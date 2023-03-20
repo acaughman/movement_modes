@@ -33,17 +33,10 @@ This project is interested in exploring the relationship between two different m
 
 ### Deliverables
 
-##### For This Quarter:
-
 1. All code developed, with comments (save code you end up not using at bottom of scripts)
-2. Detailed Methods of all Steps
+2. Detailed Methods of all things you did (even ones that didn't work well)
+3. Polished methods draft of work
 
-##### Future: 
-
-*I'm not sure how funding would work, but there's likely options even post-graduation if interested; Please let me know if you're interested in either of the below*
-
-1. Assist with and/or lead paper writing? 
-2. Participate in additional projects using this data
 
 ### Data Overview
 
@@ -90,24 +83,6 @@ ggplot(data, aes(magnitude_homerange, month_pld)) +
 
 Here, I using a Gaussian Mixture Model (https://towardsdatascience.com/gaussian-mixture-models-d13a5e915c8e). 
 
-```{r, include = FALSE}
-# gmm_data_log = data %>%
-#   dplyr::select(home_range, pld) %>%
-#   mutate(home_range = log(home_range))
-# 
-# gmm_mclust = Mclust(gmm_data_log)
-# 
-# summary(gmm_mclust)
-# 
-# gmm_data_log$class = as.factor(gmm_mclust[["classification"]])
-# 
-# ggplot(gmm_data_log, aes(home_range, pld)) +
-#   geom_point(aes(color = class)) +
-#   theme_bw() +
-#   labs(x = "log(Predicted Home Range)", 
-#       y = "Predicted Pelagic Larval Duration")
-```
-
 ```{r}
 gmm_data = data %>%
   dplyr::select(magnitude_homerange, month_pld)
@@ -130,3 +105,30 @@ ggsave(p2, file = paste0("gmm_fig.pdf"), path = here::here("04_figs"), height = 
 ```
 
 My idea is for you to start with these clusters. You can get the cluster ID for each individual species from `gmm_data` and then start pulling in variables to describe and, ideally, differentiate these clusters. Some of them are small so feel free to try combining some.
+
+# Week 1
+
+### Tasks:
+
+Prior to Meeting 1:
+
+1. Make sure R studio is linked to your github (I'll help in meeting 1 if you're having issues)
+
+Meeting 1:
+
+1. I'll show you the random forest model for how this data was generated
+2. We'll walk through Lester et al. together briefly
+3. Walk through FishBase
+
+Prior to Meeting 2:
+
+1. Read/Skim Papers and Prepare any questions you have, anything you need help understanding
+2. Try to familiarize yourself some with what is in the FishBase tables
+
+Meeting 2:
+
+1. Discuss Papers
+2. We'll go through your strategy for the characterization work
+3. Discuss Week 2 goals
+
+This will get less structured as we go. If you need more to do or get stuck at any point, I'm pretty free for last minute meetings, working sessions, etc. My calendar is always up to date.
