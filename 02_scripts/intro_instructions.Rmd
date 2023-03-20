@@ -121,8 +121,8 @@ gmm_data$class = as.factor(gmm_mclust2[["classification"]])
 p2 = ggplot(gmm_data, aes(magnitude_homerange, month_pld)) +
   geom_jitter(aes(color = class)) +
   theme_bw() +
-  labs(x = "log(Predicted Home Range)", 
-      y = "Predicted Pelagic Larval Duration")
+  labs(x = "Order of Magnitude of Predicted Home Range", 
+      y = "Predicted Pelagic Larval Duration (Month)")
 
 p2
 
