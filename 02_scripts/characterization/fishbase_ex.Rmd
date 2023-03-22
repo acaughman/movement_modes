@@ -10,57 +10,24 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 library(tidyverse)
 library(here)
-library(janitor)
 library(rfishbase)
-require(rgbif)
-require(rredlist)
 ```
 
 ### Read in data
 
-#### Empirical Home Range Sizes
-
 ```{r}
-hrs <- read_csv(here("data", "empirical_homeranges.csv")) %>%
-  clean_names() %>%
-  dplyr::select(-hr_sd) # remove irrelevant columns
-
-clean_taxa <- read_csv(here("data", "cleaned_taxonomy.csv")) %>%
-  pull(species) # get list of cleaned taxa
-
-taxa_check <- hrs %>%
-  mutate(valid = ifelse(hrs$species %in% clean_taxa, 1, 0)) %>% # assign valid = 1 if hr species is in clean taxa list
-  select(valid, species)
-
-sum(taxa_check$valid) == nrow(hrs) # check that the sum of valid is equal to the number of rows in hrs
-```
-
-#### Life History Data
-
-```{r}
-life_history <- readRDS(here("data", "MegaData_Ray.rds")) %>%
-  as.data.frame() %>% # convert to dataframe
-  clean_names() %>%
-  select(sci_name, r_fin, kfin) # select relevant columns
-
-names(life_history)[names(life_history) == "sci_name"] <- "species" # rename column so that it matches empirical_homeranges.csv
-
-life_history_means <- life_history %>%
-  group_by(species) %>%
-  summarise(
-    kfin = mean(kfin, na.rm = TRUE), # get mean of carrying capacity for each species
-    r_fin = mean(r_fin, na.rm = TRUE)
-  ) # get mean of growth rate for each species
-```
-
-#### IUCN Red List Statuses
-
-```{r}
-iucn <- read_csv(here("data", "included_aquamaps_spp_list.csv")) %>%
-  clean_names() %>%
-  select(valid_sci_name, iucn_category) # select relevant columns
-
-names(iucn)[names(iucn) == "valid_sci_name"] <- "species" # rename column so that it matches homeranges.csv
+data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")) %>%
+  mutate(home_range = case_when(
+    !is.na(observed_homerange) ~ observed_homerange,
+    is.na(observed_homerange) ~ predicted_homerange
+  )) %>%
+  mutate(pld = case_when(
+    !is.na(observed_pld) ~ observed_pld,
+    is.na(observed_pld) ~ predicted_pld
+  )) %>%
+  filter(pld < 400) %>%
+  mutate(magnitude_homerange = floor(log10(home_range))) %>%
+  mutate(month_pld = ceiling(pld / 30))
 ```
 
 #### Get Data from Fish Base
@@ -131,45 +98,9 @@ fish_data <- left_join(fish_data_means, fish_data_o, by = "species") %>%
   distinct() # get all the data for each fish species with length and trophic level data
 ```
 
-#### Mobility Data
+### Write output
 
 ```{r}
-mobility_data <- read_csv(here("data", "movement_classification.csv")) %>%
-  select(species, movement_keyword, m_fin) # select relevant columns
+merged_data = left_join(data, fish_data)
 ```
 
-#### Geographic ranges
-
-```{r}
-geog <- read_csv(here("data", "geog_range.csv")) %>%
-  rename(species = SciName) %>% # rename column
-  select(species, geog_range) # select desired columns
-
-species_list <- geog %>%
-  pull(species) # get list of 811 species
-```
-
-### Merge all Data
-
-```{r}
-join1 <- full_join(hrs, life_history_means) %>% # merge home range data with life history data
-  filter(species %in% geog$species) %>% # filter by species list in geog range data set
-  distinct() %>% # get distinct values
-  filter(!is.na(kfin)) %>% # remove missing carrying capacities
-  filter(!is.na(r_fin)) # remove missing growth rates
-
-join2 <- left_join(join1, iucn) %>% # merge data with IUCN data
-  select(-family) # remove unneeded column
-
-join3 <- left_join(join2, fish_data) %>% # join data with fishbase data
-  filter(!is.na(length)) %>% # remove missing lengths
-  filter(!is.na(diet_troph3)) # remove missing trophic levels
-
-join4 <- left_join(join3, mobility_data) # join data with movement data
-
-join5 <- left_join(join4, geog) %>% # join data with geographic ranges
-  filter(!is.na(geog_range)) %>% # remove missing geographic ranges
-  select(species, common_name, homerange, n_ind, kfin, r_fin, iucn_category, length, diet_troph3, Class, demers_pelag, family, movement_keyword, geog_range, m_fin) # select all desired columns
-
-write_csv(join5, here::here("data", "randomforest_data.csv")) # write csv last written 10/11/2022
-```
