@@ -1,0 +1,280 @@
+---
+title: "PLD Random Forest"
+author: "Allie Caughman"
+date: "1/31/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(here)
+library(tidymodels)
+library(broom)
+library(patchwork)
+library(kableExtra)
+
+set.seed(1) # set seed
+```
+
+```{r, include=FALSE}
+## Read in all data
+pld_data_full <- read_csv(here("01_data", "02_processed_data", "pld_data.csv")) %>% # load in the data
+  select(species, family, PLD, geog_range, movement_keyword, demers_pelag, length, common_name, kfin, r_fin, diet_troph3, Class, iucn_category) %>%
+  mutate(movement_keyword = as.factor(movement_keyword)) %>% # turn categorical variables into factors
+  mutate(family = as.factor(family)) %>%
+  filter(Class != "Elasmobranchii")  # remove elasmobranchs that do not have a larval stage
+ 
+  
+# filter data with PLD values to use in random forest training and testing
+rf_data <- pld_data_full %>%
+  filter(!is.na(PLD)) %>% # remove values PLD does not exist
+  filter(!is.na(species)) %>%  # remove unknown species
+  filter(PLD > 0) # remove species that have a PLD of 0 i.e. do not have a larval stage
+
+pld_avg <- rf_data %>%
+  group_by(species) %>%
+  summarize(avg_PLD = mean(PLD)) # get mean PLD for each species
+
+merge_prep <- rf_data %>%
+  select(-PLD) %>% # remove PLD before merging average
+  distinct(species, .keep_all = TRUE)
+
+pld_rf_data <- left_join(pld_avg, merge_prep) %>% # combine data to merge average species PLD values with species list
+  distinct() %>% # get distinct values
+  rename(PLD = avg_PLD) # rename column to PLD
+
+predict_data <- pld_data_full %>% # predict data is full data set
+  select(-PLD) %>%
+  distinct(species, .keep_all = TRUE)
+```
+
+```{r, include=FALSE}
+rf_split <- initial_split(pld_rf_data, prop = .8, strata = family) # 80/20% split for training/testing
+
+train <- training(rf_split) # make training split
+test <- testing(rf_split) # make testing split
+
+cv_folds <- vfold_cv(pld_rf_data, repeats = 5, strata = family, v = 10) # folds for cross validation
+```
+
+### Overview
+
+This model seeks to predict pelagic larval duration values for an array of fish species using 91 PLD values found from the literature. Data were split into a testing and a training set and run through a random forest model using the ranger engine in R. The model is as follows:
+
+PLD ~ r + K + movement keyword + fish length + trophic level
+
+```{r, include=FALSE}
+rf_recipe <- recipe(PLD ~ r_fin + kfin + length + diet_troph3 + movement_keyword, data = train) %>% # create prepossessing recipe
+  step_normalize(all_numeric_predictors()) # normalize all numeric variables
+```
+
+```{r, include = FALSE}
+rf_ranger <- rand_forest(mode = "regression") %>% # set to regression
+  set_engine("ranger", verbose = TRUE) # set ranger engine
+```
+
+```{r, include = FALSE}
+rf_wflw <- workflow() %>%
+  add_model(rf_ranger) %>%
+  add_recipe(rf_recipe) # create workflow with ranger model and preprocessed rf model
+```
+
+```{r, include=FALSE}
+rf_fit <- fit(rf_wflw, train) # fit the data to the training data
+```
+
+
+```{r, include=FALSE}
+train_predict <- predict(object = rf_fit, new_data = train) %>% # predict the training set
+  bind_cols(train) # bind training set column to prediction
+
+test_predict <- predict(object = rf_fit, new_data = test) %>% # predict the training set
+  bind_cols(test) # bind prediction to testing data columns
+
+predict_full <- full_join(pld_rf_data, predict_data) # combine predict data with training data
+
+prediction <- predict(object = rf_fit, new_data = predict_full) %>% # predict the training set
+  bind_cols(predict_full) %>% # bind prediction to full data
+  rename(predicted_PLD = .pred) %>% # rename prediction column to predicted_PLD
+  rename(observed_PLD = PLD) # rename PLD to observed_PLD
+
+#write_csv(prediction, here::here("04_results", "pld", "pld_rf_predictions.csv"))
+```
+
+```{r, include = FALSE}
+train_metrics <- train_predict %>%
+  metrics(PLD, .pred) # get testing data metrics
+
+test_metrics <- test_predict %>%
+  metrics(PLD, .pred) # get testing data metrics
+
+#write_csv(test_metrics, here::here("04_results", "pld", "pld_rf_metrics.csv"))
+```
+
+Numeric predictor variables were normalized. Root mean square error (RMSE) and $R^2$ were calculated on the test set to evaluate the model performance. Finally, the model was use to predict the PLD for 610 species with unknown PLD values.
+
+### Metrics
+
+First we calculated the testing and training RMSE and $R^2$ values. 
+
+The training RSME was `r round(train_metrics$.estimate[1],2)` and the $R^2$ was `r round(train_metrics$.estimate[2],2)`.
+
+Then cross validation was then preformed to get an average RMSE across folds
+
+```{r, include = FALSE}
+cv2 <- rf_wflw %>%
+  fit_resamples(cv_folds) # fit the folds to the final model
+```
+
+The results of cross validation are:
+
+```{r}
+collect_metrics(cv2)
+```
+
+The testing metrics are:
+
+```{r, include=FALSE}
+metric_table <- test_metrics %>% # make nice metric table
+  as.data.frame() %>%
+  kbl(digits = 4, col.names = c("Metric", "Estimator", "Estimate")) %>%
+  kable_minimal()
+```
+
+```{r}
+metric_table
+```
+
+The RMSE indicates good model fit to the data.  A low $R^2$ value indicates a weak relationship between observed and predicted values
+
+### Diagonstics
+
+#### Test accuracy of new prediction
+
+Here are the predictions versus the actual values.
+
+```{r, include=FALSE}
+scatter_plot <- ggplot(test_predict, aes(PLD, .pred)) + # plot real versus predicted
+  geom_point() +
+  geom_smooth(method = "lm") + # add trend line
+  theme_bw() +
+  labs(x = "Observed PLD", y = "Predicted PLD")
+
+#ggsave(scatter_plot, file = paste0("observed_vs_predicted_ln.png"), path = here::here("05_figs", "pld"))
+```
+
+```{r}
+scatter_plot
+```
+
+
+#### Distribution of real versus predicted PLD for full data set
+
+```{r, include = FALSE}
+prediction_p <- ggplot(prediction, aes(predicted_PLD)) + # distribution of predicted values
+  geom_histogram(bins = 30) +
+  theme_bw() +
+  labs(
+    x = "PLD",
+    y = "Count",
+    title = "Predicted PLD"
+  )
+
+real_p <- ggplot(pld_rf_data, aes(PLD)) + # distribution of observed values
+  geom_histogram(bins = 30) +
+  theme_bw() +
+  labs(
+    x = "PLD",
+    y = "Count",
+    title = "Observed PLD"
+  )
+
+dist_plot <- real_p / prediction_p
+
+#ggsave(dist_plot, file = paste0("distribution_observed_vs_predicted.png"), path = here::here("05_figs", "pld"))
+```
+
+```{r}
+dist_plot
+```
+
+Predicted values match the distribution of the actual values well.
+
+#### Orders of Magnitude
+
+The realistic main goal of this model was to predict PLD values within the correct length in Months. 
+
+```{r, include= FALSE}
+rf_result <- test_predict %>%
+  mutate(month_pred = ceiling(.pred / 30)) %>% # calculated the month value for the predicted PLD
+  mutate(month_PLD = ceiling(PLD / 30)) %>% # calculate month for observed PLD
+  mutate(month_diff = abs(month_pred - month_PLD)) # calculate difference between month value for predicted and observed PLDs
+
+magnitude <- rf_result %>%
+  group_by(month_diff) %>% # group by the calculated difference in magnitude
+  summarise(count = n()) %>% # get number of predictions in each category
+  mutate(percent = count / nrow(test) * 100) # get percentage
+```
+
+```{r, include=FALSE}
+mag_table <- magnitude %>%
+  kbl(digits = 2, col.names = c("Difference in PLD (Month)", "Count", "Percent")) %>%
+  kable_minimal()
+```
+
+```{r}
+mag_table
+```
+
+A majority of testing data was predicted within 1 month of the correct PLD value, indicating this model is useful at predicting PLD number of months.
+
+```{r, include=FALSE, eval=FALSE}
+fam <- sort(unique(prediction$family)) %>%
+  as.data.frame() %>%
+  distinct() # get unique families in prediction
+
+fam1 <- fam %>%
+  filter(row_number() <= 72) # get half the families
+
+fam2 <- fam %>%
+  filter(row_number() > 72) # get the other half of the families
+
+prediction1 <- prediction %>%
+  filter(family %in% fam1$.) # filter data into first half of families
+
+prediction2 <- prediction %>%
+  filter(family %in% fam2$.) # filter data into second half of families
+
+# plot first half of families
+p1 <- ggplot(prediction1, aes(family, predicted_PLD)) +
+  geom_jitter(alpha = .2) +
+  geom_boxplot(outlier.shape = NA) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  theme(legend.position = "none") +
+  labs(
+    x = "",
+    y = "Predicted PLD (Days)"
+  )
+
+# plot second half of families
+p2 <- ggplot(prediction2, aes(family, predicted_PLD)) +
+  geom_jitter(alpha = .2) +
+  geom_boxplot(outlier.shape = NA) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) +
+  theme(legend.position = "none") +
+  labs(
+    x = "Family",
+    y = "Predicted PLD (Days)"
+  )
+
+# combine plots
+p <- p1 / p2
+
+p
+
+#ggsave(p, file = paste0("predicted_pld_plot.png"), path = here::here("05_figs", "pld"), width = 10, height = 8)
+```
