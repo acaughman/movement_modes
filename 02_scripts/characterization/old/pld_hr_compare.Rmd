@@ -148,8 +148,6 @@ MASS::boxcox(pld ~ hr)
 bc_hr <- 1 / sqrt(hr)
 ```
 
-
-
 ```{r, include = FALSE}
 descdist(bc_hr, discrete = FALSE)
 descdist(pld, discrete = FALSE)
