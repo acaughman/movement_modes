@@ -24,8 +24,6 @@ This project is interested in exploring the relationship between two different m
 * O’Connor, M. I., Bruno, J. F., Gaines, S. D., Halpern, B. S., Lester, S. E., Kinlan, B. P., & Weiss, J. M. (2007). Temperature control of larval dispersal and the implications for marine ecology, evolution, and conservation. Proceedings of the National Academy of Sciences, 104(4), 1266–1271. https://doi.org/10.1073/pnas.0603422104 <- (skim; math heavy don't worry about the weeds)
 
 2. Create Groupings of Species (See below for Start; see Lester et al. (2007) and Fish base Tables for variable ideas)
-* This can be more descriptive or
-* More computational (i.e. random forest classifier)
 
 3. Model relationship
 * Start with "reproducing" Lester et al. (2007); don't aim for perfect reproduction, use as more guidelines. I also don't expect to largely use linear regression
@@ -36,7 +34,6 @@ This project is interested in exploring the relationship between two different m
 1. All code developed, with comments (save code you end up not using at bottom of scripts)
 2. Detailed Methods of all things you did (even ones that didn't work well)
 3. Polished methods draft of work
-
 
 ### Data Overview
 
@@ -110,15 +107,11 @@ My idea is for you to start with these clusters. You can get the cluster ID for 
 
 ### Tasks:
 
-Prior to Meeting 1:
-
-1. Make sure R studio is linked to your github (I'll help in meeting 1 if you're having issues)
-
 Meeting 1:
 
-1. I'll show you the random forest model for how this data was generated
-2. We'll walk through Lester et al. together briefly
-3. Walk through FishBase
+1. Set up Github in R 
+2. I'll show you the random forest model for how this data was generated
+3. We'll walk through Lester et al. and Fishbase together briefly
 
 Prior to Meeting 2:
 
@@ -128,7 +121,7 @@ Prior to Meeting 2:
 Meeting 2:
 
 1. Discuss Papers
-2. We'll go through your strategy for the characterization work
+2. Strategize for characterization work
 3. Discuss Week 2 goals
 
 This will get less structured as we go. If you need more to do or get stuck at any point, I'm pretty free for last minute meetings, working sessions, etc. My calendar is always up to date.
