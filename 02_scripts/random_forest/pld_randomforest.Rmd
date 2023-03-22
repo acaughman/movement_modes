@@ -24,13 +24,13 @@ pld_data_full <- read_csv(here("01_data", "02_processed_data", "pld_data.csv")) 
   select(species, family, PLD, geog_range, movement_keyword, demers_pelag, length, common_name, kfin, r_fin, diet_troph3, Class, iucn_category) %>%
   mutate(movement_keyword = as.factor(movement_keyword)) %>% # turn categorical variables into factors
   mutate(family = as.factor(family)) %>%
-  filter(Class != "Elasmobranchii")  # remove elasmobranchs that do not have a larval stage
- 
-  
+  filter(Class != "Elasmobranchii") # remove elasmobranchs that do not have a larval stage
+
+
 # filter data with PLD values to use in random forest training and testing
 rf_data <- pld_data_full %>%
   filter(!is.na(PLD)) %>% # remove values PLD does not exist
-  filter(!is.na(species)) %>%  # remove unknown species
+  filter(!is.na(species)) %>% # remove unknown species
   filter(PLD > 0) # remove species that have a PLD of 0 i.e. do not have a larval stage
 
 pld_avg <- rf_data %>%
@@ -100,7 +100,7 @@ prediction <- predict(object = rf_fit, new_data = predict_full) %>% # predict th
   rename(predicted_PLD = .pred) %>% # rename prediction column to predicted_PLD
   rename(observed_PLD = PLD) # rename PLD to observed_PLD
 
-#write_csv(prediction, here::here("04_results", "pld", "pld_rf_predictions.csv"))
+# write_csv(prediction, here::here("04_results", "pld", "pld_rf_predictions.csv"))
 ```
 
 ```{r, include = FALSE}
@@ -110,7 +110,7 @@ train_metrics <- train_predict %>%
 test_metrics <- test_predict %>%
   metrics(PLD, .pred) # get testing data metrics
 
-#write_csv(test_metrics, here::here("04_results", "pld", "pld_rf_metrics.csv"))
+# write_csv(test_metrics, here::here("04_results", "pld", "pld_rf_metrics.csv"))
 ```
 
 Numeric predictor variables were normalized. Root mean square error (RMSE) and $R^2$ were calculated on the test set to evaluate the model performance. Finally, the model was use to predict the PLD for 610 species with unknown PLD values.
@@ -162,7 +162,7 @@ scatter_plot <- ggplot(test_predict, aes(PLD, .pred)) + # plot real versus predi
   theme_bw() +
   labs(x = "Observed PLD", y = "Predicted PLD")
 
-#ggsave(scatter_plot, file = paste0("observed_vs_predicted_ln.png"), path = here::here("05_figs", "pld"))
+# ggsave(scatter_plot, file = paste0("observed_vs_predicted_ln.png"), path = here::here("05_figs", "pld"))
 ```
 
 ```{r}
@@ -193,7 +193,7 @@ real_p <- ggplot(pld_rf_data, aes(PLD)) + # distribution of observed values
 
 dist_plot <- real_p / prediction_p
 
-#ggsave(dist_plot, file = paste0("distribution_observed_vs_predicted.png"), path = here::here("05_figs", "pld"))
+# ggsave(dist_plot, file = paste0("distribution_observed_vs_predicted.png"), path = here::here("05_figs", "pld"))
 ```
 
 ```{r}
@@ -276,5 +276,5 @@ p <- p1 / p2
 
 p
 
-#ggsave(p, file = paste0("predicted_pld_plot.png"), path = here::here("05_figs", "pld"), width = 10, height = 8)
+# ggsave(p, file = paste0("predicted_pld_plot.png"), path = here::here("05_figs", "pld"), width = 10, height = 8)
 ```

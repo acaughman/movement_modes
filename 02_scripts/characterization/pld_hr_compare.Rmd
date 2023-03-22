@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 library(ggpubr)
 library(EnvStats)
@@ -26,7 +26,7 @@ library(tidyverse)
 ### Read in Data
 
 ```{r}
-data = read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv"))
+data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv"))
 ```
 
 ### Explore data
@@ -44,7 +44,7 @@ ggplot(data, aes(log(predicted_homerange), predicted_pld)) +
   theme_bw() +
   facet_wrap(~movement_keyword) +
   geom_smooth(method = "lm", se = FALSE) +
-                   stat_cor(label.y = 90) 
+  stat_cor(label.y = 90)
 ```
 
 ```{r, include = FALSE}
@@ -53,18 +53,18 @@ ggplot(data, aes(log(predicted_homerange), predicted_pld)) +
   theme_bw() +
   facet_wrap(~demers_pelag) +
   geom_smooth(method = "lm", se = FALSE) +
-                   stat_cor(label.y = 90) 
+  stat_cor(label.y = 90)
 ```
 
 Family with > 5 representatives
 
 ```{r, include = FALSE}
-fam_sum = data %>%
+fam_sum <- data %>%
   group_by(family) %>%
   summarize(n = n()) %>%
   filter(n > 5)
 
-fam_data = data %>%
+fam_data <- data %>%
   filter(family %in% fam_sum$family)
 ```
 
@@ -74,28 +74,28 @@ ggplot(fam_data, aes(log(predicted_homerange), predicted_pld)) +
   theme_bw() +
   facet_wrap(~family) +
   geom_smooth(method = "lm", se = FALSE) +
-                   stat_cor(label.y = 75) 
+  stat_cor(label.y = 75)
 ```
 
 
 ### Clustering 
 
 ```{r, include = FALSE}
-pld_data = data %>%
+pld_data <- data %>%
   dplyr::select(predicted_pld)
-hr_data = data %>%
+hr_data <- data %>%
   dplyr::select(predicted_homerange) %>%
   mutate(predicted_homerange = log(predicted_homerange))
 
-pld_km = kmeans(pld_data, 3)
-hr_km = kmeans(hr_data, 3)
+pld_km <- kmeans(pld_data, 3)
+hr_km <- kmeans(hr_data, 3)
 
-data$pld_clusters = pld_km$cluster
-data$hr_clusters = hr_km$cluster
+data$pld_clusters <- pld_km$cluster
+data$hr_clusters <- hr_km$cluster
 
-data = data %>%
+data <- data %>%
   mutate(hr_clusters = as.factor(hr_clusters))
-data = data %>%
+data <- data %>%
   mutate(pld_clusters = as.factor(pld_clusters))
 
 ggplot(data, aes(x = log(predicted_homerange), y = predicted_pld)) +
@@ -109,11 +109,11 @@ ggplot(data, aes(x = log(predicted_homerange), y = predicted_pld)) +
 Gaussian Mixture Model
 
 ```{r}
-gmm_data_log = data %>%
+gmm_data_log <- data %>%
   dplyr::select(predicted_homerange, predicted_pld) %>%
   mutate(predicted_homerange = log(predicted_homerange))
 
-gmm_mclust = Mclust(gmm_data_log)
+gmm_mclust <- Mclust(gmm_data_log)
 
 summary(gmm_mclust)
 
@@ -121,31 +121,31 @@ plot(gmm_mclust, what = "classification")
 ```
 
 ```{r}
-gmm_data = data %>%
+gmm_data <- data %>%
   dplyr::select(predicted_homerange, predicted_pld) %>%
-  mutate(log_predicted_homerange = log(predicted_homerange)) %>% 
-  filter(log_predicted_homerange < 5) %>% 
+  mutate(log_predicted_homerange = log(predicted_homerange)) %>%
+  filter(log_predicted_homerange < 5) %>%
   select(-log_predicted_homerange)
 
-gmm_mclust = Mclust(gmm_data)
+gmm_mclust <- Mclust(gmm_data)
 
 summary(gmm_mclust)
 
-plot(gmm_mclust, what = "classification", xlim = c(0,1))
+plot(gmm_mclust, what = "classification", xlim = c(0, 1))
 ```
 
 
 
 ```{r, include = FALSE}
-hr = data %>% 
+hr <- data %>%
   pull(predicted_homerange)
 
-pld = data %>% 
+pld <- data %>%
   pull(predicted_pld)
 
 MASS::boxcox(pld ~ hr)
 
-bc_hr = 1/sqrt(hr)
+bc_hr <- 1 / sqrt(hr)
 ```
 
 
@@ -154,9 +154,9 @@ bc_hr = 1/sqrt(hr)
 descdist(bc_hr, discrete = FALSE)
 descdist(pld, discrete = FALSE)
 
-fit.pld.lognorm = fitdist(pld, "lnorm")
-fit.pld.weibull = fitdist(pld, "weibull")
-fit.pld.gamma = fitdist(pld, "gamma")
+fit.pld.lognorm <- fitdist(pld, "lnorm")
+fit.pld.weibull <- fitdist(pld, "weibull")
+fit.pld.gamma <- fitdist(pld, "gamma")
 
 c(fit.pld.lognorm$loglik, fit.pld.weibull$loglik, fit.pld.gamma$loglik)
 
@@ -164,15 +164,14 @@ plot(fit.pld.lognorm)
 ```
 
 ```{r, include = FALSE}
-fit.hr = spEMsymloc(bc_hr, mu0 = c(3, 28))
-fit.hr.norm = normalmixEM(bc_hr)
+fit.hr <- spEMsymloc(bc_hr, mu0 = c(3, 28))
+fit.hr.norm <- normalmixEM(bc_hr)
 
 fit.hr.norm$loglik
 
 plot(fit.hr)
-lines(density(bc_hr), lty=2, lwd=2)
+lines(density(bc_hr), lty = 2, lwd = 2)
 
-plot(fit.hr.norm, which =2)
-lines(density(bc_hr), lty=2, lwd=2)
+plot(fit.hr.norm, which = 2)
+lines(density(bc_hr), lty = 2, lwd = 2)
 ```
-

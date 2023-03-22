@@ -173,7 +173,7 @@ prediction <- predict(object = rf_fit, new_data = predict_full) %>% # predict th
   rename(observed_homerange = hr) %>% # rename columns
   rename(predicted_homerange = pred) # rename columns
 
-write_csv(prediction, here::here("data", "homerange_rf_predictions.csv"))
+# write_csv(prediction, here::here("data", "homerange_rf_predictions.csv"))
 ```
 
 Numeric predictor variables were normalized and and the home range values were log-transformed so that the large values did not over influence the results of the model. Root mean square error (RMSE) and $R^2$ were calculated on the test set to evaluate the model performance. Finally, the model was use to predict the home ranges for 600 additional species with unknown home range values.
@@ -185,7 +185,7 @@ train_metrics <- train_predict %>%
 test_metrics <- test_predict %>%
   metrics(log_hr, .pred) # get testing data metrics
 
-write_csv(test_metrics, here::here("results", "hr_rf_metrics.csv"))
+# write_csv(test_metrics, here::here("results", "hr_rf_metrics.csv"))
 ```
 
 ### Metrics
@@ -236,7 +236,8 @@ scatter_plot <- ggplot(test_predict, aes(x = log_hr, y = .pred)) + # plot ln of 
     "2"
   }))), y = expression(ln(predicted ~ home ~ range ~ (km^{
     "2"
-  })))) + theme(text = element_text(size = 10))  
+  })))) +
+  theme(text = element_text(size = 10))
 ```
 
 ```{r}
@@ -288,7 +289,8 @@ varimp <- ggplot(var_imp, aes(x = dropout_loss, y = variable)) + # plot variable
   geom_boxplot() +
   theme_bw() +
   labs(x = "Drop-out loss", y = "") +
-  scale_y_discrete(name = "", labels = c("Baseline", "Geographic Range", "Length", "Carrying Capacity", "Trophic Level", "Movement Keyword", "Full Model", "Growth Rate")) + theme(text = element_text(size = 10))  
+  scale_y_discrete(name = "", labels = c("Baseline", "Geographic Range", "Length", "Carrying Capacity", "Trophic Level", "Movement Keyword", "Full Model", "Growth Rate")) +
+  theme(text = element_text(size = 10))
 ```
 
 ```{r}
@@ -300,7 +302,7 @@ Drop-out loss is the RMSE value for a model that includes on the variable of int
 ```{r, include=FALSE}
 metric_plot <- scatter_plot + varimp + plot_annotation(tag_levels = "a")
 
-ggsave(metric_plot, file = paste0("fig5.pdf"), path = here::here("results"), width = 10, height = 5)
+# ggsave(metric_plot, file = paste0("fig5.pdf"), path = here::here("results"), width = 10, height = 5)
 ```
 
 #### Distribution of real versus predicted home ranges for full data set
@@ -364,7 +366,7 @@ mag_table
 Most values in the testing set were predicted within 1 order of magnitude of the correct value, indicating the model is useful at predicting on the correct order of magnitude.
 
 ```{r, include=FALSE}
-write_csv(magnitude, here::here("results", "magnitude_difference_summary.csv"))
+# write_csv(magnitude, here::here("results", "magnitude_difference_summary.csv"))
 ```
 
 ```{r, include=FALSE}

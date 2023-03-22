@@ -25,14 +25,14 @@ hrs <- read_csv(here("data", "empirical_homeranges.csv")) %>%
   clean_names() %>%
   dplyr::select(-hr_sd) # remove irrelevant columns
 
-clean_taxa = read_csv(here("data", "cleaned_taxonomy.csv")) %>% 
-  pull(species) #get list of cleaned taxa
+clean_taxa <- read_csv(here("data", "cleaned_taxonomy.csv")) %>%
+  pull(species) # get list of cleaned taxa
 
-taxa_check = hrs %>% 
-  mutate(valid = ifelse(hrs$species %in% clean_taxa, 1, 0)) %>% #assign valid = 1 if hr species is in clean taxa list
+taxa_check <- hrs %>%
+  mutate(valid = ifelse(hrs$species %in% clean_taxa, 1, 0)) %>% # assign valid = 1 if hr species is in clean taxa list
   select(valid, species)
 
-sum(taxa_check$valid) == nrow(hrs) #check that the sum of valid is equal to the number of rows in hrs
+sum(taxa_check$valid) == nrow(hrs) # check that the sum of valid is equal to the number of rows in hrs
 ```
 
 #### Life History Data
@@ -49,7 +49,8 @@ life_history_means <- life_history %>%
   group_by(species) %>%
   summarise(
     kfin = mean(kfin, na.rm = TRUE), # get mean of carrying capacity for each species
-    r_fin = mean(r_fin, na.rm = TRUE)) # get mean of growth rate for each species
+    r_fin = mean(r_fin, na.rm = TRUE)
+  ) # get mean of growth rate for each species
 ```
 
 #### IUCN Red List Statuses
@@ -170,5 +171,5 @@ join5 <- left_join(join4, geog) %>% # join data with geographic ranges
   filter(!is.na(geog_range)) %>% # remove missing geographic ranges
   select(species, common_name, homerange, n_ind, kfin, r_fin, iucn_category, length, diet_troph3, Class, demers_pelag, family, movement_keyword, geog_range, m_fin) # select all desired columns
 
-write_csv(join5, here::here("data", "randomforest_data.csv")) #write csv last written 10/11/2022
+write_csv(join5, here::here("data", "randomforest_data.csv")) # write csv last written 10/11/2022
 ```
