@@ -19,8 +19,8 @@ This project is interested in exploring the relationship between two different m
 1. Read/Skim Baseline Papers
 
 * Lester, S. E., Ruttenberg, B. I., Gaines, S. D., & Kinlan, B. P. (2007). The relationship between dispersal ability and geographic range size. Ecology Letters, 10(8), 745–758. https://doi.org/10.1111/j.1461-0248.2007.01070.x <- (Please read this paper in its entirety)
-* Green, A. L., Maypa, A. P., Almany, G. R., Rhodes, K. L., Weeks, R., Abesamis, R. A., Gleason, M. G., Mumby, P. J., & White, A. T. (2015). Larval dispersal and movement patterns of coral reef fishes, and implications for marine reserve network design. Biological Reviews, 90(4), 1215–1247. https://doi.org/10.1111/brv.12155 <- marine reserve guidelines based on movement ecology overview; consideres adult movement and larval dipseral seperately (skim is fine)
-* Grüss, A., Kaplan, D. M., & Hart, D. R. (2011). Relative Impacts of Adult Movement, Larval Dispersal and Harvester Movement on the Effectiveness of Reserve Networks. PLoS ONE, 6(5), e19960. https://doi.org/10.1371/journal.pone.0019960 and Moffitt, E. A., White, J. W., & Botsford, L. W. (2011). The utility and limitations of size and spacing guidelines for designing marine protected area (MPA) networks. Biological Conservation. https://doi.org/10.1016/j.biocon.2010.09.008 <- marine reserve guidelines considering both adult movement and larval dispersal together (skim Grüss, I'd read Moffitt more thoroughly)
+* Green, A. L., Maypa, A. P., Almany, G. R., Rhodes, K. L., Weeks, R., Abesamis, R. A., Gleason, M. G., Mumby, P. J., & White, A. T. (2015). Larval dispersal and movement patterns of coral reef fishes, and implications for marine reserve network design. Biological Reviews, 90(4), 1215–1247. https://doi.org/10.1111/brv.12155 <- marine reserve guidelines based on movement ecology overview; considers adult movement and larval dispersal separately (skim is fine)
+* Grüss, A., Kaplan, D. M., & Hart, D. R. (2011). Relative Impacts of Adult Movement, Larval Dispersal and Harvester Movement on the Effectiveness of Reserve Networks. PLoS ONE, 6(5), e19960. https://doi.org/10.1371/journal.pone.0019960 and * Moffitt, E. A., White, J. W., & Botsford, L. W. (2011). The utility and limitations of size and spacing guidelines for designing marine protected area (MPA) networks. Biological Conservation. https://doi.org/10.1016/j.biocon.2010.09.008 <- marine reserve guidelines considering both adult movement and larval dispersal together (skim Grüss, I'd read Moffitt more thoroughly)
 * O’Connor, M. I., Bruno, J. F., Gaines, S. D., Halpern, B. S., Lester, S. E., Kinlan, B. P., & Weiss, J. M. (2007). Temperature control of larval dispersal and the implications for marine ecology, evolution, and conservation. Proceedings of the National Academy of Sciences, 104(4), 1266–1271. https://doi.org/10.1073/pnas.0603422104 <- (skim; math heavy don't worry about the weeds)
 
 2. Create Groupings of Species (See below for Start; see Lester et al. (2007) and Fish base Tables for variable ideas)
@@ -82,7 +82,7 @@ ggplot(data, aes(magnitude_homerange, month_pld)) +
 
 ##### Intial Clustering
 
-Here, I using a Gaussian Mixture Model (https://towardsdatascience.com/gaussian-mixture-models-d13a5e915c8e). 
+Here, I using a Gaussian Mixture Model to cluster (https://towardsdatascience.com/gaussian-mixture-models-d13a5e915c8e). 
 
 ```{r}
 gmm_data <- data %>%
@@ -104,31 +104,31 @@ p2 <- ggplot(gmm_data, aes(magnitude_homerange, month_pld)) +
 
 p2
 
-ggsave(p2, file = paste0("gmm_fig.pdf"), path = here::here("04_figs"), height = 8, width = 15)
+# ggsave(p2, file = paste0("gmm_fig.pdf"), path = here::here("04_figs"), height = 8, width = 15)
+
+# write_csv(gmm_data, here::here("01_data", "02_processed_data", "clusters.csv"))
 ```
 
-My idea is for you to start with these clusters. You can get the cluster ID for each individual species from `gmm_data` and then start pulling in variables to describe and, ideally, differentiate these clusters. Some of them are small so feel free to try combining some.
+My idea is for you to start with these clusters. You can get the cluster ID for each individual species from clusters.csv and then start pulling in variables to describe and, ideally, differentiate these clusters. Some of them are small so feel free to try combining some if that makes sense (I'm thinking maybe 2 and 6 especially). Also can consider breaking up bigger ones (like 1).
+
+I think we will try starting with PCA to determine how different groupings are. https://towardsdatascience.com/principal-component-analysis-pca-explained-visually-with-zero-math-1cbf392b9e7d and https://towardsdatascience.com/a-one-stop-shop-for-principal-component-analysis-5582fb7e0a9c
 
 # Week 1
 
 ### Tasks:
 
-Meeting 1:
-
-1. Set up Github in R 
-2. I'll show you the random forest model for how this data was generated
-3. We'll walk through Lester et al. and Fishbase together briefly
-
 Prior to Meeting 2:
 
-1. Read/Skim Papers and Prepare any questions you have, anything you need help understanding
-2. Try to familiarize yourself some with what is in the FishBase tables
+1. Create Github and link to R
+2. Browse git and tidyverse tutorial
+3. Read/Skim Papers and Prepare any questions you have, anything you need help understanding - focus on Lester et al.
+4. Try to familiarize yourself some with what is in the FishBase tables
 
 Meeting 2:
 
-1. Discuss Papers
-2. Strategize for characterization work
-3. Discuss Week 2 goals
-4. Show github organization
+1. Show github organization
+2. Discuss Papers
+3. Strategize for characterization work
+4. Discuss Week 2 goals
 
-This will get less structured as we go. If you need more to do or get stuck at any point, I'm pretty free for last minute meetings, working sessions, etc. My calendar is always up to date.
+This will get less structured as we go. If you need more to do let me know and if you get stuck at any point, I'm pretty free for last minute meetings, working sessions, etc. My calendar is always up to date.
