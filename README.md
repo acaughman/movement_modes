@@ -27,6 +27,7 @@ Please ignore folders/data/scripts no listed here
       |__pld_rf_predictions.csv
   |__ 02_processed_data
       |__homerange_pld.csv
+      |__clusters.csv
       |__output any final datasets with additional data from fishbase here
 02_scripts
   |__characterization
