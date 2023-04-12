@@ -13,7 +13,7 @@ library(rfishbase)
 
 ```
 
-TEST FOR COMMIT
+
 
 ### Read in data
 
@@ -65,11 +65,8 @@ use left_join(data,diet)
 use names or unique to get info on columns or rows
 
 
+```{r}
 
 
-
-
-
-
-
+```
 
