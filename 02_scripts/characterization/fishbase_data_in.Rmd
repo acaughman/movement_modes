@@ -49,6 +49,11 @@ data$species[!(data$species %in% fish$Species)] # find the species in data that 
 diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodIII"))
 
 
+stocks <- stocks() %>%  # load stocks info, then
+  filter(SpecCode %in% fish$SpecCode) %>%  # filter rows by specCodes in fish, then
+  select(SpecCode, Northernmost, NorthSouthN, Southermost, NorthSouthS, Westernmost,
+         WestEastW, Easternmost, WestEastE, BoundingRef, BoundingMethod) # select columns
+
 
 ```
 
