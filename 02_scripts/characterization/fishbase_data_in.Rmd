@@ -14,7 +14,6 @@ library(rfishbase)
 ```
 
 
-
 ### Read in data
 
 ```{r}
@@ -36,7 +35,7 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
 ```{r}
 
 fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
-  filter(Species %in% data$species) # select only the rows containing species named in our homerange_pld data
+  filter(Species %in% data$species) # select only the rows containing species named in data
 
 # created a dataframe with 3 fewer rows?
 
@@ -46,7 +45,13 @@ data$species[!(data$species %in% fish$Species)] # find the species in data that 
 # 3 species not included in fish: Limanda ferruginea, Oblada melanura, Pennahia anea
 
 
-diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodIII"))
+diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>% 
+  group_by(Species) %>%
+  summarise(FoodI = paste(FoodI, collapse = ", "), FoodII = paste(FoodII, collapse = ", "), FoodIII = paste(FoodIII, collapse = ", ")) %>% 
+  ungroup()
+
+# how to remove duplicates? <-----------------------------------------
+
 
 
 stocks <- stocks() %>%  # load stocks info, then
@@ -60,14 +65,8 @@ stocks <- stocks() %>%  # load stocks info, then
 
 use rename to rename column names
 
-group by species using group_by()
-
-use summarize() to see if you can collect the data from different columns in one column separated by commas, like nekton, zoobenthos. then each sp will have its associated prey listed. maybe paste()?
-
-when you google stuff add the word tidyverse!! helps to get tidy commands in answers
-
 use left_join(data,diet)
-use names or unique to get info on columns or rows
+
 
 
 ```{r}
