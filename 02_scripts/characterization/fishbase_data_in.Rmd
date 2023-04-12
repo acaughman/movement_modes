@@ -38,7 +38,7 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
 fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
   filter(Species %in% data$species) # select only the rows containing species named in our homerange_pld data
 
-# WHY DID THIS CREATE A DATAFRAME WITH 3 fewer rows?
+# created a dataframe with 3 fewer rows?
 
 order(data$species) # order the dataframes by species to look for missing species names
 order(fish$Species)
@@ -51,12 +51,6 @@ diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodII
 
 
 ```
-
-
- 
-
-
-
 
 
 use rename to rename column names
