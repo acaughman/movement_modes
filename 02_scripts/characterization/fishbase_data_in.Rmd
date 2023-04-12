@@ -33,7 +33,6 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
 
 
 ```{r}
-
 fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
   filter(Species %in% data$species) # select only the rows containing species named in data
 
@@ -42,24 +41,65 @@ fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
 order(data$species) # order the dataframes by species to look for missing species names
 order(fish$Species)
 data$species[!(data$species %in% fish$Species)] # find the species in data that are not included in fish
+
 # 3 species not included in fish: Limanda ferruginea, Oblada melanura, Pennahia anea
 
 
+```
+
+### collect diet variable
+
+```{r}
+# get diet items and combine rows of the same species in each column
 diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>% 
   group_by(Species) %>%
-  summarise(FoodI = paste(FoodI, collapse = ", "), FoodII = paste(FoodII, collapse = ", "), FoodIII = paste(FoodIII, collapse = ", ")) %>% 
+  summarise(FoodI = paste(FoodI, collapse = ", "), FoodII = paste(FoodII, collapse = ", "), FoodIII =
+            paste(FoodIII, collapse = ", ")) %>% 
   ungroup()
 
-# how to remove duplicates? <-----------------------------------------
+# how to remove duplicates? <------------------------------------------------------------------------
 
 
+```
 
-stocks <- stocks() %>%  # load stocks info, then
+
+### collect location variable
+
+```{r}
+# get location data (lat and long)
+coords <- stocks() %>%  # load stocks info, then
   filter(SpecCode %in% fish$SpecCode) %>%  # filter rows by specCodes in fish, then
   select(SpecCode, Northernmost, NorthSouthN, Southermost, NorthSouthS, Westernmost,
-         WestEastW, Easternmost, WestEastE, BoundingRef, BoundingMethod) # select columns
+           WestEastW, Easternmost, WestEastE) # select columns
+
+coords <- na.omit(coords) # remove NA values
+
+# not sure if I need to make everything uppercase? Just in case:
+
+coords <- data.frame(lapply(coords, function(v) {
+  if (is.character(v)) return(toupper(v))
+  else return(v)
+}))
+
+# there are a few spec codes listed more than once. 
+# can I delete duplicated rows..? there are only 5! <-----------------------------------------------
+
+coords_clean <- coords[!duplicated(coords$SpecCode), ]
 
 
+
+```
+
+
+```{r}
+# can I average the lat/long values and delete the duplicated rows? <--------------- NO. bc this messes with the E/W delineation
+
+# mean_stocks <- stocks %>% 
+  # group_by(SpecCode) %>% 
+  # summarise(Northernmost = mean(Northernmost), NorthSouthN = NorthSouthN, Southernmost =
+             # mean(Southermost),NorthSouthS = NorthSouthS, Westernmost = mean(Westernmost), WestEastW =
+             # WestEastW, Easternmost = mean(Easternmost), WestEastE = WestEastE) %>% 
+  # ungroup()
 ```
 
 
@@ -67,10 +107,4 @@ use rename to rename column names
 
 use left_join(data,diet)
 
-
-
-```{r}
-
-
-```
 
