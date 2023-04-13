@@ -34,7 +34,7 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
 
 ```{r}
 fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
-  filter(Species %in% data$species) # select only the rows containing species named in data
+  filter(Species %in% data$species) # select only the rows containing species listed in data
 
 # created a dataframe with 3 fewer rows?
 
@@ -47,18 +47,30 @@ data$species[!(data$species %in% fish$Species)] # find the species in data that 
 
 ```
 
+
 ### collect diet variable
 
 ```{r}
 # get diet items and combine rows of the same species in each column
 diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>% 
   group_by(Species) %>%
-  summarise(FoodI = paste(FoodI, collapse = ", "), FoodII = paste(FoodII, collapse = ", "), FoodIII =
-            paste(FoodIII, collapse = ", ")) %>% 
+  summarise(FoodI = paste(unique(FoodI), collapse = ", "), 
+            FoodII = paste(unique(FoodII), collapse = ", "), 
+            FoodIII = paste(unique(FoodIII), collapse = ", ")) %>% 
   ungroup()
 
-# how to remove duplicates? <------------------------------------------------------------------------
+# using unique(x) makes sure there are not duplicates
 
+diet <- janitor::clean_names(diet)
+```
+
+
+### Add diet columns to data
+
+```{r}
+
+data <- left_join(data,diet) %>% 
+  select(-food_ii, -food_iii)
 
 ```
 
@@ -74,7 +86,7 @@ coords <- stocks() %>%  # load stocks info, then
 
 coords <- na.omit(coords) # remove NA values
 
-# not sure if I need to make everything uppercase? Just in case:
+# not sure if I need to make everything uppercase?
 
 coords <- data.frame(lapply(coords, function(v) {
   if (is.character(v)) return(toupper(v))
@@ -82,14 +94,29 @@ coords <- data.frame(lapply(coords, function(v) {
 }))
 
 # there are a few spec codes listed more than once. 
-# can I delete duplicated rows..? there are only 5! <-----------------------------------------------
+# can I delete the duplicated rows..? there are only 5 <-----------------------------------------------
 
 coords_clean <- coords[!duplicated(coords$SpecCode), ]
 
+# add coords to fish because they share a column
+fish <- left_join(fish, coords_clean)
 
+fish <- janitor::clean_names(fish2)
 
 ```
 
+
+### Add location columns to data
+
+```{r}
+
+data <- left_join(data2, fish2) %>% 
+  select(-spec_code, -genus, -subfamily, -family, -order, -class, -super_class)
+
+```
+
+
+### Old
 
 ```{r}
 # can I average the lat/long values and delete the duplicated rows? <--------------- NO. bc this messes with the E/W delineation
@@ -103,8 +130,5 @@ coords_clean <- coords[!duplicated(coords$SpecCode), ]
 ```
 
 
-use rename to rename column names
-
-use left_join(data,diet)
 
 
