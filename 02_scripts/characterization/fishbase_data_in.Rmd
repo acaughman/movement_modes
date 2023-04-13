@@ -32,6 +32,14 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
 ```
 
 ```{r}
+
+clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv"))
+
+```
+
+
+
+```{r}
 fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
   filter(Species %in% data$species) # select only the rows containing species listed in data
 ```
@@ -93,7 +101,17 @@ fish <- janitor::clean_names(fish)
 ```{r}
 data <- left_join(data, fish) %>% 
   select(-spec_code, -genus, -subfamily, -family, -order, -class, -super_class)
+
+data <- full_join(data, clusters)
+
 ```
+
+```{r}
+
+write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+
+```
+
 
 
 ### Old
@@ -111,9 +129,9 @@ data <- left_join(data, fish) %>%
 ```{r}
 # created a dataframe with 3 fewer rows?
 
-order(data$species) # order the dataframes by species to look for missing species names
-order(fish$Species)
-data$species[!(data$species %in% fish$Species)] # find the species in data that are not included in fish
+# order(data$species) # order the dataframes by species to look for missing species names
+# order(fish$Species)
+# data$species[!(data$species %in% fish$Species)] # find the species in data that are not included in fish
 
 # 3 species not included in fish: Limanda ferruginea, Oblada melanura, Pennahia anea
 
