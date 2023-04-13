@@ -34,16 +34,6 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
 ```{r}
 fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
   filter(Species %in% data$species) # select only the rows containing species listed in data
-
-# created a dataframe with 3 fewer rows?
-
-order(data$species) # order the dataframes by species to look for missing species names
-order(fish$Species)
-data$species[!(data$species %in% fish$Species)] # find the species in data that are not included in fish
-
-# 3 species not included in fish: Limanda ferruginea, Oblada melanura, Pennahia anea
-
-# Myzopsetta ferruginea for Limanda ferruginea, Oblada melanurus for Oblada melanura, Pennahia aneas for Pennahia anea
 ```
 
 ### collect diet variable
@@ -118,6 +108,17 @@ data <- left_join(data, fish) %>%
   # ungroup()
 ```
 
+```{r}
+# created a dataframe with 3 fewer rows?
+
+order(data$species) # order the dataframes by species to look for missing species names
+order(fish$Species)
+data$species[!(data$species %in% fish$Species)] # find the species in data that are not included in fish
+
+# 3 species not included in fish: Limanda ferruginea, Oblada melanura, Pennahia anea
+
+# Myzopsetta ferruginea for Limanda ferruginea, Oblada melanurus for Oblada melanura, Pennahia aneas for Pennahia anea
+```
 
 
 
