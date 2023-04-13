@@ -309,7 +309,7 @@ magnitude_homerange,month_pld,species,class
 -2,1,Lethrinus xanthochilus,4
 -1,2,Lichia amia,1
 -2,2,Limanda aspera,1
--1,2,Limanda ferruginea,1
+-1,2,Myzopsetta ferruginea,1
 -2,2,Limanda limanda,1
 -2,1,Lithognathus mormyrus,4
 -1,2,Lophius americanus,1
@@ -381,7 +381,7 @@ magnitude_homerange,month_pld,species,class
 -3,3,Nemipterus japonicus,3
 -3,2,Nemipterus virgatus,1
 -4,2,Normanichthys crockeri,7
--2,1,Oblada melanura,4
+-2,1,Oblada melanuras,4
 -1,2,Oncorhynchus gorbuscha,1
 -1,3,Oncorhynchus keta,3
 -1,2,Oncorhynchus kisutch,1
@@ -411,7 +411,7 @@ magnitude_homerange,month_pld,species,class
 -2,2,Patagonotothen ramsayi,1
 -2,2,Pegusa lascaris,1
 -4,2,Pelates quadrilineatus,7
--3,2,Pennahia anea,1
+-3,2,Pennahia aneas,1
 -2,2,Pennahia argentata,1
 -2,2,Pentaceros richardsoni,1
 -3,1,Pentanemus quinquarius,4
