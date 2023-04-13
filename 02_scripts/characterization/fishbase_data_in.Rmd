@@ -42,6 +42,8 @@ order(fish$Species)
 data$species[!(data$species %in% fish$Species)] # find the species in data that are not included in fish
 
 # 3 species not included in fish: Limanda ferruginea, Oblada melanura, Pennahia anea
+
+# Myzopsetta ferruginea for Limanda ferruginea, Oblada melanurus for Oblada melanura, Pennahia aneas for Pennahia anea
 ```
 
 ### collect diet variable
