@@ -1,607 +1,607 @@
-magnitude_homerange,month_pld,class
--1,2,1
--1,1,4
--1,2,1
--3,2,1
--2,1,4
-2,2,6
-0,2,1
--3,1,4
--6,2,7
--5,2,7
--4,1,4
--4,2,7
--2,2,1
-0,2,1
--2,2,1
--1,2,1
--3,1,4
--3,1,4
-0,2,1
--1,2,1
-5,2,6
-0,2,1
--3,3,3
--3,2,1
--2,3,3
-0,2,1
--3,2,1
--1,2,1
--5,2,7
--2,2,1
--2,2,1
--2,1,4
--3,2,1
--2,3,3
--6,2,7
-0,2,1
-1,2,1
--3,2,1
--1,2,1
--3,2,1
--1,2,1
--2,2,1
--1,2,1
-0,2,1
-4,1,2
-4,2,6
--1,2,1
--1,2,1
-1,2,1
--3,2,1
--1,2,1
--1,1,4
--1,5,5
-7,2,6
--2,2,1
--1,2,1
--2,1,4
--2,2,1
--1,2,1
-0,2,1
--1,1,4
--2,2,1
-4,2,6
--1,2,1
--3,1,4
--2,2,1
--1,2,1
--2,1,4
--2,2,1
--2,2,1
-0,2,1
--2,2,1
--3,2,1
--2,1,4
--1,1,4
--3,2,1
--3,2,1
--2,1,4
--1,2,1
--1,2,1
--3,2,1
--3,2,1
--1,3,3
-3,2,6
--1,2,1
--2,2,1
--3,2,1
--3,2,1
--1,2,1
--2,1,4
--1,1,4
--3,2,1
--2,2,1
--3,2,1
--1,2,1
--2,2,1
--1,2,1
--1,2,1
--2,2,1
--2,2,1
--3,2,1
--2,2,1
--2,2,1
--1,1,4
--3,2,1
--2,2,1
--2,2,1
--1,1,4
--1,1,4
--1,2,1
--1,2,1
--1,2,1
--2,1,4
--2,2,1
--3,2,1
-3,2,6
--2,2,1
--4,2,7
--3,2,1
--2,2,1
--1,2,1
--1,2,1
--1,2,1
--1,2,1
--2,1,4
--3,2,1
--2,2,1
--1,2,1
--1,2,1
--1,2,1
--1,2,1
--2,1,4
--2,2,1
--1,2,1
--4,2,7
--2,2,1
--2,1,4
--2,2,1
--3,2,1
--3,2,1
--2,2,1
--2,2,1
--1,2,1
--2,2,1
--1,1,4
--2,2,1
--1,2,1
--1,2,1
--1,2,1
--1,2,1
--1,2,1
--1,2,1
--1,2,1
--3,2,1
--2,2,1
--2,6,5
--4,2,7
--3,2,1
--2,2,1
--1,2,1
--1,2,1
--2,2,1
--3,2,1
--2,1,4
--1,1,4
-3,2,6
--1,3,3
--2,1,4
--4,2,7
--2,1,4
--3,1,4
--1,2,1
--2,2,1
--2,2,1
--1,2,1
--2,1,4
--2,2,1
--2,2,1
--1,2,1
--1,2,1
--1,1,4
--2,2,1
--2,2,1
--2,2,1
--2,1,4
--2,1,4
--2,2,1
--3,2,1
--1,2,1
--2,1,4
--2,1,4
--2,2,1
--1,1,4
--1,2,1
--2,2,1
--1,2,1
--1,1,4
--3,2,1
--3,2,1
--1,2,1
--2,2,1
--1,1,4
--3,2,1
--3,2,1
-0,2,1
--2,2,1
--2,2,1
--1,2,1
--2,1,4
--1,2,1
--3,2,1
--3,2,1
--3,2,1
--3,2,1
--3,2,1
--3,3,3
--2,3,3
--1,2,1
--2,2,1
--1,1,4
--1,2,1
--2,2,1
--1,2,1
--3,2,1
--2,2,1
--2,2,1
--2,2,1
--3,2,1
--2,2,1
--2,2,1
--4,2,7
--4,2,7
-0,2,1
--1,1,4
--1,1,4
--2,2,1
--2,2,1
--4,2,7
--1,2,1
--2,2,1
-0,2,1
--3,2,1
--2,2,1
--1,2,1
--2,2,1
--2,2,1
--4,2,7
--4,2,7
--3,2,1
--3,2,1
--2,3,3
--2,2,1
-0,2,1
--4,2,7
-0,2,1
--2,1,4
--2,2,1
--1,2,1
--2,2,1
--1,2,1
--4,2,7
--2,2,1
--3,2,1
--2,2,1
--2,2,1
-0,2,1
--2,1,4
--2,2,1
--2,2,1
--1,2,1
--2,2,1
--2,2,1
--1,2,1
--2,2,1
--3,2,1
--1,2,1
--2,2,1
--2,1,4
-4,2,6
-0,2,1
--2,2,1
-0,2,1
-4,2,6
--2,2,1
-3,1,2
--3,2,1
--2,2,1
-3,2,6
--1,2,1
--2,2,1
--3,1,4
--1,2,1
--1,2,1
--3,2,1
-0,2,1
--2,2,1
--2,2,1
--1,2,1
--2,2,1
--2,2,1
--2,2,1
--2,1,4
--2,1,4
--1,2,1
--2,2,1
--1,1,4
--2,1,4
--2,1,4
--1,2,1
--2,2,1
--1,2,1
--2,2,1
--2,1,4
--1,2,1
--2,2,1
--2,2,1
--1,2,1
--2,2,1
-0,2,1
--2,1,4
--1,2,1
--2,1,4
--1,1,4
--1,2,1
--2,1,4
-0,2,1
--1,2,1
--2,2,1
--2,2,1
--1,2,1
--2,2,1
--1,1,4
--2,2,1
--1,2,1
--1,2,1
--1,2,1
--1,2,1
--2,2,1
--2,5,5
--1,2,1
-0,2,1
--1,5,5
--3,2,1
--3,2,1
--2,1,4
--2,1,4
--1,2,1
--2,2,1
--2,2,1
--2,2,1
--1,3,3
--2,2,1
--1,2,1
--2,2,1
--2,3,3
--2,1,4
--3,2,1
--2,1,4
--1,2,1
--1,1,4
--1,2,1
--1,2,1
--1,3,3
--2,3,3
--1,2,1
--1,2,1
--2,2,1
--2,2,1
--1,2,1
-0,2,1
--1,2,1
--1,2,1
--4,2,7
--2,2,1
--2,2,1
--1,2,1
--2,2,1
--1,2,1
--3,2,1
--3,3,3
--3,2,1
--4,2,7
--2,1,4
--1,2,1
--1,3,3
--1,2,1
--1,1,4
--1,2,1
--1,2,1
--3,2,1
--2,2,1
--1,1,4
--2,2,1
--3,2,1
--1,2,1
--3,1,4
--2,2,1
--2,2,1
--1,1,4
--1,2,1
--1,2,1
--2,2,1
--2,2,1
--2,4,5
--2,2,1
--2,1,4
--1,2,1
--2,2,1
--2,2,1
--2,2,1
--2,2,1
--4,2,7
--3,2,1
--2,2,1
--2,2,1
--3,1,4
--3,2,1
--3,2,1
--2,2,1
--2,2,1
--2,2,1
--1,2,1
--2,2,1
--2,2,1
--1,2,1
--1,2,1
-0,2,1
--2,1,4
--2,2,1
--1,2,1
--2,1,4
--2,1,4
--2,2,1
--2,2,1
--2,2,1
--1,4,5
--1,3,3
--1,2,1
--1,2,1
--1,2,1
--2,2,1
--1,2,1
--2,2,1
--1,2,1
--3,2,1
-3,2,6
--2,2,1
--3,2,1
--1,2,1
--3,2,1
--2,2,1
--1,2,1
--1,2,1
--1,2,1
--1,2,1
--1,3,3
--2,2,1
--2,2,1
--1,2,1
--1,2,1
--2,2,1
--2,2,1
--4,2,7
-0,2,1
--3,2,1
--2,2,1
--2,2,1
--2,2,1
--3,1,4
--2,1,4
-1,2,1
--2,2,1
--1,2,1
--2,2,1
--2,2,1
-0,2,1
--1,1,4
--3,2,1
--1,2,1
--3,2,1
--2,2,1
--3,2,1
--3,2,1
--3,2,1
--3,2,1
--2,2,1
--2,2,1
--1,2,1
--2,2,1
--1,1,4
--2,2,1
--1,1,4
--3,2,1
--2,2,1
--1,1,4
--1,2,1
--1,1,4
--1,2,1
--2,2,1
--1,2,1
--1,2,1
--1,1,4
-0,2,1
--2,1,4
--2,2,1
--2,1,4
--1,2,1
--1,2,1
--2,2,1
--2,2,1
--2,2,1
--1,2,1
--2,2,1
--1,3,3
--2,3,3
--3,2,1
--3,3,3
--2,3,3
--2,3,3
--2,3,3
--2,2,1
--2,2,1
--2,2,1
--4,3,3
--2,2,1
--2,3,3
--2,2,1
--2,2,1
--2,3,3
--2,2,1
--2,3,3
--2,3,3
--1,3,3
--2,2,1
-0,2,1
--3,2,1
--2,2,1
--2,2,1
--1,2,1
-0,2,1
-0,2,1
-0,2,1
--2,2,1
--1,2,1
--2,2,1
--1,2,1
--1,2,1
--3,2,1
--1,2,1
-0,2,1
--1,2,1
--1,2,1
--1,2,1
--4,2,7
--3,2,1
--2,2,1
--4,2,7
--1,2,1
--2,2,1
--2,2,1
--2,1,4
--1,2,1
--2,2,1
-4,2,6
--1,2,1
-0,2,1
-3,2,6
-0,1,4
-3,1,2
-4,2,6
-1,2,1
-0,2,1
--1,2,1
--2,2,1
--1,2,1
--1,2,1
--2,1,4
--1,2,1
--2,2,1
--1,2,1
--2,2,1
--2,2,1
--1,2,1
--1,3,3
-0,1,4
--2,3,3
--3,2,1
--4,2,7
-0,3,3
--3,2,1
--1,2,1
--2,2,1
-0,1,4
--1,2,1
--2,2,1
--1,1,4
--2,1,4
--2,2,1
--1,2,1
--2,2,1
--1,2,1
-5,2,6
--2,2,1
--2,2,1
--1,2,1
--2,2,1
+magnitude_homerange,month_pld,species,class
+-1,2,Acanthopagrus latus,1
+-1,1,Acanthopagrus schlegelii,4
+-1,2,Albula vulpes,1
+-3,2,Balistes capriscus,1
+-2,1,Caranx crysos,4
+2,2,Centropomus undecimalis,6
+0,2,Centropristis striata,1
+-3,1,Cephalopholis argus,4
+-6,2,Cephalopholis boenak,7
+-5,2,Cephalopholis hemistiktos,7
+-4,1,Cephalopholis miniata,4
+-4,2,Conger conger,7
+-2,2,Dicentrarchus labrax,1
+0,2,Epinephelus morio,1
+-2,2,Epinephelus striatus,1
+-1,2,Epinephelus tauvina,1
+-3,1,Lachnolaimus maximus,4
+-3,1,Lethrinus harak,4
+0,2,Lethrinus nebulosus,1
+-1,2,Lutjanus griseus,1
+5,2,Makaira nigricans,6
+0,2,Morone saxatilis,1
+-3,3,Mulloidichthys flavolineatus,3
+-3,2,Mycteroperca microlepis,1
+-2,3,Naso unicornis,3
+0,2,Ocyurus chrysurus,1
+-3,2,Ophiodon elongatus,1
+-1,2,Pagrus pagrus,1
+-5,2,Paralichthys olivaceus,7
+-2,2,Parophrys vetulus,1
+-2,2,Plectropomus areolatus,1
+-2,1,Plectropomus leopardus,4
+-3,2,Pollachius pollachius,1
+-2,3,Pollachius virens,3
+-6,2,Prolatilus jugularis,7
+0,2,Pseudocaranx dentex,1
+1,2,Salmo trutta,1
+-3,2,Scorpaenichthys marmoratus,1
+-1,2,Sebastes melanops,1
+-3,2,Sebastes mystinus,1
+-1,2,Serranus cabrilla,1
+-2,2,Sparisoma cretense,1
+-1,2,Sparus aurata,1
+0,2,Sphyraena barracuda,1
+4,1,Thunnus albacares,2
+4,2,Thunnus orientalis,6
+-1,2,Xyrichtys novacula,1
+-1,2,Boreogadus saida,1
+1,2,Caranx ignobilis,1
+-3,2,Cheilinus undulatus,1
+-1,2,Diplodus sargus,1
+-1,1,Diplodus vulgaris,4
+-1,5,Gadus morhua,5
+7,2,Istiophorus platypterus,6
+-2,2,Labrus bergylta,1
+-1,2,Lutjanus analis,1
+-2,1,Lutjanus campechanus,4
+-2,2,Sarpa salpa,1
+-1,2,Semicossyphus pulcher,1
+0,2,Solea senegalensis,1
+-1,1,Ablennes hians,4
+-2,2,Acanthistius brasilianus,1
+4,2,Acanthocybium solandri,6
+-1,2,Acanthopagrus berda,1
+-3,1,Acanthopagrus bifasciatus,4
+-2,2,Acanthurus sohal,1
+-1,2,Acipenser transmontanus,1
+-2,1,Aethaloperca rogaa,4
+-2,2,Alepes djedaba,1
+-2,2,Allocyttus niger,1
+0,2,Allothunnus fallai,1
+-2,2,Alosa fallax,1
+-3,2,Alosa immaculata,1
+-2,1,Alosa pseudoharengus,4
+-1,1,Alosa sapidissima,4
+-3,2,Amblygaster sirm,1
+-3,2,Ammodytes personatus,1
+-2,1,Amphichthys cryptocentrus,4
+-1,2,Anarhichas denticulatus,1
+-1,2,Anarhichas lupus,1
+-3,2,Anchoa nasus,1
+-3,2,Anodontostoma chacunda,1
+-1,3,Anoplopoma fimbria,3
+3,2,Antimora rostrata,6
+-1,2,Aphanopus carbo,1
+-2,2,Aphareus rutilans,1
+-3,2,Aphia minuta,1
+-3,2,Aplodactylus punctatus,1
+-1,2,Aprion virescens,1
+-2,1,Apsilus fuscus,4
+-1,1,Archosargus probatocephalus,4
+-3,2,Arctoscopus japonicus,1
+-2,2,Argentina silus,1
+-3,2,Argentina sphyraena,1
+-1,2,Argyrops spinifer,1
+-2,2,Argyrosomus hololepidotus,1
+-1,2,Argyrosomus regius,1
+-1,2,Arripis trutta,1
+-2,2,Atheresthes evermanni,1
+-2,2,Atheresthes stomias,1
+-3,2,Atherina boyeri,1
+-2,2,Atractoscion aequidens,1
+-2,2,Atractoscion nobilis,1
+-1,1,Atrobucca nibe,4
+-3,2,Atule mate,1
+-2,2,Austroglossus microlepis,1
+-2,2,Austroglossus pectoralis,1
+-1,1,Auxis thazard,4
+-1,1,Belone belone,4
+-1,2,Beryx decadactylus,1
+-1,2,Beryx splendens,1
+-1,2,Bolbometopon muricatum,1
+-2,1,Boops boops,4
+-2,2,Bothus pantherinus,1
+-3,2,Brachydeuterus auritus,1
+3,2,Brama brama,6
+-2,2,Bregmaceros mcclellandi,1
+-4,2,Brevoortia aurea,7
+-3,2,Brevoortia patronus,1
+-2,2,Brevoortia tyrannus,1
+-1,2,Brosme brosme,1
+-1,2,Brotula barbata,1
+-1,2,Callorhinchus callorynchus,1
+-1,2,Callorhinchus milii,1
+-2,1,Caprodon longimanus,4
+-3,2,Capros aper,1
+-2,2,Carangoides bajad,1
+-1,2,Carangoides fulvoguttatus,1
+-1,2,Carangoides malabaricus,1
+-1,2,Caranx hippos,1
+-1,2,Caranx melampygus,1
+-2,1,Caranx rhonchus,4
+-2,2,Caranx ruber,1
+-1,2,Caranx sexfasciatus,1
+-4,2,Centriscops humerosus,7
+-2,2,Centroberyx affinis,1
+-2,1,Cephalopholis fulva,4
+-2,2,Cepola macrophthalma,1
+-3,2,Cetengraulis edentulus,1
+-3,2,Cetengraulis mysticetus,1
+-2,2,Champsocephalus gunnari,1
+-2,2,Channichthys rhinoceratus,1
+-1,2,Chanos chanos,1
+-2,2,Cheilodactylus variegatus,1
+-1,1,Cheimerius nufar,4
+-2,2,Chelidonichthys capensis,1
+-1,2,Chelidonichthys cuculus,1
+-1,2,Chelidonichthys kumu,1
+-1,2,Chelidonichthys lucerna,1
+-1,2,Chimaera monstrosa,1
+-1,2,Chirocentrus dorab,1
+-1,2,Chirocentrus nudus,1
+-1,2,Chloroscombrus chrysurus,1
+-3,2,Chloroscombrus orqueta,1
+-2,2,Cilus gilberti,1
+-2,6,Clupea harengus,5
+-4,2,Clupeonella cultriventris,7
+-3,2,Coelorinchus chilensis,1
+-2,2,Cololabis saira,1
+-1,2,Conger myriaster,1
+-1,2,Conger oceanicus,1
+-2,2,Conger orbignianus,1
+-3,2,Conodon nobilis,1
+-2,1,Coregonus albula,4
+-1,1,Coregonus lavaretus,4
+3,2,Coryphaena hippurus,6
+-1,3,Coryphaenoides rupestris,3
+-2,1,Cottoperca gobio,4
+-4,2,Crenidens crenidens,7
+-2,1,Cromileptes altivelis,4
+-3,1,Ctenolabrus rupestris,4
+-1,2,Cyclopterus lumpus,1
+-2,2,Cymatoceps nasutus,1
+-2,2,Cynoponticus coniceps,1
+-1,2,Cynoscion acoupa,1
+-2,1,Cynoscion analis,4
+-2,2,Cynoscion arenarius,1
+-2,2,Cynoscion guatucupa,1
+-1,2,Cynoscion jamaicensis,1
+-1,2,Cynoscion leiarchus,1
+-1,1,Cynoscion nebulosus,4
+-2,2,Cynoscion regalis,1
+-2,2,Cynoscion striatus,1
+-2,2,Cynoscion virescens,1
+-2,1,Cyttus traversi,4
+-2,1,Dactylopterus volitans,4
+-2,2,Decapterus macrosoma,1
+-3,2,Decapterus maruadsi,1
+-1,2,Decapterus russelli,1
+-2,1,Dentex angolensis,4
+-2,1,Dentex congoensis,4
+-2,2,Dentex dentex,1
+-1,1,Dentex macrophthalmus,4
+-1,2,Diagramma pictum,1
+-2,2,Diapterus auratus,1
+-1,2,Diastobranchus capensis,1
+-1,1,Dicentrarchus punctatus,4
+-3,2,Dicologlossa cuneata,1
+-3,2,Diplodus annularis,1
+-1,2,Dissostichus eleginoides,1
+-2,2,Drepane africana,1
+-1,1,Drepane punctata,4
+-3,2,Dussumieria acuta,1
+-3,2,Dussumieria elopsoides,1
+0,2,Elagatis bipinnulata,1
+-2,2,Eleginus gracilis,1
+-2,2,Eleginus nawaga,1
+-1,2,Eleutheronema tetradactylum,1
+-2,1,Elops lacerta,4
+-1,2,Elops saurus,1
+-3,2,Encrasicholina punctifer,1
+-3,2,Engraulis anchoita,1
+-3,2,Engraulis encrasicolus,1
+-3,2,Engraulis japonicus,1
+-3,2,Engraulis mordax,1
+-3,3,Engraulis ringens,3
+-2,3,Eopsetta jordani,3
+-1,2,Epigonus telescopus,1
+-2,2,Epinephelus aeneus,1
+-1,1,Epinephelus areolatus,4
+-1,2,Epinephelus chlorostigma,1
+-2,2,Epinephelus fuscoguttatus,1
+-1,2,Epinephelus goreensis,1
+-3,2,Epinephelus merra,1
+-2,2,Epinephelus morrhua,1
+-2,2,Epinephelus multinotatus,1
+-2,2,Epinephelus polylepis,1
+-3,2,Epinephelus summana,1
+-2,2,Eptatretus cirrhatus,1
+-2,2,Ethmalosa fimbriata,1
+-4,2,Ethmidium maculatum,7
+-4,2,Etrumeus whiteheadi,7
+0,2,Euthynnus affinis,1
+-1,1,Euthynnus alletteratus,4
+-1,1,Euthynnus lineatus,4
+-2,2,Eutrigla gurnardus,1
+-2,2,Fistularia corneta,1
+-4,2,Gadiculus argenteus,7
+-1,2,Gadus macrocephalus,1
+-2,2,Galeoides decadactylus,1
+0,2,Gasterochisma melampus,1
+-3,2,Gasterosteus aculeatus,1
+-2,2,Genyonemus lineatus,1
+-1,2,Genypterus blacodes,1
+-2,2,Genypterus capensis,1
+-2,2,Genypterus chilensis,1
+-4,2,Gerres nigri,7
+-4,2,Gerres oblongus,7
+-3,2,Gerres oyena,1
+-3,2,Glossanodon semifasciatus,1
+-2,3,Glyptocephalus cynoglossus,3
+-2,2,Glyptocephalus zachirus,1
+0,2,Gnathanodon speciosus,1
+-4,2,Grammoplites suppositus,7
+0,2,Gymnosarda unicolor,1
+-2,1,Haemulon plumierii,4
+-2,2,Harpadon nehereus,1
+-1,2,Helicolenus dactylopterus,1
+-2,2,Hemiramphus balao,1
+-1,2,Hemiramphus brasiliensis,1
+-4,2,Herklotsichthys quadrimaculatus,7
+-2,2,Hexagrammos decagrammus,1
+-3,2,Hilsa kelee,1
+-2,2,Hippoglossoides elassodon,1
+-2,2,Hippoglossoides platessoides,1
+0,2,Hippoglossus hippoglossus,1
+-2,1,Hoplopagrus guentherii,4
+-2,2,Hoplostethus atlanticus,1
+-2,2,Hydrolagus novaezealandiae,1
+-1,2,Hyperoglyphe antarctica,1
+-2,2,Hyporthodus flavolimbatus,1
+-2,2,Hyporthodus mystacinus,1
+-1,2,Hyporthodus nigritus,1
+-2,2,Hyporthodus niveatus,1
+-3,2,Ilisha africana,1
+-1,2,Ilisha elongata,1
+-2,2,Isacia conceptionis,1
+-2,1,Isopisthus parvipinnis,4
+4,2,Istiompax indica,6
+0,2,Istiophorus albicans,1
+-2,2,Joturus pichardi,1
+0,2,Kajikia albida,1
+4,2,Kajikia audax,6
+-2,2,Kathetostoma giganteum,1
+3,1,Katsuwonus pelamis,2
+-3,2,Konosirus punctatus,1
+-2,2,Lactarius lactarius,1
+3,2,Lampris guttatus,6
+-1,2,Larimichthys crocea,1
+-2,2,Larimichthys polyactis,1
+-3,1,Larimus breviceps,4
+-1,2,Lateolabrax japonicus,1
+-1,2,Lates calcarifer,1
+-3,2,Leiostomus xanthurus,1
+0,2,Lepidocybium flavobrunneum,1
+-2,2,Lepidonotothen squamifrons,1
+-2,2,Lepidopsetta bilineata,1
+-1,2,Lepidopus caudatus,1
+-2,2,Lepidorhombus boscii,1
+-2,2,Lepidorhombus whiffiagonis,1
+-2,2,Lepidorhynchus denticulatus,1
+-2,1,Lethrinus atlanticus,4
+-2,1,Lethrinus borbonicus,4
+-1,2,Lethrinus lentjan,1
+-2,2,Lethrinus mahsena,1
+-1,1,Lethrinus microdon,4
+-2,1,Lethrinus obsoletus,4
+-2,1,Lethrinus xanthochilus,4
+-1,2,Lichia amia,1
+-2,2,Limanda aspera,1
+-1,2,Limanda ferruginea,1
+-2,2,Limanda limanda,1
+-2,1,Lithognathus mormyrus,4
+-1,2,Lophius americanus,1
+-2,2,Lophius budegassa,1
+-2,2,Lophius gastrophysus,1
+-1,2,Lophius piscatorius,1
+-2,2,Lophius vomerinus,1
+0,2,Lutjanus argentimaculatus,1
+-2,1,Lutjanus argentiventris,4
+-1,2,Lutjanus bohar,1
+-2,1,Lutjanus buccanella,4
+-1,1,Lutjanus cyanopterus,4
+-1,2,Lutjanus gibbus,1
+-2,1,Lutjanus guttatus,4
+0,2,Lutjanus johnii,1
+-1,2,Lutjanus kasmira,1
+-2,2,Lutjanus malabaricus,1
+-2,2,Lutjanus peru,1
+-1,2,Lutjanus purpureus,1
+-2,2,Lutjanus quinquelineatus,1
+-1,1,Lutjanus synagris,4
+-2,2,Lutjanus vivanus,1
+-1,2,Macrodon ancylodon,1
+-1,2,Macrourus berglax,1
+-1,2,Macrourus carinatus,1
+-1,2,Macrourus whitsoni,1
+-2,2,Malacanthus plumieri,1
+-2,5,Mallotus villosus,5
+-1,2,Megalaspis cordyla,1
+0,2,Megalops cyprinoides,1
+-1,5,Melanogrammus aeglefinus,5
+-3,2,Mene maculata,1
+-3,2,Menidia menidia,1
+-2,1,Menticirrhus littoralis,4
+-2,1,Menticirrhus saxatilis,4
+-1,2,Merlangius merlangus,1
+-2,2,Merluccius albidus,1
+-2,2,Merluccius australis,1
+-2,2,Merluccius bilinearis,1
+-1,3,Merluccius capensis,3
+-2,2,Merluccius hubbsi,1
+-1,2,Merluccius merluccius,1
+-2,2,Merluccius polli,1
+-2,3,Merluccius productus,3
+-2,1,Merluccius senegalensis,4
+-3,2,Meuschenia scaber,1
+-2,1,Microgadus tomcod,4
+-1,2,Micromesistius australis,1
+-1,1,Micromesistius poutassou,4
+-1,2,Micropogonias furnieri,1
+-1,2,Micropogonias undulatus,1
+-1,3,Microstomus kitt,3
+-2,3,Microstomus pacificus,3
+-1,2,Miichthys miiuy,1
+-1,2,Molva dypterygia,1
+-2,2,Molva molva,1
+-2,2,Monotaxis grandoculis,1
+-1,2,Mora moro,1
+0,2,Mugil cephalus,1
+-1,2,Mugil curema,1
+-1,2,Mugil liza,1
+-4,2,Mullus argentinae,7
+-2,2,Mullus barbatus,1
+-2,2,Mullus surmuletus,1
+-1,2,Muraenesox cinereus,1
+-2,2,Mycteroperca phenax,1
+-1,2,Naucrates ductor,1
+-3,2,Nematalosa nasus,1
+-3,3,Nemipterus japonicus,3
+-3,2,Nemipterus virgatus,1
+-4,2,Normanichthys crockeri,7
+-2,1,Oblada melanura,4
+-1,2,Oncorhynchus gorbuscha,1
+-1,3,Oncorhynchus keta,3
+-1,2,Oncorhynchus kisutch,1
+-1,1,Oncorhynchus masou,4
+-1,2,Oncorhynchus nerka,1
+-1,2,Oncorhynchus tshawytscha,1
+-3,2,Opisthonema libertate,1
+-2,2,Opisthonema oglinum,1
+-1,1,Orcynopsis unicolor,4
+-2,2,Osmerus eperlanus,1
+-3,2,Osmerus mordax,1
+-1,2,Otolithes ruber,1
+-3,1,Pagellus acarne,4
+-2,2,Pagellus bellottii,1
+-2,2,Pagellus bogaraveo,1
+-1,1,Pagellus erythrinus,4
+-1,2,Pagrus major,1
+-1,2,Pampus argenteus,1
+-2,2,Paralabrax humeralis,1
+-2,2,Paralichthys californicus,1
+-2,4,Paralichthys dentatus,5
+-2,2,Paralonchurus peruanus,1
+-2,1,Parapercis colias,4
+-1,2,Parastromateus niger,1
+-2,2,Paristiopterus labiosus,1
+-2,2,Parona signata,1
+-2,2,Patagonotothen ramsayi,1
+-2,2,Pegusa lascaris,1
+-4,2,Pelates quadrilineatus,7
+-3,2,Pennahia anea,1
+-2,2,Pennahia argentata,1
+-2,2,Pentaceros richardsoni,1
+-3,1,Pentanemus quinquarius,4
+-3,2,Peprilus paru,1
+-3,2,Peprilus triacanthus,1
+-2,2,Percophis brasiliensis,1
+-2,2,Petromyzon marinus,1
+-2,2,Petrus rupestris,1
+-1,2,Phycis blennoides,1
+-2,2,Phycis phycis,1
+-2,2,Plagiogeneion rubiginosum,1
+-1,2,Platichthys flesus,1
+-1,2,Platichthys stellatus,1
+0,2,Platycephalus indicus,1
+-2,1,Plectorhinchus gaterinus,4
+-2,2,Plectorhinchus mediterraneus,1
+-1,2,Plectorhinchus pictus,1
+-2,1,Plectorhinchus schotaf,4
+-2,1,Plectorhinchus sordidus,4
+-2,2,Plectropomus pessuliferus,1
+-2,2,Pleurogrammus azonus,1
+-2,2,Pleurogrammus monopterygius,1
+-1,4,Pleuronectes platessa,5
+-1,3,Pleuronectes quadrituberculatus,3
+-1,2,Pogonias cromis,1
+-1,2,Polydactylus quadrifilis,1
+-1,2,Polyprion americanus,1
+-2,2,Pomacanthus maculosus,1
+-1,2,Pomadasys argenteus,1
+-2,2,Pomadasys jubelini,1
+-1,2,Pomadasys kaakan,1
+-3,2,Pomadasys stridens,1
+3,2,Pomatomus saltatrix,6
+-2,2,Pontinus kuhlii,1
+-3,2,Priacanthus macracanthus,1
+-1,2,Promethichthys prometheus,1
+-3,2,Psenopsis anomala,1
+-2,2,Psettichthys melanostictus,1
+-1,2,Psettodes erumei,1
+-1,2,Pseudocyttus maculatus,1
+-1,2,Pseudopercis semifasciata,1
+-1,2,Pseudophycis bachus,1
+-1,3,Pseudopleuronectes americanus,3
+-2,2,Pseudopleuronectes herzensteini,1
+-2,2,Pseudotolithus elongatus,1
+-1,2,Pseudotolithus senegalensis,1
+-1,2,Pseudotolithus senegallus,1
+-2,2,Pseudupeneus prayensis,1
+-2,2,Pterogymnus laniarius,1
+-4,2,Pteroscion peli,7
+0,2,Rachycentron canadum,1
+-3,2,Rastrelliger brachysoma,1
+-2,2,Reinhardtius hippoglossoides,1
+-2,2,Rexea solandri,1
+-2,2,Rhabdosargus globiceps,1
+-3,1,Rhabdosargus haffara,4
+-2,1,Rhomboplites aurorubens,4
+1,2,Ruvettus pretiosus,1
+-2,2,Salilota australis,1
+-1,2,Salmo salar,1
+-2,2,Salvelinus alpinus,1
+-2,2,Sarda chiliensis,1
+0,2,Sarda orientalis,1
+-1,1,Sarda sarda,4
+-3,2,Sardina pilchardus,1
+-1,2,Sardinella aurita,1
+-3,2,Sardinella brasiliensis,1
+-2,2,Sardinella gibbosa,1
+-3,2,Sardinella lemuru,1
+-3,2,Sardinella longiceps,1
+-3,2,Sardinella maderensis,1
+-3,2,Sardinella zunasi,1
+-2,2,Sardinops sagax,1
+-2,2,Sargocentron spiniferum,1
+-1,2,Saurida tumbil,1
+-2,2,Saurida undosquamis,1
+-1,1,Scarus ghobban,4
+-2,2,Scarus persicus,1
+-1,1,Sciaenops ocellatus,4
+-3,2,Scolopsis taeniata,1
+-2,2,Scomber australasicus,1
+-1,1,Scomber japonicus,4
+-1,2,Scomber scombrus,1
+-1,1,Scomberesox saurus,4
+-1,2,Scomberoides commersonnianus,1
+-2,2,Scomberoides lysan,1
+-1,2,Scomberoides tol,1
+-1,2,Scomberomorus brasiliensis,1
+-1,1,Scomberomorus cavalla,4
+0,2,Scomberomorus commerson,1
+-2,1,Scomberomorus guttatus,4
+-2,2,Scomberomorus lineolatus,1
+-2,1,Scomberomorus maculatus,4
+-1,2,Scomberomorus niphonius,1
+-1,2,Scomberomorus regalis,1
+-2,2,Scomberomorus sierra,1
+-2,2,Scomberomorus tritor,1
+-2,2,Scophthalmus aquosus,1
+-1,2,Scophthalmus maximus,1
+-2,2,Scophthalmus rhombus,1
+-1,3,Sebastes aleutianus,3
+-2,3,Sebastes alutus,3
+-3,2,Sebastes carnatus,1
+-3,3,Sebastes chlorostictus,3
+-2,3,Sebastes crameri,3
+-2,3,Sebastes diploproa,3
+-2,3,Sebastes elongatus,3
+-2,2,Sebastes entomelas,1
+-2,2,Sebastes flavidus,1
+-2,2,Sebastes goodei,1
+-4,3,Sebastes jordani,3
+-2,2,Sebastes melanostomus,1
+-2,3,Sebastes norvegicus,3
+-2,2,Sebastes paucispinis,1
+-2,2,Sebastes pinniger,1
+-2,3,Sebastes polyspinis,3
+-2,2,Sebastes ruberrimus,1
+-2,3,Sebastes rufus,3
+-2,3,Sebastes variabilis,3
+-1,3,Sebastolobus alascanus,3
+-2,2,Sebastolobus altivelis,1
+0,2,Selar crumenophthalmus,1
+-3,2,Selaroides leptolepis,1
+-2,2,Selene dorsalis,1
+-2,2,Selene peruviana,1
+-1,2,Selene setapinnis,1
+0,2,Seriola dumerili,1
+0,2,Seriola lalandi,1
+0,2,Seriola rivoliana,1
+-2,2,Seriolella brama,1
+-1,2,Seriolella caerulea,1
+-2,2,Seriolella porosa,1
+-1,2,Seriolella punctata,1
+-1,2,Seriolina nigrofasciata,1
+-3,2,Sillago sihama,1
+-1,2,Solea solea,1
+0,2,Sphyraena jello,1
+-1,2,Sphyraena obtusata,1
+-1,2,Sphyraena sphyraena,1
+-1,2,Spondyliosoma cantharus,1
+-4,2,Sprattus fuegensis,7
+-3,2,Sprattus sprattus,1
+-2,2,Stenotomus chrysops,1
+-4,2,Stephanolepis cirrhifer,7
+-1,2,Stereolepis gigas,1
+-2,2,Stromateus fiatola,1
+-2,2,Tautoga onitis,1
+-2,1,Tautogolabrus adspersus,4
+-1,2,Tenualosa ilisha,1
+-2,2,Tenualosa toli,1
+4,2,Tetrapturus angustirostris,6
+-1,2,Tetrapturus belone,1
+0,2,Tetrapturus pfluegeri,1
+3,2,Thunnus alalunga,6
+0,1,Thunnus atlanticus,4
+3,1,Thunnus maccoyii,2
+4,2,Thunnus obesus,6
+1,2,Thunnus thynnus,1
+0,2,Thunnus tonggol,1
+-1,2,Thyrsites atun,1
+-2,2,Trachinotus blochii,1
+-1,2,Trachinotus carolinus,1
+-1,2,Trachinotus mookalee,1
+-2,1,Trachinus draco,4
+-1,2,Trachipterus arcticus,1
+-2,2,Trachurus capensis,1
+-1,2,Trachurus declivis,1
+-2,2,Trachurus japonicus,1
+-2,2,Trachurus lathami,1
+-1,2,Trachurus mediterraneus,1
+-1,3,Trachurus murphyi,3
+0,1,Trachurus symmetricus,4
+-2,3,Trachurus trachurus,3
+-3,2,Trachurus trecae,1
+-4,2,Tragulichthys jaculiferus,7
+0,3,Trichiurus lepturus,3
+-3,2,Trisopterus esmarkii,1
+-1,2,Trisopterus luscus,1
+-2,2,Trisopterus minutus,1
+0,1,Tylosurus crocodilus,4
+-1,2,Umbrina canariensis,1
+-2,2,Umbrina canosai,1
+-1,1,Umbrina cirrosa,4
+-2,1,Uranoscopus scaber,4
+-2,2,Urophycis brasiliensis,1
+-1,2,Urophycis chuss,1
+-2,2,Urophycis tenuis,1
+-1,2,Variola louti,1
+5,2,Xiphias gladius,6
+-2,2,Zenopsis conchifer,1
+-2,2,Zenopsis nebulosa,1
+-1,2,Zeus faber,1
+-2,2,Zoarces viviparus,1
