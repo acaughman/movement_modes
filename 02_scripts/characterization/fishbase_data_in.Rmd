@@ -2,6 +2,8 @@
 title: "fishbase_data_in"
 output: html_document
 date: "2023-04-10"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE, message=FALSE, warning=FALSE}
@@ -12,7 +14,6 @@ library(here)
 library(rfishbase)
 
 ```
-
 
 ### Read in data
 
@@ -47,7 +48,6 @@ data$species[!(data$species %in% fish$Species)] # find the species in data that 
 
 ```
 
-
 ### collect diet variable
 
 ```{r}
@@ -64,7 +64,6 @@ diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodII
 diet <- janitor::clean_names(diet)
 ```
 
-
 ### Add diet columns to data
 
 ```{r}
@@ -73,7 +72,6 @@ data <- left_join(data,diet) %>%
   select(-food_ii, -food_iii)
 
 ```
-
 
 ### collect location variable
 
@@ -101,16 +99,15 @@ coords_clean <- coords[!duplicated(coords$SpecCode), ]
 # add coords to fish because they share a column
 fish <- left_join(fish, coords_clean)
 
-fish <- janitor::clean_names(fish2)
+fish <- janitor::clean_names(fish)
 
 ```
-
 
 ### Add location columns to data
 
 ```{r}
 
-data <- left_join(data2, fish2) %>% 
+data <- left_join(data, fish) %>% 
   select(-spec_code, -genus, -subfamily, -family, -order, -class, -super_class)
 
 ```
