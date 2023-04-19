@@ -20,8 +20,10 @@ library(vcd)
 ```{r}
 
 fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+fishbase_data[fishbase_data == "pelagic-oceanic"] <- "pelagic_oceanic"
+fishbase_data[fishbase_data == "pelagic-neritic"] <- "pelagic_neritic"
 
-fishbase_pca1 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+fishbase_pca1 <- fishbase_data %>% 
   select(where(is.numeric)) %>% 
   select(r_fin, kfin, length, diet_troph3, class) %>% 
   mutate(class = as.factor(class))
@@ -45,8 +47,9 @@ plot(pca1, choix = "var") # this is the same plot as the original PCA code on li
 pca1_fig <- fviz_pca_ind(pca1, label = "none", habillage = fishbase_pca1$class, addEllipses = TRUE, 
                 ellipse.level = 0.95) +
             theme_minimal()
+pca1_fig
 
-#ggsave(pca1_fig, file = paste0("pca1_fig.png"), path = here::here("04_figs"))
+ggsave(pca1_fig, file = paste0("pca1_fig.png"), path = here::here("04_figs"))
 
 ```
 
@@ -57,7 +60,7 @@ play around w different variables, only continuous, etc - not geographic ones. d
 
 ```{r}
 
-fishbase_pca2 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+fishbase_pca2 <- fishbase_data %>% 
   select(where(is.numeric)) %>% 
   select(r_fin, length, diet_troph3, class) %>% 
   mutate(class = as.factor(class))
@@ -83,7 +86,7 @@ ggsave(pca2_fig, file = paste0("pca2_fig.png"), path = here::here("04_figs"))
 
 ```{r}
 
-fishbase_pca3 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+fishbase_pca3 <- fishbase_data %>% 
   select(where(is.numeric)) %>% 
   select(kfin, length, diet_troph3, class) %>% 
   mutate(class = as.factor(class))
@@ -106,11 +109,9 @@ ggsave(pca3_fig, file = paste0("pca3_fig.png"), path = here::here("04_figs"))
 ```
 
 
-THIS ONE I ALSO DID WIH FAMD...
-
 ```{r}
 
-fishbase_pca4 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+fishbase_pca4 <- fishbase_data %>% 
   select(where(is.numeric)) %>% 
   select(length, diet_troph3, class) %>% 
   mutate(class = as.factor(class))
@@ -141,7 +142,7 @@ ggsave(pca4_fig, file = paste0("pca4_fig.png"), path = here::here("04_figs"))
 
 ```{r}
 
-fishbase_famd1 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+fishbase_famd1 <- fishbase_data %>% 
   select(r_fin, kfin, length, diet_troph3, movement_keyword, food_i, class) %>% 
   mutate(class = as.factor(class), movement_keyword = as.factor(movement_keyword), food_i = as.factor(food_i)) %>% 
   na.omit(fishbase_famd1)
@@ -165,6 +166,36 @@ ggsave(famd1_fig, file = paste0("famd1_fig.png"), path = here::here("04_figs"))
 
 
 ```{r}
+# 
+# fishbase_famd5 <- fishbase_data %>% 
+#   select(r_fin, kfin, length, diet_troph3, movement_keyword, demers_pelag, food_i, class) %>% 
+#   mutate(class = as.factor(class), 
+#          movement_keyword = as.factor(movement_keyword), 
+#          food_i = as.factor(food_i), 
+#          demers_pelag = as.factor(demers_pelag)) %>%  # error here? whyyy
+#   na.omit(fishbase_famd5)
+#   
+# 
+# famd5 <- FAMD(fishbase_famd5[,1:7], graph=FALSE)
+# famd5
+# 
+# eigen_famd5 <- famd5$eig
+# eigen_famd5 # 7.23% of variance explained by first 2 components!?
+# 
+# 
+# famd5_fig <- fviz_famd_ind(famd5, label = "none", habillage = fishbase_famd5$class, addEllipses = TRUE, ellipse.level = 0.95) +
+#   theme_minimal()
+# 
+# famd5_fig
+# #ggsave(famd5_fig, file = paste0("famd5_fig.png"), path = here::here("04_figs"))
+# 
+
+```
+
+
+
+
+```{r}
 
 fishbase_famd2 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
   select(length, food_i, class) %>% 
@@ -177,7 +208,7 @@ eigen_famd2 <- famd2$eig
 eigen_famd2 # 5.49% 
 
 
-famd2_fig <- fviz_famd_ind(famd1, label = "none", habillage = fishbase_famd2$class, addEllipses = TRUE, ellipse.level = 0.95) +
+famd2_fig <- fviz_famd_ind(famd2, label = "none", habillage = fishbase_famd2$class, addEllipses = TRUE, ellipse.level = 0.95) +
   theme_minimal()
 
 famd2_fig
@@ -251,10 +282,15 @@ eigen_famd6 # 30.38% of variance explained by first 2 components
 
 famd6_fig <- fviz_famd_ind(famd6, label = "none", habillage = fishbase_famd6$class, addEllipses = TRUE, ellipse.level = 0.95) +
   theme_minimal()
-
 famd6_fig # still pretty good groupings here
-ggsave(famd6_fig, file = paste0("famd6_fig.png"), path = here::here("04_figs"))
 
+famd6_1_fig <- fviz_famd_ind(famd6, label = "none", habillage = fishbase_famd6$class) +
+  theme_minimal()
+famd6_1_fig # really interesting.. what does it mean?
+
+
+ggsave(famd6_fig, file = paste0("famd6_fig.png"), path = here::here("04_figs"))
+ggsave(famd6_1_fig, file = paste0("famd6_1_fig.png"), path = here::here("04_figs"))
 
 ```
 
