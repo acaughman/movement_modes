@@ -58,17 +58,57 @@ pca1_fig
 
 
 ```{r}
-plot1_data = fishbase_data %>% 
+#continuous 
+
+plot1_data = fishbase_data 
+
+#option1 sort by variable
+plot1_data = plot1_data%>% 
   select(r_fin, species, class) %>% 
-  mutate(r_fin = sort(r_fin)) %>% 
+  mutate(class = sort(r_fin)) %>% 
   mutate(species = as.factor(species)) %>% 
   mutate(class = as.factor(class)) %>% 
   mutate(species = fct_relevel(plot1_data$species))
 
 ggplot(plot1_data, aes(species, r_fin)) +
   geom_point(aes(color = class))
+
+#option 2 sort by class
+plot1_data = plot1_data%>% 
+  select(r_fin, species, class) %>% 
+  mutate(class = sort(class)) %>% 
+  mutate(species = as.factor(species)) %>% 
+  mutate(class = as.factor(class)) %>% 
+  mutate(species = fct_relevel(plot1_data$species))
+
+#more descriptive
+ggplot(plot1_data, aes(r_fin, class)) +
+  geom_point(aes(color = r_fin))
+
+#more to find groupings
+ggplot(plot1_data, aes(species, r_fin)) +
+  geom_point(aes(color = class))
 ```
 
+```{r}
+#categorical
+plot2_data = fishbase_data %>% 
+  select(demers_pelag, species, class) %>% 
+  mutate(class = as.factor(class))
+
+#to find groupings
+ggplot(plot2_data, aes(demers_pelag, species)) +
+  geom_point(aes(color = class)) 
+
+#more descriptive
+ggplot(plot2_data, aes(demers_pelag, class)) +
+  geom_jitter(aes(color = demers_pelag)) +
+  theme_bw() +
+  labs(x = "Habitat Type",
+       y = "Movement Class",
+       color = "Habitat Type")
+  #scale_color_manual(values = c("", ""))
+```
 
 ```{r}
 
