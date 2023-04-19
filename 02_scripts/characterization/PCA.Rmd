@@ -1,0 +1,293 @@
+---
+title: "PCA"
+output: html_document
+date: "2023-04-13"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(here)
+library(rfishbase)
+library(FactoMineR)
+library(factoextra)
+library(vcd)
+
+```
+
+```{r}
+
+fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+
+fishbase_pca1 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(where(is.numeric)) %>% 
+  select(r_fin, kfin, length, diet_troph3, class) %>% 
+  mutate(class = as.factor(class))
+
+# this will only work if both variables are numeric
+#cor.mat <- round(cor(fishbase_pca1),2) # nothing is highly correlated - good!
+#cor.mat
+
+pca1 <- PCA(fishbase_pca1[,1:4], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+pca1
+
+eigen_pca1 <- pca1$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
+eigen_pca1 # 66% of variance explained by first 2 components
+
+fviz_screeplot(pca1, ncp=10) # scree plot shows eigenvalues/variances associated w components
+
+
+plot(pca1, choix = "var") # this is the same plot as the original PCA code on line 31?
+
+
+pca1_fig <- fviz_pca_ind(pca1, label = "none", habillage = fishbase_pca1$class, addEllipses = TRUE, 
+                ellipse.level = 0.95) +
+            theme_minimal()
+
+#ggsave(pca1_fig, file = paste0("pca1_fig.png"), path = here::here("04_figs"))
+
+```
+
+use ggsave to save figures
+play around w different variables, only continuous, etc - not geographic ones. dont pull any more variables for now
+
+
+
+```{r}
+
+fishbase_pca2 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(where(is.numeric)) %>% 
+  select(r_fin, length, diet_troph3, class) %>% 
+  mutate(class = as.factor(class))
+
+pca2 <- PCA(fishbase_pca2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+
+eigen_pca2 <- pca2$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
+eigen_pca2 # 81.45% of variance explained by first 2 components
+
+plot(pca2, choix = "var")
+
+
+pca2_fig <- fviz_pca_ind(pca2, label = "none", habillage = fishbase_pca2$class, addEllipses = TRUE, 
+                ellipse.level = 0.95) +
+            theme_minimal()
+pca2_fig
+
+ggsave(pca2_fig, file = paste0("pca2_fig.png"), path = here::here("04_figs"))
+
+```
+
+
+
+```{r}
+
+fishbase_pca3 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(where(is.numeric)) %>% 
+  select(kfin, length, diet_troph3, class) %>% 
+  mutate(class = as.factor(class))
+
+pca3 <- PCA(fishbase_pca3[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+
+eigen_pca3 <- pca3$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
+eigen_pca3 # 81.29% of variance explained by first 2 components
+
+plot(pca3, choix = "var")
+
+
+pca3_fig <- fviz_pca_ind(pca3, label = "none", habillage = fishbase_pca3$class, addEllipses = TRUE, 
+                ellipse.level = 0.95) +
+            theme_minimal()
+pca3_fig
+
+ggsave(pca3_fig, file = paste0("pca3_fig.png"), path = here::here("04_figs"))
+
+```
+
+
+THIS ONE I ALSO DID WIH FAMD...
+
+```{r}
+
+fishbase_pca4 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(where(is.numeric)) %>% 
+  select(length, diet_troph3, class) %>% 
+  mutate(class = as.factor(class))
+
+# this will only work if both variables are numeric
+#cor.mat <- round(cor(fishbase_pca2),2) # nothing is highly correlated - good!
+#cor.mat
+
+pca4 <- PCA(fishbase_pca4[,1:2], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+
+eigen_pca4 <- pca4$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
+eigen_pca4 # only 2 components
+
+plot(pca4, choix = "var")
+
+
+pca4_fig <- fviz_pca_ind(pca4, label = "none", habillage = fishbase_pca4$class, addEllipses = TRUE, 
+                ellipse.level = 0.95) +
+            theme_minimal()
+pca4_fig # group 6 pretty clearly defined?
+
+ggsave(pca4_fig, file = paste0("pca4_fig.png"), path = here::here("04_figs"))
+
+```
+
+
+
+
+
+## FAMD
+
+
+```{r}
+
+fishbase_famd1 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(r_fin, kfin, length, diet_troph3, movement_keyword, food_i, class) %>% 
+  mutate(class = as.factor(class), movement_keyword = as.factor(movement_keyword), food_i = as.factor(food_i)) %>% 
+  na.omit(fishbase_famd1)
+
+famd1 <- FAMD(fishbase_famd1, graph=FALSE)
+famd1
+
+eigen_famd1 <- famd1$eig
+eigen_famd1 # 6% of variance explained by first 2 components!?
+
+
+famd1_fig <- fviz_famd_ind(famd1, label = "none", habillage = fishbase_famd1$class, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+famd1_fig
+ggsave(famd1_fig, file = paste0("famd1_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+
+```{r}
+
+fishbase_famd2 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(length, food_i, class) %>% 
+  mutate(class = as.factor(class), food_i = as.factor(food_i)) %>% 
+  na.omit(fishbase_famd2)
+
+famd2 <- FAMD(fishbase_famd2, graph=FALSE)
+
+eigen_famd2 <- famd2$eig
+eigen_famd2 # 6.22% 
+
+
+famd2_fig <- fviz_famd_ind(famd1, label = "none", habillage = fishbase_famd2$class, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+famd2_fig
+ggsave(famd2_fig, file = paste0("famd2_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+
+```{r}
+
+fishbase_famd3 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(r_fin, kfin, diet_troph3, iucn_category, class) %>% 
+  mutate(class = as.factor(class), iucn_category = as.factor(iucn_category)) %>% 
+  na.omit(fishbase_famd3)
+
+famd3 <- FAMD(fishbase_famd3, graph=FALSE)
+famd3
+
+eigen_famd3 <- famd3$eig
+eigen_famd3 # 23.34% of variance explained by first 2 components
+
+
+famd3_fig <- fviz_famd_ind(famd3, label = "none", habillage = fishbase_famd3$class, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+famd3_fig # interesting.. look at group 3
+ggsave(famd3_fig, file = paste0("famd3_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+
+```{r}
+
+fishbase_famd4 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(length, iucn_category, class) %>% 
+  mutate(class = as.factor(class), iucn_category = as.factor(iucn_category)) %>% 
+  na.omit(fishbase_famd4)
+
+famd4 <- FAMD(fishbase_famd4, graph=FALSE)
+famd4
+
+eigen_famd4 <- famd4$eig
+eigen_famd4 # 24.66% of variance explained by first 2 components
+
+
+famd4_fig <- fviz_famd_ind(famd4, label = "none", habillage = fishbase_famd4$class, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+famd4_fig # interesting.. groups 1 and 6?
+ggsave(famd4_fig, file = paste0("famd4_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+length seems to be the biggest component so far?
+
+
+pretty distinct groups here --> but WHOOPS is this supposed to be with PCA?
+
+```{r}
+
+fishbase_famd5 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(length, diet_troph3, class) %>% 
+  mutate(class = as.factor(class)) %>% 
+  na.omit(fishbase_famd5)
+
+famd5 <- FAMD(fishbase_famd5, graph=FALSE)
+famd5
+
+eigen_famd5 <- famd5$eig
+eigen_famd5 # 34.68% of variance explained by first 2 components
+
+
+famd5_fig <- fviz_famd_ind(famd5, label = "none", habillage = fishbase_famd5$class, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+famd5_fig # interesting.. pretty good groupings here!!
+ggsave(famd5_fig, file = paste0("famd5_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+
+```{r}
+
+fishbase_famd6 <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  select(length, diet_troph3, demers_pelag, class) %>% 
+  mutate(class = as.factor(class), demers_pelag = as.factor(demers_pelag)) %>% 
+  na.omit(fishbase_famd6)
+
+famd6 <- FAMD(fishbase_famd6, graph=FALSE)
+famd6
+
+eigen_famd6 <- famd6$eig
+eigen_famd6 # 22.20% of variance explained by first 2 components
+
+
+famd6_fig <- fviz_famd_ind(famd6, label = "none", habillage = fishbase_famd6$class, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+famd6_fig # still pretty good groupings here
+ggsave(famd6_fig, file = paste0("famd6_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+

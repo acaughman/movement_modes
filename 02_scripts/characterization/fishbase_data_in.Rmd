@@ -106,6 +106,7 @@ data <- full_join(data, clusters)
 
 ```
 
+
 ```{r}
 
 write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
