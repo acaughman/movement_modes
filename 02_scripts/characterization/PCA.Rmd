@@ -57,6 +57,18 @@ pca1_fig
 ```
 
 
+```{r}
+plot1_data = fishbase_data %>% 
+  select(r_fin, species, class) %>% 
+  mutate(r_fin = sort(r_fin)) %>% 
+  mutate(species = as.factor(species)) %>% 
+  mutate(class = as.factor(class)) %>% 
+  mutate(species = fct_relevel(plot1_data$species))
+
+ggplot(plot1_data, aes(species, r_fin)) +
+  geom_point(aes(color = class))
+```
+
 
 ```{r}
 
