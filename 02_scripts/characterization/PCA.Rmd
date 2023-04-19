@@ -106,7 +106,9 @@ ggplot(plot2_data, aes(demers_pelag, class)) +
   theme_bw() +
   labs(x = "Habitat Type",
        y = "Movement Class",
-       color = "Habitat Type")
+       color = "Habitat Type") +
+  scale_color_viridis_d() +
+  theme(axis.text.x = element_text(angle = 30, hjust=1)) 
   #scale_color_manual(values = c("", ""))
 ```
 
