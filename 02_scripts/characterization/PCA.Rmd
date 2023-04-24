@@ -86,6 +86,8 @@ ggplot(plot2_data, aes(demers_pelag, class)) +
 ```
 
 
+### Lex attempts
+
 ```{r}
 
 
@@ -123,13 +125,127 @@ ggplot(plot4_data, aes(species, length)) +
 
 
 
+### PCA with new variables added
+
+```{r}
+fishbase_p1 <- fishbase_data %>% 
+  select(where(is.numeric)) %>% 
+  select(r_fin, longevity_wild, weight, fecundity_mean, class2) %>% 
+  mutate(class2 = as.factor(class2))
+
+p1 <- PCA(fishbase_p1[,1:4], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+p1
+
+eigen_p1 <- p1$eig
+eigen_p1 # 69.07% variance explained by first 2 components
+
+p1_fig <- fviz_pca_ind(p1, label = "none", habillage = fishbase_p1$class2, addEllipses = TRUE, 
+                ellipse.level = 0.95) +
+            theme_minimal()
+p1_fig
+
+ggsave(p1_fig, file = paste0("p1_fig.png"), path = here::here("04_figs"))
+
+```
+
+
+```{r}
+fishbase_p2 <- fishbase_data %>% 
+  select(where(is.numeric)) %>% 
+  select(r_fin, weight, diet_troph3, class2) %>% 
+  mutate(class2 = as.factor(class2))
+
+p2 <- PCA(fishbase_p2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+p2
+
+eigen_p2 <- p2$eig
+eigen_p2 # 74.71% of variance explained by first 2 components
+
+p2_fig <- fviz_pca_ind(p2, label = "none", habillage = fishbase_p2$class2, addEllipses = TRUE, 
+                ellipse.level = 0.95) +
+            theme_minimal()
+p2_fig
+
+ggsave(p2_fig, file = paste0("p2_fig.png"), path = here::here("04_figs"))
+
+```
+
+
+
+### FAMD with new variables added
+
+```{r}
+
+fishbase_f1 <- fishbase_data %>% 
+   select(weight, env_temp, temp_preferred, fecundity_mean, r_fin, class2) %>% 
+   mutate(class2 = as.factor(class2), 
+          env_temp = as.factor(env_temp)) %>% 
+   na.omit()
+ 
+f1 <- FAMD(fishbase_f1[,1:5], graph=FALSE)
+f1
+
+eigen_f1 <- f1$eig
+eigen_f1 # 42.11% of variance explained by first 2 components
+
+
+f1_fig <- fviz_famd_ind(f1, label = "none", habillage = fishbase_f1$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+f1_fig
+
+ggsave(f1_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+```{r}
+
+fishbase_f2 <- fishbase_data %>% 
+   select(r_fin, weight, env_temp, temp_preferred, demers_pelag, 
+          body_shape_i, fecundity_mean, class2) %>% 
+   mutate(class2 = as.factor(class2), 
+          env_temp = as.factor(env_temp),
+          demers_pelag = as.factor(demers_pelag),
+          body_shape_i = as.factor(body_shape_i)) %>% 
+   na.omit()
+ 
+f2 <- FAMD(fishbase_f2[,1:7], graph=FALSE)
+f2
+
+eigen_f2 <- f2$eig
+eigen_f2 # 42.11% of variance explained by first 2 components
+
+
+f2_fig <- fviz_famd_ind(f2, label = "none", habillage = fishbase_f2$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+f2_fig
+
+#ggsave(f2_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+### Vizualize variable contributions to components
+
+```{r}
+
+# Contributions of variables to PC1
+fviz_contrib(f2, choice = "var", axes = 1, top = 10)
+
+# Contributions of variables to PC2
+fviz_contrib(f2, choice = "var", axes = 2, top = 10)
+
+
+```
 
 
 
 
 
 
-### PCA and FAMD
+### Initial PCA and FAMD
 
 ```{r}
 fishbase_pca1 <- fishbase_data %>% 
@@ -184,6 +300,20 @@ pca2_fig <- fviz_pca_ind(pca2, label = "none", habillage = fishbase_pca2$class, 
 pca2_fig
 
 #ggsave(pca2_fig, file = paste0("pca2_fig.png"), path = here::here("04_figs"))
+
+```
+
+
+### Vizualize variable contributions to components
+
+```{r}
+
+# Contributions of variables to PC1
+fviz_contrib(pca2, choice = "var", axes = 1, top = 10)
+
+# Contributions of variables to PC2
+fviz_contrib(pca2, choice = "var", axes = 2, top = 10)
+
 
 ```
 
@@ -386,80 +516,6 @@ famd6_1_fig # really interesting.. what does it mean?
 
 #ggsave(famd6_fig, file = paste0("famd6_fig.png"), path = here::here("04_figs"))
 #ggsave(famd6_1_fig, file = paste0("famd6_1_fig.png"), path = here::here("04_figs"))
-
-```
-
-
-### PCA with new variables added
-
-```{r}
-fishbase_p1 <- fishbase_data %>% 
-  select(where(is.numeric)) %>% 
-  select(r_fin, longevity_wild, weight, fecundity_mean, class2) %>% 
-  mutate(class2 = as.factor(class2))
-
-p1 <- PCA(fishbase_p1[,1:4], graph = FALSE) # runs the PCA on the first 4 columns (not class)
-p1
-
-eigen_p1 <- p1$eig
-eigen_p1 # 69.07% variance explained by first 2 components
-
-p1_fig <- fviz_pca_ind(p1, label = "none", habillage = fishbase_p1$class2, addEllipses = TRUE, 
-                ellipse.level = 0.95) +
-            theme_minimal()
-p1_fig
-
-ggsave(p1_fig, file = paste0("p1_fig.png"), path = here::here("04_figs"))
-
-```
-
-
-```{r}
-fishbase_p2 <- fishbase_data %>% 
-  select(where(is.numeric)) %>% 
-  select(r_fin, weight, diet_troph3, class2) %>% 
-  mutate(class2 = as.factor(class2))
-
-p2 <- PCA(fishbase_p2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
-p2
-
-eigen_p2 <- p2$eig
-eigen_p2 # 74.71% of variance explained by first 2 components
-
-p2_fig <- fviz_pca_ind(p2, label = "none", habillage = fishbase_p2$class2, addEllipses = TRUE, 
-                ellipse.level = 0.95) +
-            theme_minimal()
-p2_fig
-
-ggsave(p2_fig, file = paste0("p2_fig.png"), path = here::here("04_figs"))
-
-```
-
-
-### FAMD with new variables added
-
-```{r}
-
-fishbase_f1 <- fishbase_data %>% 
-   select(weight, env_temp, temp_preferred, fecundity_mean, r_fin, class2) %>% 
-   mutate(class2 = as.factor(class2), 
-          env_temp = as.factor(env_temp)) %>% 
-   na.omit()
- 
-f1 <- FAMD(fishbase_f1[,1:5], graph=FALSE)
-f1
-
-eigen_f1 <- f1$eig
-eigen_f1 # 42.11% of variance explained by first 2 components
-
-
-f1_fig <- fviz_famd_ind(f1, label = "none", habillage = fishbase_f1$class2, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
-
-f1_fig
-
-ggsave(f1_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
-
 
 ```
 
