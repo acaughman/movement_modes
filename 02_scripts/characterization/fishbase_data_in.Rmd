@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(here)
 library(rfishbase)
+library(naniar)
 ```
 
 ### Read in data
@@ -33,18 +34,23 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
 
 ```{r}
 
-clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv"))
+clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv")) %>% 
+  mutate(class2 = class) %>% 
+  mutate(class2 = case_when(class2 == 6 ~ 2, class2 != 6 ~ class2)) # combine classes 6 into 2
+  
+# split part of class 1 into 8
+clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -2] <- 8) 
+clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -3] <- 8)
 
 ```
-
-
 
 ```{r}
 fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
   filter(Species %in% data$species) # select only the rows containing species listed in data
 ```
 
-### collect diet variable
+
+### Collect diet variable
 
 ```{r}
 # get diet items and combine rows of the same species in each column
@@ -58,16 +64,13 @@ diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodII
 # using unique(x) makes sure there are not duplicates
 
 diet <- janitor::clean_names(diet)
-```
 
-### Add diet columns to data
-
-```{r}
 data <- left_join(data,diet) %>% 
   select(-food_ii, -food_iii)
 ```
 
-### collect location variable
+
+### Collect location variables
 
 ```{r}
 # get location data (lat and long)
@@ -96,13 +99,131 @@ fish <- left_join(fish, coords_clean)
 fish <- janitor::clean_names(fish)
 ```
 
-### Add location columns to data
+
+### Collect temperature variables
 
 ```{r}
+
+temp <- stocks() %>%  # load stocks info, then
+  filter(SpecCode %in% fish$spec_code) %>%  # filter rows by spec codes in fish, then
+  select(SpecCode, TempMin, TempMax, TempPreferred, EnvTemp) %>% # select columns
+  mutate(temp_range = TempMax - TempMin)
+
+temp <- drop_na(temp, TempPreferred)
+
+temp <- janitor::clean_names(temp)
+
+
+fish <- left_join(fish, temp)
+
+```
+
+
+### Collect fecundity variables
+
+```{r}
+
+fecund <- fecundity() %>%  # load stocks info, then
+  filter(SpecCode %in% fish$spec_code) %>%  # filter rows by spec codes in fish, then
+  select(SpecCode, FecundityMin, FecundityMax) %>%   # select columns
+  janitor::clean_names() %>% 
+  na.omit(fecund)
+
+fecund <- fecund %>%  # average the values for a given spec code
+  group_by(spec_code) %>% 
+  summarise(fecundity_min = mean(fecundity_min), fecundity_max = mean(fecundity_max)) %>% 
+  mutate(fecundity_mean = (fecundity_min + fecundity_max)/2) %>% 
+  ungroup()
+
+
+fish <- left_join(fish, fecund)
+
+```
+
+
+### Collect weight/shape/age data
+
+```{r}
+
+spec <- species() %>%  # load stocks info, then
+  filter(SpecCode %in% fish$spec_code) %>%  # filter rows by spec codes in fish, then
+  select(SpecCode, BodyShapeI, LongevityWild, Weight) %>% 
+  janitor::clean_names()
+
+fish <- left_join(fish, spec)
+
+```
+
+
+### Collect maturity data
+
+```{r}
+
+matur <- maturity() %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
+  select(SpecCode, AgeMatMin, AgeMatMin2) %>% 
+  janitor::clean_names() %>% 
+  na.omit()
+
+matur <- matur %>%  # average the values for a given spec code
+  group_by(spec_code) %>% 
+  summarise(age_mat_min = mean(age_mat_min), age_mat_min2 = mean(age_mat_min2)) %>% 
+  ungroup()
+
+fish <- left_join(fish, matur)
+
+```
+
+Only 68 species with oxygen consumption data:
+```{r}
+
+oxygen <- oxygen() %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
+  select(SpecCode, OxygenCons, Temp) %>% 
+  janitor::clean_names()
+
+oxygen <- oxygen %>%  # average the values for a given spec code
+  group_by(spec_code) %>% 
+  summarise(oxygen_cons = mean(oxygen_cons), temp = mean(temp)) %>% 
+  ungroup()
+
+
+```
+
+Only 14 species with schooling behavior listed:
+```{r}
+
+eco <- ecology() %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
+  select(SpecCode, SchoolingFrequency, SchoolingLifestage) %>% 
+  janitor::clean_names()
+
+```
+
+
+
+```{r}
+
+# why did this add a row? <------------------------------------------------------------------------------
+
 data <- left_join(data, fish) %>% 
   select(-spec_code, -genus, -subfamily, -family, -order, -class, -super_class)
 
 data <- full_join(data, clusters)
+
+```
+
+
+### Look at missing data
+
+```{r}
+
+missing <- miss_var_summary(data)
+
+missing_fig <- gg_miss_var(data)
+
+#ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
+
 
 ```
 
@@ -112,6 +233,7 @@ data <- full_join(data, clusters)
 write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 
 ```
+
 
 
 
