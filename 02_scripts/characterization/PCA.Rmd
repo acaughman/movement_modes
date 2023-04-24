@@ -36,7 +36,7 @@ fishbase_data[fishbase_data == "pelagic"] <- "pelagic_oceanic"
 plot1_data = fishbase_data 
 
 #option1 sort by variable
-plot1_data = plot1_data%>% 
+plot1_data = plot1_data %>% 
   select(r_fin, species, class) %>% 
   mutate(class = sort(r_fin)) %>% 
   mutate(species = as.factor(species)) %>% 
@@ -86,6 +86,45 @@ ggplot(plot2_data, aes(demers_pelag, class)) +
 ```
 
 
+```{r}
+
+
+plot3_data = fishbase_data %>% 
+  select(demers_pelag, env_temp, body_shape_i, species, class, class2) %>% 
+  mutate(class = as.factor(class), class2 = as.factor(class2))
+
+#to find groupings
+ggplot(plot3_data, aes(species, env_temp)) +
+  geom_point(aes(color = class2))
+
+#more descriptive
+ggplot(plot3_data, aes(body_shape_i, class2)) +
+  geom_jitter(aes(color = body_shape_i)) +
+  theme_bw() +
+  labs(x = "env_temp",
+       y = "Movement Class",
+       color = "Habitat Type") +
+  scale_color_viridis_d() +
+  theme(axis.text.x = element_text(angle = 30, hjust=1)) 
+  #scale_color_manual(values = c("", ""))
+
+plot4_data = fishbase_data %>% 
+  select(length, species, class2) %>% 
+  #mutate(class2 = sort(length)) %>% this line is causing problemssssss
+  mutate(species = as.factor(species)) %>% 
+  mutate(class2 = as.factor(class2)) %>% 
+  mutate(species = fct_relevel(plot4_data$species))
+
+ggplot(plot4_data, aes(species, length)) +
+  geom_jitter(aes(color = class2))
+
+
+```
+
+
+
+
+
 
 
 
@@ -98,7 +137,7 @@ fishbase_pca1 <- fishbase_data %>%
   select(r_fin, kfin, length, diet_troph3, class) %>% 
   mutate(class = as.factor(class))
 
-# this will only work if both variables are numeric
+# this will only work if all variables are numeric
 #cor.mat <- round(cor(fishbase_pca1),2) # nothing is highly correlated - good!
 #cor.mat
 
@@ -327,7 +366,7 @@ ggsave(famd5_fig, file = paste0("famd5_fig.png"), path = here::here("04_figs"))
 fishbase_famd6 <- fishbase_data %>% 
   select(length, diet_troph3, demers_pelag, class) %>% 
   mutate(class = as.factor(class), demers_pelag = as.factor(demers_pelag)) %>% 
-  na.omit(fishbase_famd6)
+  na.omit()
 
 famd6 <- FAMD(fishbase_famd6[,1:3], graph=FALSE)
 famd6
@@ -351,6 +390,85 @@ famd6_1_fig # really interesting.. what does it mean?
 ```
 
 
+### PCA with new variables added
+
+```{r}
+fishbase_p1 <- fishbase_data %>% 
+  select(where(is.numeric)) %>% 
+  select(r_fin, longevity_wild, weight, fecundity_mean, class2) %>% 
+  mutate(class2 = as.factor(class2))
+
+p1 <- PCA(fishbase_p1[,1:4], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+p1
+
+eigen_p1 <- p1$eig
+eigen_p1 # 69.07% variance explained by first 2 components
+
+p1_fig <- fviz_pca_ind(p1, label = "none", habillage = fishbase_p1$class2, addEllipses = TRUE, 
+                ellipse.level = 0.95) +
+            theme_minimal()
+p1_fig
+
+ggsave(p1_fig, file = paste0("p1_fig.png"), path = here::here("04_figs"))
+
+```
+
+
+```{r}
+fishbase_p2 <- fishbase_data %>% 
+  select(where(is.numeric)) %>% 
+  select(r_fin, weight, diet_troph3, class2) %>% 
+  mutate(class2 = as.factor(class2))
+
+p2 <- PCA(fishbase_p2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+p2
+
+eigen_p2 <- p2$eig
+eigen_p2 # 74.71% of variance explained by first 2 components
+
+p2_fig <- fviz_pca_ind(p2, label = "none", habillage = fishbase_p2$class2, addEllipses = TRUE, 
+                ellipse.level = 0.95) +
+            theme_minimal()
+p2_fig
+
+ggsave(p2_fig, file = paste0("p2_fig.png"), path = here::here("04_figs"))
+
+```
+
+
+### FAMD with new variables added
+
+```{r}
+
+fishbase_f1 <- fishbase_data %>% 
+   select(weight, env_temp, temp_preferred, fecundity_mean, r_fin, class2) %>% 
+   mutate(class2 = as.factor(class2), 
+          env_temp = as.factor(env_temp)) %>% 
+   na.omit()
+ 
+f1 <- FAMD(fishbase_f1[,1:5], graph=FALSE)
+f1
+
+eigen_f1 <- f1$eig
+eigen_f1 # 42.11% of variance explained by first 2 components
+
+
+f1_fig <- fviz_famd_ind(f1, label = "none", habillage = fishbase_f1$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+f1_fig
+
+ggsave(f1_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+
+
+
+
+
+### Old
 
 
 ```{r}

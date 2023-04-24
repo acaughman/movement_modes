@@ -32,6 +32,8 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
   mutate(month_pld = ceiling(pld / 30))
 ```
 
+### Make new clusters
+
 ```{r}
 
 clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv")) %>% 
@@ -174,6 +176,88 @@ fish <- left_join(fish, matur)
 
 ```
 
+
+### Join new variables with data
+
+```{r}
+
+# why did this add a row? <------------------------------------------------------------------------------
+
+data <- left_join(data, fish) %>% 
+  select(-spec_code, -genus, -subfamily, -family, -order, -class, -super_class)
+
+data <- full_join(data, clusters)
+
+```
+
+
+### Plot new clusters
+
+```{r}
+
+fishbase_data_gmm <- fishbase_data %>% 
+  mutate(class2 = as.factor(class2))
+
+gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
+  geom_jitter(aes(color = class2)) +
+  theme_bw() +
+  labs(
+    x = "Order of Magnitude of Predicted Home Range",
+    y = "Predicted Pelagic Larval Duration (Month)"
+  )
+
+gmm_new_fig
+
+ggsave(gmm_new_fig, file = paste0("gmm_new_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
+
+```
+
+
+### Look at missing data
+
+```{r}
+
+missing <- miss_var_summary(data) # summary of missing data in each variable
+
+missing_fig <- gg_miss_var(data) + # figure showing the missing data
+  theme_bw()
+missing_fig
+
+#ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+
+### Look at any correlated data
+
+```{r}
+
+# for numeric variables, omit NAs?
+data_cor <- data %>% 
+  select(where(is.numeric)) %>% 
+  select(length, kfin, r_fin, diet_troph3, temp_preferred, 
+         fecundity_mean, longevity_wild, weight, age_mat_min, age_mat_min2) %>% 
+  na.omit()
+
+cor_mat <- round(cor(data_cor),2) # length and weight = 0.88, age_mat_min/2 and longevity_wild > 0.70 for all three
+cor_mat
+
+
+```
+
+
+### Write new csv including added variables
+
+```{r}
+
+#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+
+```
+
+
+### May not use?
+
 Only 68 species with oxygen consumption data:
 ```{r}
 
@@ -202,37 +286,7 @@ eco <- ecology() %>%
 
 
 
-```{r}
 
-# why did this add a row? <------------------------------------------------------------------------------
-
-data <- left_join(data, fish) %>% 
-  select(-spec_code, -genus, -subfamily, -family, -order, -class, -super_class)
-
-data <- full_join(data, clusters)
-
-```
-
-
-### Look at missing data
-
-```{r}
-
-missing <- miss_var_summary(data)
-
-missing_fig <- gg_miss_var(data)
-
-#ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
-
-
-```
-
-
-```{r}
-
-write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
-
-```
 
 
 
