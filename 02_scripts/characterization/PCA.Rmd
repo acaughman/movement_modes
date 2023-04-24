@@ -37,44 +37,47 @@ plot1_data = fishbase_data
 
 #option1 sort by variable
 plot1_data = plot1_data %>% 
-  select(r_fin, species, class) %>% 
-  mutate(class = sort(r_fin)) %>% 
+  select(r_fin, species, class2) %>% 
+  mutate(r_fin = sort(r_fin)) %>% 
   mutate(species = as.factor(species)) %>% 
-  mutate(class = as.factor(class)) %>% 
+  mutate(class2 = as.factor(class2)) %>% 
   mutate(species = fct_relevel(plot1_data$species))
 
 ggplot(plot1_data, aes(species, r_fin)) +
-  geom_point(aes(color = class))
+  geom_point(aes(color = class2))
+
+plot1_data = fishbase_data 
 
 #option 2 sort by class
-plot1_data = plot1_data%>% 
-  select(r_fin, species, class) %>% 
-  mutate(class = sort(class)) %>% 
+plot1_data = plot1_data %>% 
+  select(r_fin, species, class2)%>% 
+  mutate(class2 = sort(class2)) %>% 
   mutate(species = as.factor(species)) %>% 
-  mutate(class = as.factor(class)) %>% 
+  mutate(class2 = as.factor(class2)) %>% 
   mutate(species = fct_relevel(plot1_data$species))
 
-#more descriptive
-ggplot(plot1_data, aes(r_fin, class)) +
+#more descriptive****
+ggplot(plot1_data, aes(r_fin, class2)) +
   geom_point(aes(color = r_fin))
 
 #more to find groupings
 ggplot(plot1_data, aes(species, r_fin)) +
-  geom_point(aes(color = class))
+  geom_point(aes(color = class2))
 ```
 
 ```{r}
 #categorical
 plot2_data = fishbase_data %>% 
-  select(demers_pelag, species, class) %>% 
-  mutate(class = as.factor(class))
+  select(demers_pelag, species, class2) %>% 
+  mutate(class2 = as.factor(class2))
 
 #to find groupings
 ggplot(plot2_data, aes(demers_pelag, species)) +
-  geom_point(aes(color = class)) 
+  geom_point(aes(color = class2)) 
 
-#more descriptive
-ggplot(plot2_data, aes(demers_pelag, class)) +
+#more descriptive***
+ggplot(plot2_data, aes(demers_pelag, class2)) +
+  # geom_point(aes(color = demers_pelag)) +
   geom_jitter(aes(color = demers_pelag)) +
   theme_bw() +
   labs(x = "Habitat Type",
@@ -89,7 +92,6 @@ ggplot(plot2_data, aes(demers_pelag, class)) +
 ### Lex attempts
 
 ```{r}
-
 
 plot3_data = fishbase_data %>% 
   select(demers_pelag, env_temp, body_shape_i, species, class, class2) %>% 
