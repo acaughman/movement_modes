@@ -44,6 +44,14 @@ clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv"))
 clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -2] <- 8) 
 clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -3] <- 8)
 
+
+
+
+
+
+
+
+
 ```
 
 ```{r}
@@ -143,36 +151,41 @@ fish <- left_join(fish, fecund)
 ```
 
 
-### Collect weight/shape/age data
+### Collect shape/age data
 
 ```{r}
 
 spec <- species() %>%  # load stocks info, then
   filter(SpecCode %in% fish$spec_code) %>%  # filter rows by spec codes in fish, then
-  select(SpecCode, BodyShapeI, LongevityWild, Weight) %>% 
+  select(SpecCode, BodyShapeI, LongevityWild) %>% 
   janitor::clean_names()
+
 
 fish <- left_join(fish, spec)
 
 ```
 
 
-### Collect maturity data
+### Collect metabolic data
 
+Only 68 species with oxygen consumption data:
 ```{r}
 
-matur <- maturity() %>% 
+oxygen <- oxygen() %>% 
   filter(SpecCode %in% fish$spec_code) %>% 
-  select(SpecCode, AgeMatMin, AgeMatMin2) %>% 
-  janitor::clean_names() %>% 
-  na.omit()
+  select(SpecCode, OxygenCons, Temp) %>% 
+  janitor::clean_names()
 
-matur <- matur %>%  # average the values for a given spec code
+oxygen <- oxygen %>%  # average the values for a given spec code
   group_by(spec_code) %>% 
-  summarise(age_mat_min = mean(age_mat_min), age_mat_min2 = mean(age_mat_min2)) %>% 
-  ungroup()
+  summarise(oxygen_cons = mean(oxygen_cons), temp = mean(temp)) %>% 
+  ungroup() %>% 
+  rename(temp_cons = temp)
 
-fish <- left_join(fish, matur)
+fish <- left_join(fish, oxygen)
+fish <- fish %>% 
+  rename(class_taxon = class)
+
 
 ```
 
@@ -183,32 +196,25 @@ fish <- left_join(fish, matur)
 
 # why did this add a row? <------------------------------------------------------------------------------
 
-data <- left_join(data, fish) %>% 
-  select(-spec_code, -genus, -subfamily, -family, -order, -class, -super_class)
+data <- left_join(fish, data) %>% 
+  select(-spec_code, -class, -fecundity_min, -temp_max, -temp_min)
 
 data <- full_join(data, clusters)
+
+data$body_shape_i[data$species == "Oblada melanuras"] <- "fusiform / normal"
+data$body_shape_i[data$species == "Pennahia aneas"] <- "fusiform / normal"
+
+
+  
 
 ```
 
 
-### Plot new clusters
+### Write new csv including added variables
 
 ```{r}
 
-fishbase_data_gmm <- fishbase_data %>% 
-  mutate(class2 = as.factor(class2))
-
-gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
-  geom_jitter(aes(color = class2)) +
-  theme_bw() +
-  labs(
-    x = "Order of Magnitude of Predicted Home Range",
-    y = "Predicted Pelagic Larval Duration (Month)"
-  )
-
-gmm_new_fig
-
-ggsave(gmm_new_fig, file = paste0("gmm_new_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
+#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 
 ```
 
@@ -217,9 +223,11 @@ ggsave(gmm_new_fig, file = paste0("gmm_new_fig.png"), path = here::here("04_figs
 
 ```{r}
 
-missing <- miss_var_summary(data) # summary of missing data in each variable
-
-missing_fig <- gg_miss_var(data) + # figure showing the missing data
+missing_data <- miss_var_summary(data) # summary of missing data in each variable
+  
+missing <- data %>% 
+  
+missing_fig <- gg_miss_var(missing) + # figure showing the missing data
   theme_bw()
 missing_fig
 
@@ -247,43 +255,33 @@ cor_mat
 ```
 
 
-### Write new csv including added variables
+
+
+
+
+
+
+
+### Plot of new clusters
 
 ```{r}
 
-#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+fishbase_data_gmm <- data %>% 
+  mutate(class2 = as.factor(class2))
+
+gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
+  geom_jitter(aes(color = class2)) +
+  theme_bw() +
+  labs(
+    x = "Order of Magnitude of Predicted Home Range",
+    y = "Predicted Pelagic Larval Duration (Month)"
+  )
+
+gmm_new_fig
+
+# ggsave(gmm_new_fig, file = paste0("gmm_new_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
 
 ```
-
-
-### May not use?
-
-Only 68 species with oxygen consumption data:
-```{r}
-
-oxygen <- oxygen() %>% 
-  filter(SpecCode %in% fish$spec_code) %>% 
-  select(SpecCode, OxygenCons, Temp) %>% 
-  janitor::clean_names()
-
-oxygen <- oxygen %>%  # average the values for a given spec code
-  group_by(spec_code) %>% 
-  summarise(oxygen_cons = mean(oxygen_cons), temp = mean(temp)) %>% 
-  ungroup()
-
-
-```
-
-Only 14 species with schooling behavior listed:
-```{r}
-
-eco <- ecology() %>% 
-  filter(SpecCode %in% fish$spec_code) %>% 
-  select(SpecCode, SchoolingFrequency, SchoolingLifestage) %>% 
-  janitor::clean_names()
-
-```
-
 
 
 
@@ -292,6 +290,36 @@ eco <- ecology() %>%
 
 
 ### Old
+
+```{r}
+
+# collect maturity variables
+
+# matur <- maturity() %>% 
+#   filter(SpecCode %in% fish$spec_code) %>% 
+#   select(SpecCode, AgeMatMin, AgeMatMin2) %>% 
+#   janitor::clean_names() %>% 
+#   na.omit()
+# 
+# matur <- matur %>%  # average the values for a given spec code
+#   group_by(spec_code) %>% 
+#   summarise(age_mat_min = mean(age_mat_min), age_mat_min2 = mean(age_mat_min2)) %>% 
+#   ungroup()
+# 
+# fish <- left_join(fish, matur)
+```
+
+```{r}
+# 
+# # Only 14 species with schooling behavior listed:
+# 
+# eco <- ecology() %>% 
+#   filter(SpecCode %in% fish$spec_code) %>% 
+#   select(SpecCode, SchoolingFrequency, SchoolingLifestage) %>% 
+#   janitor::clean_names()
+
+```
+
 ```{r}
 # can I average the lat/long values and delete the duplicated rows? <--------------- NO. bc this messes with the E/W delineation
 

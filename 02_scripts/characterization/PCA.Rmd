@@ -89,39 +89,79 @@ ggplot(plot2_data, aes(demers_pelag, class2)) +
 ```
 
 
-### Lex attempts
+### Metabolic data
 
 ```{r}
 
-plot3_data = fishbase_data %>% 
-  select(demers_pelag, env_temp, body_shape_i, species, class, class2) %>% 
-  mutate(class = as.factor(class), class2 = as.factor(class2))
+plot2_data = fishbase_data
+plot2_data <- plot2_data[!is.na(plot2_data$oxygen_cons),]
 
-#to find groupings
-ggplot(plot3_data, aes(species, env_temp)) +
-  geom_point(aes(color = class2))
+#option1 sort by oxygen_cons
+plot2_data = plot2_data %>% 
+  select(oxygen_cons, species, class2, genus) %>% 
+  mutate(oxygen_cons = sort(oxygen_cons)) %>% 
+  mutate(species = as.factor(species)) %>% 
+  mutate(genus = as.factor(genus)) %>% 
+  mutate(species = fct_relevel(plot2_data$species))
 
-#more descriptive
-ggplot(plot3_data, aes(body_shape_i, class2)) +
-  geom_jitter(aes(color = body_shape_i)) +
-  theme_bw() +
-  labs(x = "env_temp",
-       y = "Movement Class",
-       color = "Habitat Type") +
-  scale_color_viridis_d() +
-  theme(axis.text.x = element_text(angle = 30, hjust=1)) 
-  #scale_color_manual(values = c("", ""))
+ggplot(plot2_data, aes(species, oxygen_cons)) +
+  geom_point(aes(color = genus)) +
+  theme(legend.position="none")
 
-plot4_data = fishbase_data %>% 
-  select(length, species, class2) %>% 
-  #mutate(class2 = sort(length)) %>% this line is causing problemssssss
+# no noteworthy groupings for class - try coloring by genus/family/order
+# COLORING BY GENUS GAVE PERFECT LOOKING GRAPH??
+
+
+#option 2 sort by class
+plot2_data = plot2_data %>% 
+  select(oxygen_cons, species, class2)%>% 
+  mutate(class2 = sort(class2)) %>% 
   mutate(species = as.factor(species)) %>% 
   mutate(class2 = as.factor(class2)) %>% 
-  mutate(species = fct_relevel(plot4_data$species))
+  mutate(species = fct_relevel(plot2_data$species))
 
-ggplot(plot4_data, aes(species, length)) +
-  geom_jitter(aes(color = class2))
+#more descriptive****
+ggplot(plot2_data, aes(oxygen_cons, class2)) +
+  geom_point(aes(color = oxygen_cons))
 
+
+
+```
+
+
+
+
+```{r}
+# 
+# plot3_data = fishbase_data %>% 
+#   select(demers_pelag, env_temp, body_shape_i, species, class, class2) %>% 
+#   mutate(class = as.factor(class), class2 = as.factor(class2))
+# 
+# #to find groupings
+# ggplot(plot3_data, aes(species, env_temp)) +
+#   geom_point(aes(color = class2))
+# 
+# #more descriptive
+# ggplot(plot3_data, aes(body_shape_i, class2)) +
+#   geom_jitter(aes(color = body_shape_i)) +
+#   theme_bw() +
+#   labs(x = "env_temp",
+#        y = "Movement Class",
+#        color = "Habitat Type") +
+#   scale_color_viridis_d() +
+#   theme(axis.text.x = element_text(angle = 30, hjust=1)) 
+#   #scale_color_manual(values = c("", ""))
+# 
+# plot4_data = fishbase_data %>% 
+#   select(length, species, class2) %>% 
+#   #mutate(class2 = sort(length)) %>% this line is causing problemssssss
+#   mutate(species = as.factor(species)) %>% 
+#   mutate(class2 = as.factor(class2)) %>% 
+#   mutate(species = fct_relevel(plot4_data$species))
+# 
+# ggplot(plot4_data, aes(species, length)) +
+#   geom_jitter(aes(color = class2))
+# 
 
 ```
 
@@ -146,9 +186,25 @@ p1_fig <- fviz_pca_ind(p1, label = "none", habillage = fishbase_p1$class2, addEl
             theme_minimal()
 p1_fig
 
-ggsave(p1_fig, file = paste0("p1_fig.png"), path = here::here("04_figs"))
+# ggsave(p1_fig, file = paste0("p1_fig.png"), path = here::here("04_figs"))
+
+
+# Vizualize variable contributions to components
+
+fviz_pca_biplot(p1, repel = TRUE, label = "none", habillage = fishbase_p1$class2)
+
+
+# Contributions of variables to PC1
+p1_c1 <- fviz_contrib(p1, choice = "var", axes = 1, top = 10)
+
+# Contributions of variables to PC2
+p1_c2 <- fviz_contrib(p1, choice = "var", axes = 2, top = 10)
+
+gridExtra::grid.arrange(p1_c1, p1_c2, ncol = 2)
+
 
 ```
+
 
 
 ```{r}
@@ -168,7 +224,7 @@ p2_fig <- fviz_pca_ind(p2, label = "none", habillage = fishbase_p2$class2, addEl
             theme_minimal()
 p2_fig
 
-ggsave(p2_fig, file = paste0("p2_fig.png"), path = here::here("04_figs"))
+# ggsave(p2_fig, file = paste0("p2_fig.png"), path = here::here("04_figs"))
 
 ```
 
@@ -196,7 +252,7 @@ f1_fig <- fviz_famd_ind(f1, label = "none", habillage = fishbase_f1$class2, addE
 
 f1_fig
 
-ggsave(f1_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
+# ggsave(f1_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
 
 
 ```
@@ -229,18 +285,7 @@ f2_fig
 
 ```
 
-### Vizualize variable contributions to components
 
-```{r}
-
-# Contributions of variables to PC1
-fviz_contrib(f2, choice = "var", axes = 1, top = 10)
-
-# Contributions of variables to PC2
-fviz_contrib(f2, choice = "var", axes = 2, top = 10)
-
-
-```
 
 
 
@@ -302,20 +347,6 @@ pca2_fig <- fviz_pca_ind(pca2, label = "none", habillage = fishbase_pca2$class, 
 pca2_fig
 
 #ggsave(pca2_fig, file = paste0("pca2_fig.png"), path = here::here("04_figs"))
-
-```
-
-
-### Vizualize variable contributions to components
-
-```{r}
-
-# Contributions of variables to PC1
-fviz_contrib(pca2, choice = "var", axes = 1, top = 10)
-
-# Contributions of variables to PC2
-fviz_contrib(pca2, choice = "var", axes = 2, top = 10)
-
 
 ```
 
