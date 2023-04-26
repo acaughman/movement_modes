@@ -201,10 +201,13 @@ data <- left_join(fish, data) %>%
 
 data <- full_join(data, clusters)
 
+
+# add missing info
+
 data$body_shape_i[data$species == "Oblada melanuras"] <- "fusiform / normal"
 data$body_shape_i[data$species == "Pennahia aneas"] <- "fusiform / normal"
 
-
+# NEED TO ADD MORE HERE
   
 
 ```
@@ -226,6 +229,8 @@ data$body_shape_i[data$species == "Pennahia aneas"] <- "fusiform / normal"
 missing_data <- miss_var_summary(data) # summary of missing data in each variable
   
 missing <- data %>% 
+  select(- species, -genus, -subfamily, -family, -order, -class_taxon, -super_class, -body_shape_i, -temp_cons, -n_ind, -geog_range, -fecundity_mean, -movement_keyword, -demers_pelag, -length, -common_name, -kfin, -r_fin, -diet_troph3, -iucn_category, -predicted_homerange, -predicted_pld, -home_range, -pld, -magnitude_homerange, -month_pld, -class, -class2, -north_south_n, -southermost, -north_south_s, -westernmost, -west_east_w, -easternmost, -west_east_e) %>% 
+  rename(geographic_coords = northernmost)
   
 missing_fig <- gg_miss_var(missing) + # figure showing the missing data
   theme_bw()
