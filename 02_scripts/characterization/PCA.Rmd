@@ -73,8 +73,9 @@ plot2_data = fishbase_data %>%
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
 #to find groupings
-ggplot(plot2_data, aes(demers_pelag, species)) +
-  geom_point(aes(color = class2)) 
+ggplot(plot2_data, aes(class2, order)) +
+  geom_point(aes(color = family)) +
+  theme(legend.position = "none")
 
 #more descriptive***
 ggplot(plot2_data, aes(r_fin, class2)) +
@@ -99,20 +100,20 @@ plot2_data <- plot2_data[!is.na(plot2_data$oxygen_cons),]
 
 #option1 sort by oxygen_cons
 plot2_data = plot2_data %>% 
-  select(oxygen_cons, species, class2, genus) %>% 
+  select(oxygen_cons, species, class2, genus, order, temp_preferred) %>% 
   mutate(oxygen_cons = sort(oxygen_cons)) %>% 
   mutate(species = as.factor(species)) %>% 
-  mutate(genus = as.factor(genus)) %>% 
+  mutate(class2 = as.factor(class2)) %>% 
   mutate(species = fct_relevel(plot2_data$species))
 
 ggplot(plot2_data, aes(species, oxygen_cons)) +
-  geom_point(aes(color = genus)) +
+  geom_point(aes(color = class2)) +
   theme_bw() +
   theme(legend.position="none") +
   theme(axis.text.x=element_blank()) +
   labs(x = "Species",
-       y = "O2 Consumption Rate") +
-  scale_color_viridis_d()
+       y = "O2 Consumption Rate") # +
+  #scale_color_viridis_d()
 
 # no noteworthy groupings for class - try coloring by genus/family/order
 # COLORING BY GENUS GAVE PERFECT LOOKING GRAPH??
@@ -120,17 +121,17 @@ ggplot(plot2_data, aes(species, oxygen_cons)) +
 
 #option 2 sort by class
 plot2_data = plot2_data %>% 
-  select(oxygen_cons, species, class2, order)%>% 
+  select(oxygen_cons, species, class2, order, temp_preferred)%>% 
   mutate(class2 = sort(class2)) %>% 
   mutate(species = as.factor(species)) %>% 
   mutate(class2 = as.factor(class2)) %>% 
   mutate(species = fct_relevel(plot2_data$species))
 
 #more descriptive****
-ggplot(plot2_data, aes(oxygen_cons, class2)) +
+ggplot(plot2_data, aes(temp_preferred, class2)) +
   geom_point(aes(color = order)) +
   theme_bw() +
-  labs(x = "O2 Consumption Rate",
+  labs(x = "Optimal Temp",
        y = "Movement Class") +
   theme(legend.position = "none")
 

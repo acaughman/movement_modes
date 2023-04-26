@@ -207,8 +207,7 @@ data <- full_join(data, clusters)
 data$body_shape_i[data$species == "Oblada melanuras"] <- "fusiform / normal"
 data$body_shape_i[data$species == "Pennahia aneas"] <- "fusiform / normal"
 
-# NEED TO ADD MORE HERE
-  
+# ADD MORE INFO ON THESE TWO GUYS HERE
 
 ```
 
@@ -218,6 +217,44 @@ data$body_shape_i[data$species == "Pennahia aneas"] <- "fusiform / normal"
 ```{r}
 
 #write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+
+```
+
+
+### fill in missing info from averages/max counts
+
+```{r}
+
+# create a function to find the mode of a column
+
+calc_mode <- function(x){  
+  
+  distinct_values <- unique(x) # list the unique values
+  
+  distinct_tabulate <- tabulate(match(x, distinct_values)) # count the occurrence of each
+  
+  distinct_values[which.max(distinct_tabulate)] # return value with highest occurrence
+}
+
+
+# replace numeric NAs with mean of column, categorical with mode of column
+
+filled_data <- data %>%  
+  mutate_at(vars(temp_preferred, longevity_wild, fecundity_max, fecundity_mean, 
+                 temp_range, temp_cons, oxygen_cons), 
+            ~replace_na(.,mean(., na.rm = TRUE))) %>% 
+  mutate(food_i = if_else(is.na(food_i), calc_mode(food_i), food_i)) %>% 
+  mutate(env_temp = if_else(is.na(env_temp), calc_mode(env_temp), env_temp)) %>% 
+  mutate(iucn_category = if_else(is.na(iucn_category), calc_mode(iucn_category), iucn_category))
+
+```
+
+
+### Write new csv including filled variables
+
+```{r}
+
+#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
 
 ```
 
