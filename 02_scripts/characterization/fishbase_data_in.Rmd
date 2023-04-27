@@ -32,6 +32,16 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
   mutate(month_pld = ceiling(pld / 30))
 ```
 
+### Rename incorect species
+
+```{r}
+
+data <- data %>% 
+  mutate(species = str_replace(species, "Oblada melanuras", "Oblada melanurus")) %>% 
+  mutate(species = str_replace(species, "Pennahia aneas", "Pennahia aneus")) 
+
+```
+
 ### Make new clusters
 
 ```{r}
@@ -44,19 +54,21 @@ clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv"))
 clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -2] <- 8) 
 clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -3] <- 8)
 
+# rename incorrect species
 
-
-
-
-
-
-
+clusters <- clusters %>% 
+  mutate(species = str_replace(species, "Oblada melanuras", "Oblada melanurus")) %>% 
+  mutate(species = str_replace(species, "Pennahia aneas", "Pennahia aneus"))
 
 ```
 
+### Load in taxonomic info
+
 ```{r}
+
 fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
-  filter(Species %in% data$species) # select only the rows containing species listed in data
+  filter(Species %in% data$species)  # select only the rows containing species listed in data
+  
 ```
 
 
@@ -117,14 +129,19 @@ fish <- janitor::clean_names(fish)
 temp <- stocks() %>%  # load stocks info, then
   filter(SpecCode %in% fish$spec_code) %>%  # filter rows by spec codes in fish, then
   select(SpecCode, TempMin, TempMax, TempPreferred, EnvTemp) %>% # select columns
-  mutate(temp_range = TempMax - TempMin)
+  mutate(temp_range = TempMax - TempMin) %>% 
+  arrange(SpecCode)
 
 temp <- drop_na(temp, TempPreferred)
 
 temp <- janitor::clean_names(temp)
 
+#calc_mode(temp$spec_code) # find the repeated spec_code - it's 308
 
-fish <- left_join(fish, temp)
+temp <- temp %>% 
+  filter(!row_number() %in% c(106)) # remove row containing repeat
+
+fish <- left_join(fish, temp) # this was making fish have 607 rows, removed repeat spec_code
 
 ```
 
@@ -183,6 +200,7 @@ oxygen <- oxygen %>%  # average the values for a given spec code
   rename(temp_cons = temp)
 
 fish <- left_join(fish, oxygen)
+
 fish <- fish %>% 
   rename(class_taxon = class)
 
@@ -194,8 +212,6 @@ fish <- fish %>%
 
 ```{r}
 
-# why did this add a row? <------------------------------------------------------------------------------
-
 data <- left_join(fish, data) %>% 
   select(-spec_code, -class, -fecundity_min, -temp_max, -temp_min)
 
@@ -204,8 +220,8 @@ data <- full_join(data, clusters)
 
 # add missing info
 
-data$body_shape_i[data$species == "Oblada melanuras"] <- "fusiform / normal"
-data$body_shape_i[data$species == "Pennahia aneas"] <- "fusiform / normal"
+#data$body_shape_i[data$species == "Oblada melanuras"] <- "fusiform / normal"
+#data$body_shape_i[data$species == "Pennahia aneas"] <- "fusiform / normal"
 
 # ADD MORE INFO ON THESE TWO GUYS HERE
 
@@ -221,7 +237,7 @@ data$body_shape_i[data$species == "Pennahia aneas"] <- "fusiform / normal"
 ```
 
 
-### fill in missing info from averages/max counts
+### Fill in missing info from averages/max counts
 
 ```{r}
 
