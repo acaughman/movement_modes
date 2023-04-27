@@ -71,10 +71,10 @@ fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
   
 ```
 
-
 ### Collect diet variable
 
 ```{r}
+
 # get diet items and combine rows of the same species in each column
 diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>% 
   group_by(Species) %>%
@@ -89,12 +89,13 @@ diet <- janitor::clean_names(diet)
 
 data <- left_join(data,diet) %>% 
   select(-food_ii, -food_iii)
-```
 
+```
 
 ### Collect location variables
 
 ```{r}
+
 # get location data (lat and long)
 coords <- stocks() %>%  # load stocks info, then
   filter(SpecCode %in% fish$SpecCode) %>%  # filter rows by specCodes in fish, then
@@ -110,8 +111,7 @@ coords <- data.frame(lapply(coords, function(v) {
   else return(v)
 }))
 
-# there are a few spec codes listed more than once. 
-# can I delete the duplicated rows..? there are only 5 <-----------------------------------------------
+# delete duplicate spec_codes (there are only 5)
 
 coords_clean <- coords[!duplicated(coords$SpecCode), ]
 
@@ -119,8 +119,8 @@ coords_clean <- coords[!duplicated(coords$SpecCode), ]
 fish <- left_join(fish, coords_clean)
 
 fish <- janitor::clean_names(fish)
-```
 
+```
 
 ### Collect temperature variables
 
@@ -145,7 +145,6 @@ fish <- left_join(fish, temp) # this was making fish have 607 rows, removed repe
 
 ```
 
-
 ### Collect fecundity variables
 
 ```{r}
@@ -162,11 +161,9 @@ fecund <- fecund %>%  # average the values for a given spec code
   mutate(fecundity_mean = (fecundity_min + fecundity_max)/2) %>% 
   ungroup()
 
-
 fish <- left_join(fish, fecund)
 
 ```
-
 
 ### Collect shape/age data
 
@@ -181,7 +178,6 @@ spec <- species() %>%  # load stocks info, then
 fish <- left_join(fish, spec)
 
 ```
-
 
 ### Collect metabolic data
 
@@ -204,9 +200,7 @@ fish <- left_join(fish, oxygen)
 fish <- fish %>% 
   rename(class_taxon = class)
 
-
 ```
-
 
 ### Join new variables with data
 
@@ -219,7 +213,6 @@ data <- full_join(data, clusters)
 
 ```
 
-
 ### Write new csv including added variables
 
 ```{r}
@@ -227,7 +220,6 @@ data <- full_join(data, clusters)
 #write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 
 ```
-
 
 ### Look at missing data
 
@@ -243,11 +235,9 @@ missing_fig <- gg_miss_var(missing) + # figure showing the missing data
   theme_bw()
 missing_fig
 
-ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
-
+#ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
 
 ```
-
 
 ### Fill in missing info from averages/max counts
 
@@ -264,7 +254,6 @@ calc_mode <- function(x){
   distinct_values[which.max(distinct_tabulate)] # return value with highest occurrence
 }
 
-
 # replace numeric NAs with mean of column, categorical with mode of column
 
 filled_data <- data %>%  
@@ -277,14 +266,20 @@ filled_data <- data %>%
 
 ```
 
-
 ### Write new csv including filled variables
 
 ```{r}
 
-write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
 
 ```
+
+
+
+
+
+----------
+
 
 
 
@@ -304,9 +299,6 @@ cor_mat
 
 
 ```
-
-
-
 
 ### Plot of new clusters
 
