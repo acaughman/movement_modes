@@ -217,14 +217,6 @@ data <- left_join(fish, data) %>%
 
 data <- full_join(data, clusters)
 
-
-# add missing info
-
-#data$body_shape_i[data$species == "Oblada melanuras"] <- "fusiform / normal"
-#data$body_shape_i[data$species == "Pennahia aneas"] <- "fusiform / normal"
-
-# ADD MORE INFO ON THESE TWO GUYS HERE
-
 ```
 
 
@@ -233,6 +225,26 @@ data <- full_join(data, clusters)
 ```{r}
 
 #write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+
+```
+
+
+### Look at missing data
+
+```{r}
+
+missing_data <- miss_var_summary(data) # summary of missing data in each variable
+  
+missing <- data %>% 
+  select(- species, -genus, -subfamily, -family, -order, -class_taxon, -super_class, -body_shape_i, -temp_cons, -n_ind, -geog_range, -fecundity_mean, -movement_keyword, -demers_pelag, -length, -common_name, -kfin, -r_fin, -diet_troph3, -iucn_category, -predicted_homerange, -predicted_pld, -home_range, -pld, -magnitude_homerange, -month_pld, -class, -class2, -north_south_n, -southermost, -north_south_s, -westernmost, -west_east_w, -easternmost, -west_east_e) %>% 
+  rename(geographic_coords = northernmost)
+  
+missing_fig <- gg_miss_var(missing) + # figure showing the missing data
+  theme_bw()
+missing_fig
+
+#ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
+
 
 ```
 
@@ -270,29 +282,10 @@ filled_data <- data %>%
 
 ```{r}
 
-#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
 
 ```
 
-
-### Look at missing data
-
-```{r}
-
-missing_data <- miss_var_summary(data) # summary of missing data in each variable
-  
-missing <- data %>% 
-  select(- species, -genus, -subfamily, -family, -order, -class_taxon, -super_class, -body_shape_i, -temp_cons, -n_ind, -geog_range, -fecundity_mean, -movement_keyword, -demers_pelag, -length, -common_name, -kfin, -r_fin, -diet_troph3, -iucn_category, -predicted_homerange, -predicted_pld, -home_range, -pld, -magnitude_homerange, -month_pld, -class, -class2, -north_south_n, -southermost, -north_south_s, -westernmost, -west_east_w, -easternmost, -west_east_e) %>% 
-  rename(geographic_coords = northernmost)
-  
-missing_fig <- gg_miss_var(missing) + # figure showing the missing data
-  theme_bw()
-missing_fig
-
-#ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
-
-
-```
 
 
 ### Look at any correlated data
@@ -311,11 +304,6 @@ cor_mat
 
 
 ```
-
-
-
-
-
 
 
 
@@ -340,6 +328,9 @@ gmm_new_fig
 # ggsave(gmm_new_fig, file = paste0("gmm_new_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
 
 ```
+
+
+
 
 
 
