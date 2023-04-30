@@ -67,16 +67,17 @@ clusters <- clusters %>%
 ```{r}
 
 fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
-  filter(Species %in% data$species)  # select only the rows containing species listed in data
+  filter(Species %in% data$species) %>%   # select only the rows containing species listed in data
+  janitor::clean_names()
   
 ```
 
-### Collect diet variable
+### Collect diet data
 
 ```{r}
 
 # get diet items and combine rows of the same species in each column
-diet <- fooditems(fish$Species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>% 
+diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>% 
   group_by(Species) %>%
   summarise(FoodI = paste(unique(FoodI), collapse = ", "), 
             FoodII = paste(unique(FoodII), collapse = ", "), 
@@ -92,43 +93,13 @@ data <- left_join(data,diet) %>%
 
 ```
 
-### Collect location variables
-
-```{r}
-
-# get location data (lat and long)
-coords <- stocks() %>%  # load stocks info, then
-  filter(SpecCode %in% fish$SpecCode) %>%  # filter rows by specCodes in fish, then
-  select(SpecCode, Northernmost, NorthSouthN, Southermost, NorthSouthS, Westernmost,
-           WestEastW, Easternmost, WestEastE) # select columns
-
-coords <- na.omit(coords) # remove NA values
-
-# not sure if I need to make everything uppercase?
-
-coords <- data.frame(lapply(coords, function(v) {
-  if (is.character(v)) return(toupper(v))
-  else return(v)
-}))
-
-# delete duplicate spec_codes (there are only 5)
-
-coords_clean <- coords[!duplicated(coords$SpecCode), ]
-
-# add coords to fish because they share a column
-fish <- left_join(fish, coords_clean)
-
-fish <- janitor::clean_names(fish)
-
-```
-
-### Collect temperature variables
+### Collect temperature data
 
 ```{r}
 
 temp <- stocks() %>%  # load stocks info, then
   filter(SpecCode %in% fish$spec_code) %>%  # filter rows by spec codes in fish, then
-  select(SpecCode, TempMin, TempMax, TempPreferred, EnvTemp) %>% # select columns
+  select(SpecCode, TempMin, TempMax, TempPreferred) %>% # select columns
   mutate(temp_range = TempMax - TempMin) %>% 
   arrange(SpecCode)
 
@@ -145,7 +116,25 @@ fish <- left_join(fish, temp) # this was making fish have 607 rows, removed repe
 
 ```
 
-### Collect fecundity variables
+### Collect climate/range data
+
+```{r}
+
+eco <- ecosystem() %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
+  select(SpecCode, Climate, NorthernLat, NrangeNS, SouthernLat, SrangeNS, 
+         WesternLat, WrangeEW, EasternLat, ErangeEW) %>% 
+  janitor::clean_names() %>% 
+  na.omit() %>% 
+  mutate(climate = tolower(climate))
+
+eco <- eco[!duplicated(eco$spec_code), ]
+
+fish <- left_join(fish, eco)
+
+```
+
+### Collect fecundity data
 
 ```{r}
 
@@ -202,6 +191,42 @@ fish <- fish %>%
 
 ```
 
+### Collect reproduction data
+
+```{r}
+
+rep <- reproduction() %>%
+  filter(SpecCode %in% fish$spec_code) %>% 
+  select(SpecCode, RepGuild2, Spawning) %>% 
+  janitor::clean_names()
+
+fish <- left_join(fish, rep)
+
+
+spawn <- spawning() %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
+  select(SpecCode, SpawningGround) %>% 
+  janitor::clean_names() %>% 
+  na.omit()
+
+spawn <- spawn[!duplicated(spawn$spec_code), ]
+
+fish <- left_join(fish, spawn)
+
+
+larvae <- larvae() %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
+  select(SpecCode, PlaceofDevelopment) %>% 
+  janitor::clean_names() %>% 
+  na.omit() %>% 
+  rename(dev_place = placeof_development)
+
+larvae <- larvae[!duplicated(larvae$spec_code), ]
+
+fish <- left_join(fish, larvae)
+
+```
+
 ### Join new variables with data
 
 ```{r}
@@ -217,7 +242,7 @@ data <- full_join(data, clusters)
 
 ```{r}
 
-#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 
 ```
 
@@ -229,13 +254,13 @@ missing_data <- miss_var_summary(data) # summary of missing data in each variabl
   
 missing <- data %>% 
   select(observed_homerange, oxygen_cons, temp_range, observed_pld, fecundity_max, 
-         longevity_wild, temp_preferred, env_temp, food_i)
+         longevity_wild, temp_preferred, food_i, spawning, spawning_ground, dev_place, rep_guild2)
   
 missing_fig <- gg_miss_var(missing) + # figure showing the missing data
   theme_bw()
 missing_fig
 
-#ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
+ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
 
 ```
 
@@ -260,9 +285,13 @@ filled_data <- data %>%
   mutate_at(vars(temp_preferred, longevity_wild, fecundity_max, fecundity_mean, 
                  temp_range, temp_cons, oxygen_cons), 
             ~replace_na(.,mean(., na.rm = TRUE))) %>% 
-  mutate(food_i = if_else(is.na(food_i), calc_mode(food_i), food_i)) %>% 
-  mutate(env_temp = if_else(is.na(env_temp), calc_mode(env_temp), env_temp)) %>% 
-  mutate(iucn_category = if_else(is.na(iucn_category), calc_mode(iucn_category), iucn_category))
+  mutate(food_i = if_else(is.na(food_i), calc_mode(food_i), food_i)) %>%
+  mutate(iucn_category = if_else(is.na(iucn_category), calc_mode(iucn_category), iucn_category)) %>% 
+  mutate(rep_guild2 = if_else(is.na(rep_guild2), calc_mode(rep_guild2), rep_guild2)) %>%
+  mutate(spawning = if_else(is.na(spawning), calc_mode(spawning), spawning)) %>%
+  mutate(spawning_ground = if_else(is.na(spawning_ground), 
+                                   calc_mode(spawning_ground), spawning_ground)) %>%
+  mutate(dev_place = if_else(is.na(dev_place), calc_mode(dev_place), dev_place))
 
 ```
 
@@ -278,7 +307,11 @@ filled_data <- data %>%
 
 
 
-----------
+-----------------------------------------------------------------------------
+
+
+
+
 
 
 
@@ -331,6 +364,33 @@ gmm_new_fig
 
 
 ### Old
+
+```{r}
+# 
+# # get location data (lat and long)
+# coords <- stocks() %>%  # load stocks info, then
+#   filter(SpecCode %in% fish$SpecCode) %>%  # filter rows by specCodes in fish, then
+#   select(SpecCode, Northernmost, NorthSouthN, Southermost, NorthSouthS, Westernmost,
+#            WestEastW, Easternmost, WestEastE) # select columns
+# 
+# coords <- na.omit(coords) # remove NA values
+# 
+# # not sure if I need to make everything uppercase?
+# 
+# coords <- data.frame(lapply(coords, function(v) {
+#   if (is.character(v)) return(toupper(v))
+#   else return(v)
+# }))
+# 
+# # delete duplicate spec_codes (there are only 5)
+# 
+# coords_clean <- coords[!duplicated(coords$SpecCode), ]
+# 
+# # add coords to fish because they share a column
+# fish <- left_join(fish, coords_clean)
+
+```
+
 
 ```{r}
 
