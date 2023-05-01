@@ -242,7 +242,7 @@ data <- full_join(data, clusters)
 
 ```{r}
 
-write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 
 ```
 
@@ -260,7 +260,7 @@ missing_fig <- gg_miss_var(missing) + # figure showing the missing data
   theme_bw()
 missing_fig
 
-ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
+#ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs"))
 
 ```
 
@@ -268,30 +268,96 @@ ggsave(missing_fig, file = paste0("missing_fig.png"), path = here::here("04_figs
 
 ```{r}
 
+# replace numeric NAs with mean of genus, categorical with mode of genus
+
+mode <- function(x) { names(which.max(table(x))) }
+
+fish2 <- load_taxa() %>%
+  filter(Genus %in% data$genus) %>%
+  select(SpecCode, Genus) %>% 
+  janitor::clean_names()
+
+
+# Food I
+
+missing_food_i <- fooditems() %>% 
+  filter(SpecCode %in% fish2$spec_code) %>% 
+  select(SpecCode, FoodI) %>% 
+  janitor::clean_names() %>% 
+  group_by(spec_code) %>%
+  summarise(food_i = paste(unique(food_i), collapse = ", ")) %>% 
+  ungroup()
+
+missing_food_i <- left_join(fish2, missing_food_i)
+
+missing_food_i <- missing_food_i %>%
+  mutate(food_i = as.factor(food_i)) %>% 
+  group_by(genus) %>%
+  summarise(food_i = mode(food_i)) %>% 
+  ungroup()
+
+filled_data <- data 
+
+filled_data <- filled_data %>% 
+        left_join(missing_food_i, by = "genus") %>% 
+        mutate(food_i = coalesce(food_i.x, food_i.y)) %>% 
+        select(-food_i.x, -food_i.y)
+
+
+# IUCN Category
+
+missing_iucn <- stocks() %>% 
+  filter(SpecCode %in% fish2$spec_code) %>% 
+  select(SpecCode, IUCN_Code) %>% 
+  janitor::clean_names() %>% 
+  mutate_at("iucn_code", str_replace, ".", "")
+
+missing_iucn$iucn_code <- gsub("[.]","", missing_iucn$iucn_code)
+
+
+missing_iucn <- left_join(fish2, missing_iucn)
+
+missing_iucn <- missing_iucn %>%
+  mutate(iucn_code = as.factor(iucn_code)) %>% 
+  group_by(genus) %>%
+  summarise(iucn_category = mode(iucn_code)) %>% 
+  ungroup()
+
+filled_data <- filled_data %>% 
+        left_join(missing_iucn, by = "genus") %>% 
+        mutate(iucn_category = coalesce(iucn_category.x, iucn_category.y)) %>% 
+        select(-iucn_category.x, -iucn_category.y)
+
+
+
+
+
+
 # create a function to find the mode of a column
 
-calc_mode <- function(x){  
-  
-  distinct_values <- unique(x) # list the unique values
-  
-  distinct_tabulate <- tabulate(match(x, distinct_values)) # count the occurrence of each
-  
-  distinct_values[which.max(distinct_tabulate)] # return value with highest occurrence
-}
+# calc_mode <- function(x){  
+#   
+#   distinct_values <- unique(x) # list the unique values
+#   
+#   distinct_tabulate <- tabulate(match(x, distinct_values)) # count the occurrence of each
+#   
+#   distinct_values[which.max(distinct_tabulate)] # return value with highest occurrence
+# }
 
-# replace numeric NAs with mean of column, categorical with mode of column
 
-filled_data <- data %>%  
-  mutate_at(vars(temp_preferred, longevity_wild, fecundity_max, fecundity_mean, 
-                 temp_range, temp_cons, oxygen_cons), 
-            ~replace_na(.,mean(., na.rm = TRUE))) %>% 
-  mutate(food_i = if_else(is.na(food_i), calc_mode(food_i), food_i)) %>%
-  mutate(iucn_category = if_else(is.na(iucn_category), calc_mode(iucn_category), iucn_category)) %>% 
-  mutate(rep_guild2 = if_else(is.na(rep_guild2), calc_mode(rep_guild2), rep_guild2)) %>%
-  mutate(spawning = if_else(is.na(spawning), calc_mode(spawning), spawning)) %>%
-  mutate(spawning_ground = if_else(is.na(spawning_ground), 
-                                   calc_mode(spawning_ground), spawning_ground)) %>%
-  mutate(dev_place = if_else(is.na(dev_place), calc_mode(dev_place), dev_place))
+# not like this
+
+# filled_data <- data %>%
+#   mutate_at(vars(temp_preferred, longevity_wild, fecundity_max, fecundity_mean, 
+#                  temp_range, temp_cons, oxygen_cons), 
+#             ~replace_na(.,mean(., na.rm = TRUE))) %>% 
+#   mutate(food_i = if_else(is.na(food_i), calc_mode(food_i), food_i)) %>%
+#   mutate(iucn_category = if_else(is.na(iucn_category), calc_mode(iucn_category), iucn_category)) %>% 
+#   mutate(rep_guild2 = if_else(is.na(rep_guild2), calc_mode(rep_guild2), rep_guild2)) %>%
+#   mutate(spawning = if_else(is.na(spawning), calc_mode(spawning), spawning)) %>%
+#   mutate(spawning_ground = if_else(is.na(spawning_ground), 
+#                                    calc_mode(spawning_ground), spawning_ground)) %>%
+#   mutate(dev_place = if_else(is.na(dev_place), calc_mode(dev_place), dev_place))
 
 ```
 
