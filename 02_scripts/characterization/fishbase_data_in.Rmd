@@ -264,9 +264,12 @@ missing_fig
 
 ```
 
-### Fill in missing info from averages/max counts
+### Fill in missing data from averages/max counts
 
 ```{r}
+
+missing <- miss_var_summary(filled_data)
+
 
 # replace numeric NAs with mean of genus, categorical with mode of genus
 
@@ -280,7 +283,7 @@ fish2 <- load_taxa() %>%
 
 # Food I
 
-missing_food_i <- fooditems() %>% 
+missing_food <- fooditems() %>% 
   filter(SpecCode %in% fish2$spec_code) %>% 
   select(SpecCode, FoodI) %>% 
   janitor::clean_names() %>% 
@@ -288,9 +291,9 @@ missing_food_i <- fooditems() %>%
   summarise(food_i = paste(unique(food_i), collapse = ", ")) %>% 
   ungroup()
 
-missing_food_i <- left_join(fish2, missing_food_i)
+missing_food <- left_join(fish2, missing_food)
 
-missing_food_i <- missing_food_i %>%
+missing_food <- missing_food %>%
   mutate(food_i = as.factor(food_i)) %>% 
   group_by(genus) %>%
   summarise(food_i = mode(food_i)) %>% 
@@ -299,7 +302,7 @@ missing_food_i <- missing_food_i %>%
 filled_data <- data 
 
 filled_data <- filled_data %>% 
-        left_join(missing_food_i, by = "genus") %>% 
+        left_join(missing_food, by = "genus") %>% 
         mutate(food_i = coalesce(food_i.x, food_i.y)) %>% 
         select(-food_i.x, -food_i.y)
 
@@ -329,35 +332,117 @@ filled_data <- filled_data %>%
         select(-iucn_category.x, -iucn_category.y)
 
 
+# Reproduction Guild and Spawning
+
+missing_rep <- reproduction() %>%
+  filter(SpecCode %in% fish2$spec_code) %>% 
+  select(SpecCode, RepGuild2, Spawning) %>% 
+  janitor::clean_names()
+
+missing_rep <- left_join(fish2, missing_rep)
 
 
+missing_rep <- missing_rep %>%
+  mutate(rep_guild2 = as.factor(rep_guild2), spawning = as.factor(spawning)) %>% 
+  group_by(genus) %>%
+  summarise(rep_guild2 = mode(rep_guild2), spawning = mode(spawning)) %>% 
+  ungroup()
+
+filled_data <- filled_data %>% 
+        left_join(missing_rep, by = "genus") %>% 
+        mutate(rep_guild2 = coalesce(rep_guild2.x, rep_guild2.y), 
+               spawning = coalesce(spawning.x, spawning.y)) %>% 
+        select(-rep_guild2.x, -rep_guild2.y, -spawning.x, -spawning.y)
 
 
-# create a function to find the mode of a column
+# Spawning Ground
 
-# calc_mode <- function(x){  
-#   
-#   distinct_values <- unique(x) # list the unique values
-#   
-#   distinct_tabulate <- tabulate(match(x, distinct_values)) # count the occurrence of each
-#   
-#   distinct_values[which.max(distinct_tabulate)] # return value with highest occurrence
-# }
+missing_spawn <- spawning() %>% 
+  filter(SpecCode %in% fish2$spec_code) %>% 
+  select(SpecCode, SpawningGround) %>% 
+  janitor::clean_names()
+
+missing_spawn <- left_join(fish2, missing_spawn)
+
+missing_spawn <- missing_spawn %>%
+  mutate(spawning_ground = as.factor(spawning_ground)) %>% 
+  group_by(genus) %>%
+  summarise(spawning_ground = mode(spawning_ground)) %>% 
+  ungroup()
+
+filled_data <- filled_data %>% 
+        left_join(missing_spawn, by = "genus") %>% 
+        mutate(spawning_ground = coalesce(spawning_ground.x, spawning_ground.y)) %>% 
+        select(-spawning_ground.x, -spawning_ground.y)
 
 
-# not like this
+# Place of Development
 
-# filled_data <- data %>%
-#   mutate_at(vars(temp_preferred, longevity_wild, fecundity_max, fecundity_mean, 
-#                  temp_range, temp_cons, oxygen_cons), 
-#             ~replace_na(.,mean(., na.rm = TRUE))) %>% 
-#   mutate(food_i = if_else(is.na(food_i), calc_mode(food_i), food_i)) %>%
-#   mutate(iucn_category = if_else(is.na(iucn_category), calc_mode(iucn_category), iucn_category)) %>% 
-#   mutate(rep_guild2 = if_else(is.na(rep_guild2), calc_mode(rep_guild2), rep_guild2)) %>%
-#   mutate(spawning = if_else(is.na(spawning), calc_mode(spawning), spawning)) %>%
-#   mutate(spawning_ground = if_else(is.na(spawning_ground), 
-#                                    calc_mode(spawning_ground), spawning_ground)) %>%
-#   mutate(dev_place = if_else(is.na(dev_place), calc_mode(dev_place), dev_place))
+missing_dev <- larvae() %>% 
+  filter(SpecCode %in% fish2$spec_code) %>% 
+  select(SpecCode, PlaceofDevelopment) %>% 
+  janitor::clean_names() %>% 
+  rename(dev_place = placeof_development)
+
+missing_dev <- left_join(fish2, missing_dev)
+
+missing_dev <- missing_dev %>%
+  mutate(dev_place = as.factor(dev_place)) %>% 
+  group_by(genus) %>%
+  summarise(dev_place = mode(dev_place)) %>% 
+  ungroup()
+
+filled_data <- filled_data %>% 
+        left_join(missing_dev, by = "genus") %>% 
+        mutate(dev_place = coalesce(dev_place.x, dev_place.y)) %>% 
+        select(-dev_place.x, -dev_place.y)
+
+
+# Longevity Wild
+
+missing_long <- species() %>% 
+  filter(SpecCode %in% fish2$spec_code) %>%
+  select(SpecCode, LongevityWild) %>% 
+  janitor::clean_names()
+
+missing_long <- left_join(fish2, missing_long)
+
+missing_long <- missing_long %>%
+  mutate(longevity_wild = as.numeric(longevity_wild)) %>% 
+  na.omit() %>% 
+  group_by(genus) %>%
+  summarise(longevity_wild = mean(longevity_wild)) %>% 
+  ungroup()
+
+filled_data <- filled_data %>% 
+        left_join(missing_long, by = "genus") %>% 
+        mutate(longevity_wild = coalesce(longevity_wild.x, longevity_wild.y)) %>% 
+        select(-longevity_wild.x, -longevity_wild.y)
+
+
+# Preferred Temp
+
+missing_temp <- stocks() %>%
+  filter(SpecCode %in% fish2$spec_code) %>% 
+  select(SpecCode, TempPreferred) %>% 
+  janitor::clean_names()
+
+missing_temp <- left_join(fish2, missing_temp)
+
+missing_temp <- missing_temp %>%
+  mutate(temp_preferred = as.numeric(temp_preferred)) %>% 
+  na.omit() %>% 
+  group_by(genus) %>%
+  summarise(temp_preferred = mean(temp_preferred)) %>% 
+  ungroup()
+
+filled_data <- filled_data %>% 
+        left_join(missing_temp, by = "genus") %>% 
+        mutate(temp_preferred = coalesce(temp_preferred.x, temp_preferred.y)) %>% 
+        select(-temp_preferred.x, -temp_preferred.y)
+
+
+missing <- miss_var_summary(filled_data)
 
 ```
 
@@ -371,13 +456,11 @@ filled_data <- filled_data %>%
 
 
 
+### Check Variable Inflation Factors (VIF) on top of collinearity
 
+```{r}
 
------------------------------------------------------------------------------
-
-
-
-
+```
 
 
 
@@ -432,7 +515,38 @@ gmm_new_fig
 ### Old
 
 ```{r}
-# 
+
+# create a function to find the mode of a column
+
+# calc_mode <- function(x){  
+#   
+#   distinct_values <- unique(x) # list the unique values
+#   
+#   distinct_tabulate <- tabulate(match(x, distinct_values)) # count the occurrence of each
+#   
+#   distinct_values[which.max(distinct_tabulate)] # return value with highest occurrence
+# }
+
+
+# not like this
+
+# filled_data <- data %>%
+#   mutate_at(vars(temp_preferred, longevity_wild, fecundity_max, fecundity_mean, 
+#                  temp_range, temp_cons, oxygen_cons), 
+#             ~replace_na(.,mean(., na.rm = TRUE))) %>% 
+#   mutate(food_i = if_else(is.na(food_i), calc_mode(food_i), food_i)) %>%
+#   mutate(iucn_category = if_else(is.na(iucn_category), calc_mode(iucn_category), iucn_category)) %>% 
+#   mutate(rep_guild2 = if_else(is.na(rep_guild2), calc_mode(rep_guild2), rep_guild2)) %>%
+#   mutate(spawning = if_else(is.na(spawning), calc_mode(spawning), spawning)) %>%
+#   mutate(spawning_ground = if_else(is.na(spawning_ground), 
+#                                    calc_mode(spawning_ground), spawning_ground)) %>%
+#   mutate(dev_place = if_else(is.na(dev_place), calc_mode(dev_place), dev_place))
+
+```
+
+
+```{r}
+
 # # get location data (lat and long)
 # coords <- stocks() %>%  # load stocks info, then
 #   filter(SpecCode %in% fish$SpecCode) %>%  # filter rows by specCodes in fish, then
@@ -456,7 +570,6 @@ gmm_new_fig
 # fish <- left_join(fish, coords_clean)
 
 ```
-
 
 ```{r}
 
