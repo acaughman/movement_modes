@@ -26,7 +26,7 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
   )) %>%
   filter(pld < 400) %>%
   mutate(magnitude_homerange = floor(log10(home_range))) %>%
-  mutate(month_pld = ceiling(pld / 30)) %>%
+  mutate(month_pld = ceiling(pld / 30 * 2)/2) %>%
   mutate(month_pld = as.factor(month_pld)) %>%
   mutate(magnitude_homerange = as.factor(magnitude_homerange))
 
