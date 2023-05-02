@@ -33,18 +33,19 @@ fishbase_data[fishbase_data == "pelagic"] <- "pelagic_oceanic"
 ```{r}
 #continuous 
 
-plot1_data = fishbase_data 
+# plot1_data = fishbase_data 
 
-#option1 sort by variable
-plot1_data = plot1_data %>% 
-  select(r_fin, species, class2) %>% 
-  mutate(r_fin = sort(r_fin)) %>% 
-  mutate(species = as.factor(species)) %>% 
-  mutate(class2 = as.factor(class2)) %>% 
-  mutate(species = fct_relevel(plot1_data$species))
+# #option1 sort by variable
+# plot1_data = plot1_data %>% 
+#   select(r_fin, species, class2) %>% 
+#   mutate(r_fin = sort(r_fin)) %>% 
+#   mutate(species = as.factor(species)) %>% 
+#   mutate(class2 = as.factor(class2)) %>% 
+#   mutate(species = fct_relevel(plot1_data$species))
+# 
+# ggplot(plot1_data, aes(species, r_fin)) +
+#   geom_point(aes(color = class2))
 
-ggplot(plot1_data, aes(species, r_fin)) +
-  geom_point(aes(color = class2))
 
 plot1_data = fishbase_data 
 
@@ -56,13 +57,13 @@ plot1_data = plot1_data %>%
   mutate(class2 = as.factor(class2)) %>% 
   mutate(species = fct_relevel(plot1_data$species))
 
-#more descriptive****
+#more descriptive**** # USE THESE PLOTS for continuous 
 ggplot(plot1_data, aes(r_fin, class2)) +
   geom_point(aes(color = r_fin))
 
-#more to find groupings
-ggplot(plot1_data, aes(species, r_fin)) +
-  geom_point(aes(color = class2))
+# #more to find groupings
+# ggplot(plot1_data, aes(species, r_fin)) +
+#   geom_point(aes(color = class2))
 ```
 
 ```{r}
@@ -72,17 +73,17 @@ plot2_data = fishbase_data %>%
          order, class_taxon, longevity_wild, diet_troph3) %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
-#to find groupings
-ggplot(plot2_data, aes(class2, order)) +
-  geom_point(aes(color = family)) +
-  theme(legend.position = "none")
+# #to find groupings
+# ggplot(plot2_data, aes(class2, demers_pelag)) +
+#   geom_point(aes(color = family)) +
+#   theme(legend.position = "none")
 
-#more descriptive***
-ggplot(plot2_data, aes(r_fin, class2)) +
-  # geom_point(aes(color = demers_pelag)) +
-  geom_jitter(aes(color = order)) +
+#more descriptive*** - USE THIS FOR CATEGORICAl
+ggplot(plot2_data, aes(demers_pelag, class2)) +
+  geom_point(aes(color = demers_pelag)) +
+  #geom_jitter(aes(color = demers_pelag)) +
   theme_bw() +
-  labs(x = "Growth Rate",
+  labs(x = "Habitat Type",
        y = "Movement Class") +
   theme(legend.position = "none") +
   scale_color_viridis_d() +
@@ -98,6 +99,9 @@ ggplot(plot2_data, aes(r_fin, class2)) +
 plot2_data = fishbase_data
 plot2_data <- plot2_data[!is.na(plot2_data$oxygen_cons),]
 
+ggplot(plot2_data, aes(oxygen_cons, class2)) +
+  geom_point(aes(color = class2))
+
 #option1 sort by oxygen_cons
 plot2_data = plot2_data %>% 
   select(oxygen_cons, species, class2, genus, order, temp_preferred) %>% 
@@ -106,8 +110,8 @@ plot2_data = plot2_data %>%
   mutate(class2 = as.factor(class2)) %>% 
   mutate(species = fct_relevel(plot2_data$species))
 
-ggplot(plot2_data, aes(species, oxygen_cons)) +
-  geom_point(aes(color = class2)) +
+ggplot(plot2_data, aes(oxygen_cons, class2)) +
+  geom_jitter(aes(color = oxygen_cons)) +
   theme_bw() +
   theme(legend.position="none") +
   theme(axis.text.x=element_blank()) +
@@ -129,7 +133,7 @@ plot2_data = plot2_data %>%
 
 #more descriptive****
 ggplot(plot2_data, aes(temp_preferred, class2)) +
-  geom_point(aes(color = order)) +
+  geom_point(aes(color = class2)) +
   theme_bw() +
   labs(x = "Optimal Temp",
        y = "Movement Class") +
@@ -176,17 +180,20 @@ ggplot(plot2_data, aes(temp_preferred, class2)) +
 
 ```
 
+### DO NMDS HERE INSTEAD OF PCA WITH EUCLIDEAN DISTANCE FROM NOW ON 
 
+
+Most of this can probably go in old now and then doing overall NMDS and FAMD then subset ones
 
 ### PCA with new variables added
 
 ```{r}
 fishbase_p1 <- fishbase_data %>% 
   select(where(is.numeric)) %>% 
-  select(r_fin, longevity_wild, length, fecundity_mean, class2) %>% 
-  mutate(class2 = as.factor(class2))
-
-p1 <- PCA(fishbase_p1[,1:4], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+  select(r_fin, longevity_wild, length, fecundity_mean, diet_troph3, class2) %>% 
+  na.omit() # YOU WANT TO REMOVE COLUMNS WITH NAS FOR PCA, AND PROBABLY NMDS TOO
+ 
+p1 <- PCA(fishbase_p1[,1:5], graph = FALSE) # runs the PCA on the first 5 columns (not class)
 p1
 
 eigen_p1 <- p1$eig
@@ -214,7 +221,7 @@ p1_c2 <- fviz_contrib(p1, choice = "var", axes = 2, top = 10)
 components_p1 <- gridExtra::grid.arrange(p1_c1, p1_c2, ncol = 2)
 
 
-ggsave(components_p1, file = paste0("components_p1.png"), path = here::here("04_figs", "current_pca_famd"))
+#ggsave(components_p1, file = paste0("components_p1.png"), path = here::here("04_figs", "current_pca_famd"))
 
 ```
 
@@ -224,7 +231,8 @@ ggsave(components_p1, file = paste0("components_p1.png"), path = here::here("04_
 fishbase_p2 <- fishbase_data %>% 
   select(where(is.numeric)) %>% 
   select(r_fin, length, diet_troph3, class2) %>% 
-  mutate(class2 = as.factor(class2))
+  mutate(class2 = as.factor(class2)) %>% 
+  na.omit()
 
 p2 <- PCA(fishbase_p2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
 p2
@@ -273,15 +281,15 @@ f1_fig
 ```{r}
 
 fishbase_f2 <- fishbase_data %>% 
-   select(r_fin, weight, env_temp, temp_preferred, demers_pelag, 
-          body_shape_i, fecundity_mean, class2) %>% 
+   select(r_fin, env_temp, temp_preferred, demers_pelag, 
+          body_shape_i, fecundity_mean, longevity_wild, movement_keyword, length, class2, kfin, diet_troph3, food_i) %>% 
    mutate(class2 = as.factor(class2), 
           env_temp = as.factor(env_temp),
           demers_pelag = as.factor(demers_pelag),
           body_shape_i = as.factor(body_shape_i)) %>% 
    na.omit()
  
-f2 <- FAMD(fishbase_f2[,1:7], graph=FALSE)
+f2 <- FAMD(fishbase_f2[,1:12], graph=FALSE)
 f2
 
 eigen_f2 <- f2$eig
@@ -292,6 +300,9 @@ f2_fig <- fviz_famd_ind(f2, label = "none", habillage = fishbase_f2$class2, addE
   theme_minimal()
 
 f2_fig
+
+fviz_famd_var(f2, geom = "arrow", )
+
 
 #ggsave(f2_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
 
