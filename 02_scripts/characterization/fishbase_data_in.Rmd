@@ -75,6 +75,7 @@ fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
 ### Collect diet data
 
 ```{r}
+######## ADD SORT TO UNIQUE IN ORDER TO ALPHABETISE THEM; DO THIS FOR ANYWHERE YOU USE UNIQUE
 
 # get diet items and combine rows of the same species in each column
 diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>% 
@@ -253,8 +254,8 @@ data <- full_join(data, clusters)
 missing_data <- miss_var_summary(data) # summary of missing data in each variable
   
 missing <- data %>% 
-  select(observed_homerange, oxygen_cons, temp_range, observed_pld, fecundity_max, 
-         longevity_wild, temp_preferred, food_i, spawning, spawning_ground, dev_place, rep_guild2)
+  select(oxygen_cons, temp_range, fecundity_max, 
+         longevity_wild, temp_preferred, food_i, spawning, spawning_ground, dev_place, rep_guild2, iucn_category)
   
 missing_fig <- gg_miss_var(missing) + # figure showing the missing data
   theme_bw()
@@ -304,32 +305,32 @@ filled_data <- filled_data %>%
         select(-food_i.x, -food_i.y)
 
 
-# IUCN Category
+# IUCN Category - DO NOT IMPUTE THIS
 
-missing_iucn <- stocks() %>% 
-  filter(SpecCode %in% fish2$spec_code) %>% 
-  select(SpecCode, IUCN_Code) %>% 
-  janitor::clean_names() %>% 
-  mutate_at("iucn_code", str_replace, ".", "")
+# missing_iucn <- stocks() %>% 
+#   filter(SpecCode %in% fish2$spec_code) %>% 
+#   select(SpecCode, IUCN_Code) %>% 
+#   janitor::clean_names() %>% 
+#   mutate_at("iucn_code", str_replace, ".", "")
+# 
+# missing_iucn$iucn_code <- gsub("[.]","", missing_iucn$iucn_code)
+# 
+# 
+# missing_iucn <- left_join(fish2, missing_iucn)
+# 
+# missing_iucn <- missing_iucn %>%
+#   mutate(iucn_code = as.factor(iucn_code)) %>% 
+#   group_by(genus) %>%
+#   summarise(iucn_category = mode(iucn_code)) %>% 
+#   ungroup()
+# 
+# filled_data <- filled_data %>% 
+#         left_join(missing_iucn, by = "genus") %>% 
+#         mutate(iucn_category = coalesce(iucn_category.x, iucn_category.y)) %>% 
+#         select(-iucn_category.x, -iucn_category.y)
 
-missing_iucn$iucn_code <- gsub("[.]","", missing_iucn$iucn_code)
 
-
-missing_iucn <- left_join(fish2, missing_iucn)
-
-missing_iucn <- missing_iucn %>%
-  mutate(iucn_code = as.factor(iucn_code)) %>% 
-  group_by(genus) %>%
-  summarise(iucn_category = mode(iucn_code)) %>% 
-  ungroup()
-
-filled_data <- filled_data %>% 
-        left_join(missing_iucn, by = "genus") %>% 
-        mutate(iucn_category = coalesce(iucn_category.x, iucn_category.y)) %>% 
-        select(-iucn_category.x, -iucn_category.y)
-
-
-# Reproduction Guild and Spawning
+# Reproduction Guild and Spawning - DO NOT NEED
 
 missing_rep <- reproduction() %>%
   filter(SpecCode %in% fish2$spec_code) %>% 
@@ -352,7 +353,7 @@ filled_data <- filled_data %>%
         select(-rep_guild2.x, -rep_guild2.y, -spawning.x, -spawning.y)
 
 
-# Spawning Ground
+# Spawning Ground - DO NOT NEED
 
 missing_spawn <- spawning() %>% 
   filter(SpecCode %in% fish2$spec_code) %>% 
@@ -441,6 +442,8 @@ filled_data <- filled_data %>%
 
 missing <- miss_var_summary(filled_data)
 
+### ADD OXYGEN AND TEMP RANGE HERE AND SEE HOW MANY YOU GET 
+
 ```
 
 ### Write new csv including filled variables
@@ -469,8 +472,7 @@ missing <- miss_var_summary(filled_data)
 # for numeric variables, omit NAs?
 data_cor <- data %>% 
   select(where(is.numeric)) %>% 
-  select(length, kfin, r_fin, diet_troph3, temp_preferred, 
-         fecundity_mean, longevity_wild, weight, age_mat_min, age_mat_min2) %>% 
+  select(temp_preferred, fecundity_mean, longevity_wild, length, kfin, r_fin, diet_troph3) %>% 
   na.omit()
 
 cor_mat <- round(cor(data_cor),2) # length and weight = 0.88, age_mat_min/2 and longevity_wild > 0.70 for all three
