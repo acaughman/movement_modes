@@ -26,14 +26,34 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
   )) %>%
   filter(pld < 400) %>%
   mutate(magnitude_homerange = floor(log10(home_range))) %>%
-  mutate(month_pld = ceiling(pld / 30 * 2)/2) %>%
+  mutate(month_pld = ceiling(pld / 30 * 2)) %>%
   mutate(month_pld = as.factor(month_pld)) %>%
-  mutate(magnitude_homerange = as.factor(magnitude_homerange))
+  mutate(magnitude_homerange = as.factor(magnitude_homerange)) %>% 
+  select(-class)
+
+clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv")) %>% 
+  mutate(class2 = class) %>% 
+  mutate(class2 = case_when(class2 == 6 ~ 2, class2 != 6 ~ class2))  # combine classes 6 into 2
+
+# split part of class 1 into 8
+clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -2] <- 8) 
+clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -3] <- 8)
+
+# rename incorrect species
+
+clusters <- clusters %>% 
+  mutate(species = str_replace(species, "Oblada melanuras", "Oblada melanurus")) %>% 
+  mutate(species = str_replace(species, "Pennahia aneas", "Pennahia aneus")) %>% 
+  select(species, class2)
+
+data = full_join(data, clusters)
 
 species <- left_join(pisco_species, data) %>%
-  filter(!is.na(home_range))
+  filter(!is.na(home_range)) %>% 
+  mutate(class = as.factor(class2)) %>% 
+  select(-class2)
 
-ggplot(species, aes(magnitude_homerange, month_pld, color = month_pld, shape = magnitude_homerange)) +
+ggplot(species, aes(magnitude_homerange, month_pld, color = class)) +
   geom_jitter(size = 2.5) +
   theme_bw()
 
