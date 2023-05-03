@@ -55,7 +55,6 @@ clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -2] <- 
 clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -3] <- 8)
 
 # rename incorrect species
-
 clusters <- clusters %>% 
   mutate(species = str_replace(species, "Oblada melanuras", "Oblada melanurus")) %>% 
   mutate(species = str_replace(species, "Pennahia aneas", "Pennahia aneus"))
@@ -75,17 +74,14 @@ fish <- load_taxa() %>%  # load all taxonomic info from fishbase into fish, then
 ### Collect diet data
 
 ```{r}
-######## ADD SORT TO UNIQUE IN ORDER TO ALPHABETISE THEM; DO THIS FOR ANYWHERE YOU USE UNIQUE
 
 # get diet items and combine rows of the same species in each column
 diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>% 
-  group_by(Species) %>%
-  summarise(FoodI = paste(unique(FoodI), collapse = ", "), 
-            FoodII = paste(unique(FoodII), collapse = ", "), 
-            FoodIII = paste(unique(FoodIII), collapse = ", ")) %>% 
+  group_by(Species) %>% 
+  summarise(FoodI = paste(sort(unique(FoodI)), collapse = ", "), 
+            FoodII = paste(sort(unique(FoodII)), collapse = ", "), 
+            FoodIII = paste(sort(unique(FoodIII)), collapse = ", ")) %>% 
   ungroup()
-
-# using unique(x) makes sure there are not duplicates
 
 diet <- janitor::clean_names(diet)
 
@@ -251,13 +247,11 @@ data <- full_join(data, clusters)
 
 ```{r}
 
-missing_data <- miss_var_summary(data) # summary of missing data in each variable
-  
-missing <- data %>% 
+missing_data <- data %>% 
   select(oxygen_cons, temp_range, fecundity_max, 
-         longevity_wild, temp_preferred, food_i, spawning, spawning_ground, dev_place, rep_guild2, iucn_category)
+         longevity_wild, temp_preferred, food_i, dev_place, iucn_category)
   
-missing_fig <- gg_miss_var(missing) + # figure showing the missing data
+missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
   theme_bw()
 missing_fig
 
@@ -286,7 +280,7 @@ missing_food <- fooditems() %>%
   select(SpecCode, FoodI) %>% 
   janitor::clean_names() %>% 
   group_by(spec_code) %>%
-  summarise(food_i = paste(unique(food_i), collapse = ", ")) %>% 
+  summarise(food_i = paste(sort(unique(food_i)), collapse = ", ")) %>% 
   ungroup()
 
 missing_food <- left_join(fish2, missing_food)
@@ -303,75 +297,6 @@ filled_data <- filled_data %>%
         left_join(missing_food, by = "genus") %>% 
         mutate(food_i = coalesce(food_i.x, food_i.y)) %>% 
         select(-food_i.x, -food_i.y)
-
-
-# IUCN Category - DO NOT IMPUTE THIS
-
-# missing_iucn <- stocks() %>% 
-#   filter(SpecCode %in% fish2$spec_code) %>% 
-#   select(SpecCode, IUCN_Code) %>% 
-#   janitor::clean_names() %>% 
-#   mutate_at("iucn_code", str_replace, ".", "")
-# 
-# missing_iucn$iucn_code <- gsub("[.]","", missing_iucn$iucn_code)
-# 
-# 
-# missing_iucn <- left_join(fish2, missing_iucn)
-# 
-# missing_iucn <- missing_iucn %>%
-#   mutate(iucn_code = as.factor(iucn_code)) %>% 
-#   group_by(genus) %>%
-#   summarise(iucn_category = mode(iucn_code)) %>% 
-#   ungroup()
-# 
-# filled_data <- filled_data %>% 
-#         left_join(missing_iucn, by = "genus") %>% 
-#         mutate(iucn_category = coalesce(iucn_category.x, iucn_category.y)) %>% 
-#         select(-iucn_category.x, -iucn_category.y)
-
-
-# Reproduction Guild and Spawning - DO NOT NEED
-
-missing_rep <- reproduction() %>%
-  filter(SpecCode %in% fish2$spec_code) %>% 
-  select(SpecCode, RepGuild2, Spawning) %>% 
-  janitor::clean_names()
-
-missing_rep <- left_join(fish2, missing_rep)
-
-
-missing_rep <- missing_rep %>%
-  mutate(rep_guild2 = as.factor(rep_guild2), spawning = as.factor(spawning)) %>% 
-  group_by(genus) %>%
-  summarise(rep_guild2 = mode(rep_guild2), spawning = mode(spawning)) %>% 
-  ungroup()
-
-filled_data <- filled_data %>% 
-        left_join(missing_rep, by = "genus") %>% 
-        mutate(rep_guild2 = coalesce(rep_guild2.x, rep_guild2.y), 
-               spawning = coalesce(spawning.x, spawning.y)) %>% 
-        select(-rep_guild2.x, -rep_guild2.y, -spawning.x, -spawning.y)
-
-
-# Spawning Ground - DO NOT NEED
-
-missing_spawn <- spawning() %>% 
-  filter(SpecCode %in% fish2$spec_code) %>% 
-  select(SpecCode, SpawningGround) %>% 
-  janitor::clean_names()
-
-missing_spawn <- left_join(fish2, missing_spawn)
-
-missing_spawn <- missing_spawn %>%
-  mutate(spawning_ground = as.factor(spawning_ground)) %>% 
-  group_by(genus) %>%
-  summarise(spawning_ground = mode(spawning_ground)) %>% 
-  ungroup()
-
-filled_data <- filled_data %>% 
-        left_join(missing_spawn, by = "genus") %>% 
-        mutate(spawning_ground = coalesce(spawning_ground.x, spawning_ground.y)) %>% 
-        select(-spawning_ground.x, -spawning_ground.y)
 
 
 # Place of Development
@@ -440,9 +365,94 @@ filled_data <- filled_data %>%
         select(-temp_preferred.x, -temp_preferred.y)
 
 
+
 missing <- miss_var_summary(filled_data)
 
-### ADD OXYGEN AND TEMP RANGE HERE AND SEE HOW MANY YOU GET 
+
+# New missing plot
+
+missing_data_filled <- filled_data %>% 
+  select(oxygen_cons, temp_range, fecundity_max, 
+         longevity_wild, temp_preferred, food_i, dev_place, iucn_category)
+  
+missing_filled_fig <- gg_miss_var(missing_data_filled) + # figure showing the missing data
+  theme_bw()
+missing_filled_fig
+
+#ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs"))
+
+
+
+
+# ______________________ FILLED DATA 2 (includes filled oxygen_cons and temp_range)
+
+
+# Oxygen Consumption
+
+missing_ox <- oxygen() %>%
+  filter(SpecCode %in% fish2$spec_code) %>% 
+  select(SpecCode, OxygenCons) %>% 
+  janitor::clean_names()
+
+missing_ox <- left_join(fish2, missing_ox)
+
+missing_ox <- missing_ox %>%
+  mutate(oxygen_cons = as.numeric(oxygen_cons)) %>% 
+  na.omit() %>% 
+  group_by(genus) %>%
+  summarise(oxygen_cons = mean(oxygen_cons)) %>% 
+  ungroup()
+
+filled_data2 <- filled_data %>% 
+        left_join(missing_ox, by = "genus") %>% 
+        mutate(oxygen_cons = coalesce(oxygen_cons.x, oxygen_cons.y)) %>% 
+        select(-oxygen_cons.x, -oxygen_cons.y)
+
+# 538 missing to now 430 missing
+
+
+# Temp Range
+
+missing_range <- stocks() %>%
+  filter(SpecCode %in% fish2$spec_code) %>% 
+  select(SpecCode, TempMin, TempMax) %>% 
+  mutate(temp_range = TempMax - TempMin) %>%
+  janitor::clean_names()
+
+missing_range <- left_join(fish2, missing_range)
+
+missing_range <- missing_range %>%
+  mutate(temp_range = as.numeric(temp_range)) %>% 
+  na.omit() %>% 
+  group_by(genus) %>%
+  summarise(temp_range = mean(temp_range)) %>% 
+  ungroup()
+
+filled_data2 <- filled_data2 %>% 
+        left_join(missing_range, by = "genus") %>% 
+        mutate(temp_range = coalesce(temp_range.x, temp_range.y)) %>% 
+        select(-temp_range.x, -temp_range.y)
+
+# 526 missing to now 391 missing
+
+
+
+missing2 <- miss_var_summary(filled_data2)
+
+
+# New missing plot
+
+missing_data_filled2 <- filled_data2 %>% 
+  select(oxygen_cons, temp_range, fecundity_max, 
+         longevity_wild, temp_preferred, food_i, dev_place, iucn_category)
+  
+missing_filled2_fig <- gg_miss_var(missing_data_filled2) + # figure showing the missing data
+  theme_bw()
+missing_filled2_fig
+
+#ggsave(missing_filled2_fig, file = paste0("missing_filled2_fig.png"), path = here::here("04_figs"))
+
+
 
 ```
 
@@ -512,6 +522,95 @@ gmm_new_fig
 
 
 ### Old
+
+```{r}
+# IUCN Category - DO NOT IMPUTE THIS
+
+# missing_iucn <- stocks() %>% 
+#   filter(SpecCode %in% fish2$spec_code) %>% 
+#   select(SpecCode, IUCN_Code) %>% 
+#   janitor::clean_names() %>% 
+#   mutate_at("iucn_code", str_replace, ".", "")
+# 
+# missing_iucn$iucn_code <- gsub("[.]","", missing_iucn$iucn_code)
+# 
+# 
+# missing_iucn <- left_join(fish2, missing_iucn)
+# 
+# missing_iucn <- missing_iucn %>%
+#   mutate(iucn_code = as.factor(iucn_code)) %>% 
+#   group_by(genus) %>%
+#   summarise(iucn_category = mode(iucn_code)) %>% 
+#   ungroup()
+# 
+# filled_data <- filled_data %>% 
+#         left_join(missing_iucn, by = "genus") %>% 
+#         mutate(iucn_category = coalesce(iucn_category.x, iucn_category.y)) %>% 
+#         select(-iucn_category.x, -iucn_category.y)
+
+
+# # Reproduction Guild and Spawning - DO NOT NEED
+# 
+# missing_rep <- reproduction() %>%
+#   filter(SpecCode %in% fish2$spec_code) %>% 
+#   select(SpecCode, RepGuild2, Spawning) %>% 
+#   janitor::clean_names()
+# 
+# missing_rep <- left_join(fish2, missing_rep)
+# 
+# 
+# missing_rep <- missing_rep %>%
+#   mutate(rep_guild2 = as.factor(rep_guild2), spawning = as.factor(spawning)) %>% 
+#   group_by(genus) %>%
+#   summarise(rep_guild2 = mode(rep_guild2), spawning = mode(spawning)) %>% 
+#   ungroup()
+# 
+# filled_data <- filled_data %>% 
+#         left_join(missing_rep, by = "genus") %>% 
+#         mutate(rep_guild2 = coalesce(rep_guild2.x, rep_guild2.y), 
+#                spawning = coalesce(spawning.x, spawning.y)) %>% 
+#         select(-rep_guild2.x, -rep_guild2.y, -spawning.x, -spawning.y)
+# 
+# 
+# # Spawning Ground - DO NOT NEED
+# 
+# missing_spawn <- spawning() %>% 
+#   filter(SpecCode %in% fish2$spec_code) %>% 
+#   select(SpecCode, SpawningGround) %>% 
+#   janitor::clean_names()
+# 
+# missing_spawn <- left_join(fish2, missing_spawn)
+# 
+# missing_spawn <- missing_spawn %>%
+#   mutate(spawning_ground = as.factor(spawning_ground)) %>% 
+#   group_by(genus) %>%
+#   summarise(spawning_ground = mode(spawning_ground)) %>% 
+#   ungroup()
+# 
+# filled_data <- filled_data %>% 
+#         left_join(missing_spawn, by = "genus") %>% 
+#         mutate(spawning_ground = coalesce(spawning_ground.x, spawning_ground.y)) %>% 
+#         select(-spawning_ground.x, -spawning_ground.y)
+# 
+
+```
+
+
+
+```{r}
+# # the package "sbha/dfnames" doesn't work with newest version of r, so here is their code (edited):
+# 
+# to_snake_case <- function(names){
+#   x <- trimws(names)
+#   x <- gsub("([a-z])([A-Z])", "\\1_\\2", x)
+#   x <- gsub("[[:punct:] ]", "_", x)
+#   x <- gsub("_+", "_", x)
+#   x <- gsub("^_|_$", "", x)
+#   #x <- make.unique(x, sep = "_")
+#   x <- tolower(x)
+#   x
+# }
+```
 
 ```{r}
 
