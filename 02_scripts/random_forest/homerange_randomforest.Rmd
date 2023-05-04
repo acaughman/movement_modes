@@ -78,7 +78,8 @@ merge_data <- full_data %>%
 
 rf_data <- left_join(hr_averages, merge_data) # join averages with corresponding predictor data
 
-predict_data <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_data.csv"))
+predict_data <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_data.csv")) %>% 
+  left_join(full_data)
 ```
 
 
@@ -163,14 +164,13 @@ test_predict <- predict(object = rf_fit, new_data = test) %>% # predict the trai
   mutate(species = test$species) %>% # add species name back
   mutate(family = test$family) # add families back
 
-predict_full <- full_join(rf_data, predict_data) # combine predict data with training data
-
-prediction <- predict(object = rf_fit, new_data = predict_full) %>% # predict the training set
-  bind_cols(predict_full) %>% # bind prediction to full data
+prediction <- predict(object = rf_fit, new_data = predict_data) %>% # predict the training set
+  bind_cols(predict_data) %>% # bind prediction to full data
   mutate(pred = exp(.pred)) %>% # back transform predictions
   select(-.pred) %>% # remove unneeded column
   rename(observed_homerange = hr) %>% # rename columns
-  rename(predicted_homerange = pred) # rename columns
+  rename(predicted_homerange = pred) %>%  # rename columns
+  select(species, observed_homerange, predicted_homerange)
 
 # write_csv(prediction, here::here("01_data", "02_processed_data", "pisco_rf_hr_predict.csv"))
 ```

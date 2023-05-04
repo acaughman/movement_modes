@@ -47,7 +47,8 @@ pld_rf_data <- left_join(pld_avg, merge_prep) %>% # combine data to merge averag
   distinct() %>% # get distinct values
   rename(PLD = avg_PLD) # rename column to PLD
 
-predict_data <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_data.csv"))
+predict_data <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_data.csv")) %>% 
+  left_join(pld_data_full)
 ```
 
 ```{r, include=FALSE}
@@ -93,12 +94,11 @@ train_predict <- predict(object = rf_fit, new_data = train) %>% # predict the tr
 test_predict <- predict(object = rf_fit, new_data = test) %>% # predict the training set
   bind_cols(test) # bind prediction to testing data columns
 
-predict_full <- full_join(pld_rf_data, predict_data) # combine predict data with training data
-
-prediction <- predict(object = rf_fit, new_data = predict_full) %>% # predict the training set
-  bind_cols(predict_full) %>% # bind prediction to full data
+prediction <- predict(object = rf_fit, new_data = predict_data) %>% # predict the training set
+  bind_cols(predict_data) %>% # bind prediction to full data
   rename(predicted_PLD = .pred) %>% # rename prediction column to predicted_PLD
-  rename(observed_PLD = PLD) # rename PLD to observed_PLD
+  rename(observed_PLD = PLD) %>% # rename PLD to observed_PLD
+  select(species, observed_PLD, predicted_PLD)
 
 # write_csv(prediction, here::here("01_data", "02_processed_data", "pisco_rf_pld_predict.csv"))
 ```
