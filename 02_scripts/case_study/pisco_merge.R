@@ -1,63 +1,54 @@
 library(tidyverse)
 
-pisco_fish <- read_csv(here::here("01_data", "01_raw_data", "PISCO_kelpforest_fish.1.3.csv"))
+pisco_hr <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_hr_predict.csv"))
+pisco_pld <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_pld_predict.csv"))
+pisco = read_csv(here::here("01_data", "01_raw_data", "PISCO_kelpforest_fish.1.3.csv"))
 pisco_site <- read_csv(here::here("01_data", "01_raw_data", "PISCO_kelpforest_site_table.1.2.csv"))
 pisco_taxa <- read_csv(here::here("01_data", "01_raw_data", "PISCO_kelpforest_taxon_table.1.2.csv"))
 
-pisco <- list(pisco_fish, pisco_site, pisco_taxa) %>%
-  reduce(full_join) %>%
-  filter(campus == "UCSB") %>%
-  filter(!is.na(count)) %>%
-  filter(!is.na(species_definition)) %>%
+pisco <- list(pisco, pisco_site, pisco_taxa) %>%
+  reduce(full_join) %>% 
   rename(species = species_definition)
 
-pisco_species <- pisco %>%
-  select(species) %>%
-  distinct()
-
-data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")) %>%
+pisco_rf = full_join(pisco_hr, pisco_pld) %>% 
   mutate(home_range = case_when(
     !is.na(observed_homerange) ~ observed_homerange,
     is.na(observed_homerange) ~ predicted_homerange
   )) %>%
   mutate(pld = case_when(
-    !is.na(observed_pld) ~ observed_pld,
-    is.na(observed_pld) ~ predicted_pld
+    !is.na(observed_PLD) ~ observed_PLD,
+    is.na(observed_PLD) ~ predicted_PLD
   )) %>%
   filter(pld < 400) %>%
   mutate(magnitude_homerange = floor(log10(home_range))) %>%
-  mutate(month_pld = ceiling(pld / 30 * 2)) %>%
-  mutate(month_pld = as.factor(month_pld)) %>%
-  mutate(magnitude_homerange = as.factor(magnitude_homerange)) %>% 
-  select(-class)
+  mutate(month_pld = ceiling(pld / 30)) %>% 
+  mutate(class = case_when(
+    magnitude_homerange %in% c(1, 0, -1) & month_pld %in% c(2) ~ 1,
+    magnitude_homerange > 1 ~ 2,
+    month_pld == 3 ~ 3,
+    magnitude_homerange < 2 & month_pld %in% c(1) ~ 4,
+    month_pld > 3 ~ 5,
+    magnitude_homerange < -3 & month_pld %in% c(2) ~ 7,
+    magnitude_homerange %in% c(-2, -3) & month_pld %in% c(2) ~ 8
+  )) %>% 
+  select(species, class, magnitude_homerange, month_pld) %>% 
+  mutate(class = as.factor(class))
 
-clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv")) %>% 
-  mutate(class2 = class) %>% 
-  mutate(class2 = case_when(class2 == 6 ~ 2, class2 != 6 ~ class2))  # combine classes 6 into 2
+pisco = full_join(pisco, pisco_rf, multiple = "all") %>%
+  filter(campus == "UCSB") %>%
+  filter(!is.na(count)) %>%
+  filter(!is.na(species))
 
-# split part of class 1 into 8
-clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -2] <- 8) 
-clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -3] <- 8)
+pisco_species <- pisco %>%
+  select(species, magnitude_homerange, month_pld, class) %>%
+  distinct() %>% 
+  na.omit()
 
-# rename incorrect species
-
-clusters <- clusters %>% 
-  mutate(species = str_replace(species, "Oblada melanuras", "Oblada melanurus")) %>% 
-  mutate(species = str_replace(species, "Pennahia aneas", "Pennahia aneus")) %>% 
-  select(species, class2)
-
-data = full_join(data, clusters)
-
-species <- left_join(pisco_species, data) %>%
-  filter(!is.na(home_range)) %>% 
-  mutate(class = as.factor(class2)) %>% 
-  select(-class2)
-
-ggplot(species, aes(magnitude_homerange, month_pld, color = class)) +
+ggplot(pisco_species, aes(magnitude_homerange, month_pld, color = class)) +
   geom_jitter(size = 2.5) +
   theme_bw()
 
-species_list <- species %>%
+species_list <- pisco_species %>%
   pull(species)
 
 pisco$date <- as.Date(with(pisco, paste(year, month, day, sep = "-")), "%Y-%m-%d")
@@ -66,37 +57,20 @@ pisco <- pisco %>%
   filter(species %in% species_list) %>%
   filter(site_status == "MPA")
 
-data <- data %>%
-  filter(species %in% species_list)
-
 pisco_sum <- pisco %>%
-  group_by(MPA_Name, species, date) %>%
+  group_by(MPA_Name, species, date, class) %>%
   summarize(average_count = mean(count))
 
-Sebastes_carnatus <- pisco_sum %>%
-  filter(species == "Sebastes carnatus")
+pisco_count = pisco_sum %>% 
+  group_by(MPA_Name, species, class) %>%
+  summarize(count = n()) %>% 
+  filter(count <= 5) %>% 
+  pull(species)
 
-ggplot(Sebastes_carnatus) +
-  geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(date, average_count, color = species, group = 1)) +
-  facet_wrap(~MPA_Name, scales = "free") +
-  theme_bw() +
-  theme(legend.position = "none")
+pisco_sum = pisco_sum %>% 
+  filter(species %in% pisco_count)
 
-Sebastes_mystinus <- pisco_sum %>%
-  filter(species == "Sebastes mystinus")
-
-ggplot(Sebastes_mystinus) +
-  geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(date, average_count, color = species, group = 1)) +
-  facet_wrap(~MPA_Name, scales = "free") +
-  theme_bw() +
-  theme(legend.position = "none")
-
-Ophiodon_elongatus <- pisco_sum %>%
-  filter(species == "Ophiodon elongatus")
-
-ggplot(Ophiodon_elongatus) +
+ggplot(pisco_sum) +
   geom_point(aes(date, average_count, color = species)) +
   geom_line(aes(date, average_count, color = species, group = 1)) +
   facet_wrap(~MPA_Name, scales = "free") +

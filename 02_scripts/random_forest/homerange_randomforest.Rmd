@@ -38,7 +38,8 @@ full_data <- read_csv(here("01_data", "02_processed_data", "homerange_data.csv")
   filter(!is.na(diet_troph3)) %>% # remove columns with NA in predictors
   filter(!is.na(movement_keyword)) %>% # remove columns with NA in predictors
   filter(!is.na(geog_range)) %>% # remove columns with NA in predictors
-  distinct()
+  distinct() %>% 
+  select(-r_fin, -kfin, -geog_range)
 
 n_ind <- ifelse(!is.na(full_data$n_ind), full_data$n_ind, 1) # replace NA with 1
 full_data$n_ind <- n_ind # add replaced column back to dataframe
@@ -77,9 +78,7 @@ merge_data <- full_data %>%
 
 rf_data <- left_join(hr_averages, merge_data) # join averages with corresponding predictor data
 
-predict_data <- full_data %>%
-  select(-hr, -n_ind) %>%
-  distinct(species, .keep_all = TRUE)
+predict_data <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_data.csv"))
 ```
 
 
@@ -99,7 +98,7 @@ This model seeks to predict home range values for an array of fish species using
 home range ~ growth rate (r) + carrying capacity (K) + movement keyword + fish length + trophic level + geographic range
 
 ```{r, include=FALSE}
-rf_recipe <- recipe(hr ~ r_fin + kfin + length + diet_troph3 + movement_keyword + geog_range, data = train) %>% # create prepossessing recipe
+rf_recipe <- recipe(hr ~ length + diet_troph3 + movement_keyword, data = train) %>% # create prepossessing recipe
   step_normalize(all_numeric_predictors()) %>% # normalize all numeric variables
   step_log(all_outcomes(), skip = TRUE) # log transform outcome variable
 ```
@@ -173,7 +172,7 @@ prediction <- predict(object = rf_fit, new_data = predict_full) %>% # predict th
   rename(observed_homerange = hr) %>% # rename columns
   rename(predicted_homerange = pred) # rename columns
 
-# write_csv(prediction, here::here("data", "homerange_rf_predictions.csv"))
+# write_csv(prediction, here::here("01_data", "02_processed_data", "pisco_rf_hr_predict.csv"))
 ```
 
 Numeric predictor variables were normalized and and the home range values were log-transformed so that the large values did not over influence the results of the model. Root mean square error (RMSE) and $R^2$ were calculated on the test set to evaluate the model performance. Finally, the model was use to predict the home ranges for 600 additional species with unknown home range values.
@@ -246,7 +245,7 @@ scatter_plot
 
 
 ```{r, include = FALSE}
-lm <- lm(.pred ~ log(hr), data = test_predict) # linear regression of ln of real versus ln of predicted
+lm <- lm(.pred ~ PLD, data = test_predict) # linear regression of ln of real versus ln of predicted
 ```
 
 ```{r}
