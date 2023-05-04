@@ -24,7 +24,9 @@ pld_data_full <- read_csv(here("01_data", "02_processed_data", "pld_data.csv")) 
   select(species, family, PLD, geog_range, movement_keyword, demers_pelag, length, common_name, kfin, r_fin, diet_troph3, Class, iucn_category) %>%
   mutate(movement_keyword = as.factor(movement_keyword)) %>% # turn categorical variables into factors
   mutate(family = as.factor(family)) %>%
-  filter(Class != "Elasmobranchii") # remove elasmobranchs that do not have a larval stage
+  filter(Class != "Elasmobranchii") %>% # remove elasmobranchs that do not have a larval stage
+  select(-r_fin, kfin) %>% 
+  filter(PLD < 400)
 
 
 # filter data with PLD values to use in random forest training and testing
@@ -45,9 +47,7 @@ pld_rf_data <- left_join(pld_avg, merge_prep) %>% # combine data to merge averag
   distinct() %>% # get distinct values
   rename(PLD = avg_PLD) # rename column to PLD
 
-predict_data <- pld_data_full %>% # predict data is full data set
-  select(-PLD) %>%
-  distinct(species, .keep_all = TRUE)
+predict_data <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_data.csv"))
 ```
 
 ```{r, include=FALSE}
@@ -66,7 +66,7 @@ This model seeks to predict pelagic larval duration values for an array of fish 
 PLD ~ r + K + movement keyword + fish length + trophic level
 
 ```{r, include=FALSE}
-rf_recipe <- recipe(PLD ~ r_fin + kfin + length + diet_troph3 + movement_keyword, data = train) %>% # create prepossessing recipe
+rf_recipe <- recipe(PLD ~ length + diet_troph3 + movement_keyword, data = train) %>% # create prepossessing recipe
   step_normalize(all_numeric_predictors()) # normalize all numeric variables
 ```
 
@@ -100,7 +100,7 @@ prediction <- predict(object = rf_fit, new_data = predict_full) %>% # predict th
   rename(predicted_PLD = .pred) %>% # rename prediction column to predicted_PLD
   rename(observed_PLD = PLD) # rename PLD to observed_PLD
 
-# write_csv(prediction, here::here("04_results", "pld", "pld_rf_predictions.csv"))
+# write_csv(prediction, here::here("01_data", "02_processed_data", "pisco_rf_pld_predict.csv"))
 ```
 
 ```{r, include = FALSE}

@@ -130,11 +130,26 @@ data = full_join(data_1, fish_data) %>%
   select(-demers_pelag)
 ```
 
+### Need to find kfin and rfin, get geographic range
 
+Manually calculated movement keyword based on demers_pelag value from fishbase with table from Bradley et al., 2023 (unpublished)
 
 ```{r}
+geog = read_csv(here::here("01_data", "01_raw_data", "hcaf_species_native.csv"))
+geog_species = read_csv(here::here("01_data", "01_raw_data", "all_speciesid.csv")) %>% 
+  rename(SpeciesID = SPECIESID) %>% 
+  mutate(species = paste(Genus, Species)) %>% 
+  filter(species %in% data$species)
 
+geog = left_join(geog_species, geog, multiple = "all") %>% 
+  filter(Probability >= .5) %>% 
+  select(species, CsquareCode, CenterLat, CenterLong) 
+  
 ```
 
 
-### Need to find kfin and rfin, calculate movement keyword, get geographic range
+```{r}
+write_csv(data, here::here("01_data", "02_processed_data", "pisco_rf_data.csv"))
+```
+
+
