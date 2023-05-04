@@ -1,0 +1,104 @@
+genus,species,r_fin,kfin,length,diet_troph3,movement_keyword,geog_range,references
+Sebastes,Sebastes paucispinis,0.106073465,15963.77887,91,3.557260934,habitat_reef,732500,"Bradley et al., 2023?"
+Sebastes,Sebastes mystinus,0.103740039,5301.71384,61,2.71,habitat_reef,680000,"Bradley et al., 2023?"
+Semicossyphus,Semicossyphus pulcher,0.707450578,27.00400648,91,3.603965566,habitat_reef,222500,"Bradley et al., 2023?"
+Trachurus,Trachurus symmetricus,0.238376295,97859.78073,81,3.57,pelagic,12545000,"Bradley et al., 2023?"
+Sebastes,Sebastes flavidus,0.058523207,159936.5521,66,4.15,habitat_reef,622500,"Bradley et al., 2023?"
+Sebastes,Sebastes carnatus,0.085905332,2351.425635,39,3.660011125,territorial,112500,"Bradley et al., 2023?"
+Hexagrammos,Hexagrammos decagrammus,0.340852342,481.1467603,61,3.631988265,habitat_reef,1112500,"Bradley et al., 2023?"
+Ophiodon,Ophiodon elongatus,0.142917331,37899.04791,152,4.53,migratory,722500,"Bradley et al., 2023?"
+Scorpaenichthys,Scorpaenichthys marmoratus,0.3221761,642.5057606,99,3.660011018,habitat_benthic,410000,"Bradley et al., 2023?"
+Sebastes,Sebastes melanops,0.085048452,27787.10688,63,4.38,habitat_reef,1035000,"Bradley et al., 2023?"
+Sebastes,Sebastes entomelas,0.085905332,127872.2023,60,3.7,habitat_reef,927500,"Bradley et al., 2023?"
+Citharichthys,Citharichthys sordidus,0.949478483,98.62677426,41,3.46,habitat_benthic,720000,"Bradley et al., 2023?"
+Caulolatilus,Caulolatilus princeps,0.360639419,12.12291218,102,3.81,habitat_reef,812500,"Bradley et al., 2023?"
+Mugil,Mugil cephalus,0.277257899,609274.372,100,2.59514551,habitat_coastal,15862500,"Bradley et al., 2023?"
+Seriola,Seriola lalandi,0.434484387,3829.661199,250,4.16,habitat_reef,18980000,"Bradley et al., 2023?"
+Sebastes,Sebastes pinniger,0.038909064,51977.33195,76,3.828147801,habitat_reef,487500,"Bradley et al., 2023?"
+Alopias,Alopias vulpinus,0.047303963,2806.783836,573.2999878,4.5,hms,225200000,"Bradley et al., 2023?"
+Sebastes,Sebastes diploproa,0.085905332,29520.86836,46,3.764736842,habitat_benthic,647500,"Bradley et al., 2023?"
+Engraulis,Engraulis mordax,0.452423043,424727.4555,24.79999924,3.174282949,pelagic,360000,"Bradley et al., 2023?"
+Prionace,Prionace glauca,0.055184365,336291.1917,400,4.35,hms,183387500,"Bradley et al., 2023?"
+Stereolepis,Stereolepis gigas,0.278444226,33.70154285,250,4.482012652,habitat_benthic,632500,"Bradley et al., 2023?"
+Paralichthys,Paralichthys californicus,0.686346119,215.8677611,152,4.482012652,habitat_benthic,375000,"Bradley et al., 2023?"
+Sardinops,Sardinops sagax,0.348585234,6612312.475,39.5,2.84,migratory,7210000,"Bradley et al., 2023?"
+Scomber,Scomber japonicus,0.39773042,5259513.122,64,3.38,hms,6372500,"Bradley et al., 2023?"
+Galeorhinus,Galeorhinus galeus,0.04309589,60630.74761,193,4.34,hms,9010000,"Bradley et al., 2023?"
+Sarda,Sarda chiliensis,0.474168676,271116.5089,102,4.49,pelagic,307500,"Bradley et al., 2023?"
+Squatina,Squatina californica,0.075553373,8857.049935,152,4.14,habitat_benthic,415000,"Bradley et al., 2023?"
+Atractoscion,Atractoscion nobilis,0.296616436,1870.644824,166,4.332557971,habitat_coastal,522500,"Bradley et al., 2023?"
+Squalus,Squalus acanthias,0.044399483,1203407.423,160,4.37,migratory,7900000,"Bradley et al., 2023?"
+Hexanchus,Hexanchus griseus,0.164192051,336.9225229,482,4.48,deep,38262500,"Bradley et al., 2023?"
+NA,Anarrhichthys ocellatus,NA,NA,240,3.557076306,habitat_benthic,NA,
+NA,Anisotremus davidsonii,NA,NA,58,3.585093727,habitat_benthic,NA,
+NA,Artedius corallinus,NA,NA,14,3.7,habitat_benthic,NA,
+NA,Atractoscion nobilis,NA,NA,166,4.332225091,habitat_benthic,NA,
+NA,Aulorhynchus flavidus,NA,NA,18,3.445006721,habitat_deep,NA,
+NA,Balistes polylepis,NA,NA,76,3.398310921,habitat_reef,NA,
+NA,Brachyistius frenatus,NA,NA,22,3.547737166,habitat_benthic,NA,
+NA,Cebidichthys violaceus,NA,NA,76,2.33,habitat_benthic,NA,
+NA,Cephaloscyllium ventriosum,NA,NA,110,3.883946215,habitat_benthic,NA,
+NA,Cheilotrema saturnum,NA,NA,45,3.594432867,habitat_benthic,NA,
+NA,Chitonotus pugetensis,NA,NA,23,3.594432867,habitat_benthic,NA,
+NA,Chromis punctipinnis,NA,NA,25,2.828623365,habitat_reef,NA,
+NA,Citharichthys stigmaeus,NA,NA,17,3.454345763,habitat_benthic,NA,
+NA,Cymatogaster aggregata,NA,NA,20.29999924,3.071441012,habitat_benthic,NA,
+NA,Embiotoca jacksoni,NA,NA,39,3.370293501,habitat_benthic,NA,
+NA,Embiotoca lateralis,NA,NA,38,3.388971781,habitat_benthic,NA,
+NA,Engraulis mordax,NA,NA,24.79999924,3.174171555,pelagic,NA,
+NA,Girella nigricans,NA,NA,66,2.146866126,habitat_deep,NA,
+NA,Gymnothorax mordax,NA,NA,152,4.5,habitat_benthic,NA,
+NA,Halichoeres semicinctus,NA,NA,38,3.323597799,habitat_reef,NA,
+NA,Heterodontus francisci,NA,NA,122,3.2,habitat_benthic,NA,
+NA,Heterostichus rostratus,NA,NA,61,3.911963636,habitat_benthic,NA,
+NA,Hexagrammos decagrammus,NA,NA,61,3.631789348,habitat_benthic,NA,
+NA,Hexagrammos lagocephalus,NA,NA,61,3.67,habitat_benthic,NA,
+NA,Hyperprosopon argenteum,NA,NA,30,3.547737166,habitat_benthic,NA,
+NA,Hypsypops rubicundus,NA,NA,30,3.230206397,habitat_reef,NA,
+NA,Liparis mucosus,NA,NA,13,3.77,habitat_benthic,NA,
+NA,Lythrypnus dalli,NA,NA,6.400000095,3.276902098,habitat_benthic,NA,
+NA,Medialuna californiensis,NA,NA,48,2.772588524,habitat_benthic,NA,
+NA,Micrometrus minimus,NA,NA,16,2.875319066,habitat_benthic,NA,
+NA,Mola mola,NA,NA,333,3.34227608,pelagic,NA,
+NA,Mugil cephalus,NA,NA,100,2.595144859,habitat_deep,NA,
+NA,Neoclinus uninotatus,NA,NA,25,3.547737166,habitat_benthic,NA,
+NA,Oxyjulis californica,NA,NA,25,3.211528116,habitat_benthic,NA,
+NA,Oxylebius pictus,NA,NA,25,3.473024044,habitat_benthic,NA,
+NA,Paralabrax clathratus,NA,NA,72,3.93,habitat_deep,NA,
+NA,Paralabrax maculatofasciatus,NA,NA,60,4.201476984,habitat_reef,NA,
+NA,Paralabrax nebulifer,NA,NA,67,3.575754586,habitat_reef,NA,
+NA,Paralichthys californicus,NA,NA,152,4.481651192,habitat_benthic,NA,
+NA,Platyrhinoidis triseriata,NA,NA,91,3.473024044,habitat_benthic,NA,
+NA,Pleuronichthys coenosus,NA,NA,36,3.230206397,habitat_benthic,NA,
+NA,Porichthys notatus,NA,NA,38,4.05205074,habitat_benthic,NA,
+NA,Prognathodes falcifer,NA,NA,15,3.370293501,habitat_reef,NA,
+NA,Pseudobatos productus,NA,NA,119,3.59,habitat_benthic,NA,
+NA,Rathbunella hypoplecta,NA,NA,16,3.594432867,habitat_benthic,NA,
+NA,Rhinogobiops nicholsii,NA,NA,15,3.426328235,habitat_benthic,NA,
+NA,Scorpaena guttata,NA,NA,43,3.76375,habitat_benthic,NA,
+NA,Scorpaenichthys marmoratus,NA,NA,99,3.659806742,habitat_benthic,NA,
+NA,Sebastes atrovirens,NA,NA,42,3.407650062,habitat_benthic,NA,
+NA,Sebastes auriculatus,NA,NA,56,4.0427116,habitat_benthic,NA,
+NA,Sebastes carnatus,NA,NA,39,3.659806849,habitat_benthic,NA,
+NA,Sebastes caurinus,NA,NA,58,4.06,habitat_benthic,NA,
+NA,Sebastes chrysomelas,NA,NA,39,3.519719745,habitat_benthic,NA,
+NA,Sebastes dallii,NA,NA,25,3.764736842,habitat_benthic,NA,
+NA,Sebastes hopkinsi,NA,NA,29,3.764736842,habitat_reef,NA,
+NA,Sebastes miniatus,NA,NA,91,3.764736842,habitat_reef,NA,
+NA,Sebastes nebulosus,NA,NA,45,3.9,habitat_reef,NA,
+NA,Sebastes paucispinis,NA,NA,91,3.557076306,habitat_reef,NA,
+NA,Sebastes pinniger,NA,NA,76,3.827911374,habitat_benthic,NA,
+NA,Sebastes rastrelliger,NA,NA,56,3.893285356,habitat_benthic,NA,
+NA,Sebastes rosaceus,NA,NA,36,3.764736842,habitat_benthic,NA,
+NA,Sebastes rubrivinctus,NA,NA,51,3.764736842,habitat_benthic,NA,
+NA,Sebastes saxicola,NA,NA,38,3.764736842,habitat_benthic,NA,
+NA,Sebastes semicinctus,NA,NA,25,3.764736842,habitat_benthic,NA,
+NA,Sebastes serranoides,NA,NA,61,4.15,habitat_reef,NA,
+NA,Sebastes serriceps,NA,NA,41,3.764736842,habitat_benthic,NA,
+NA,Semicossyphus pulcher,NA,NA,91,3.603772007,habitat_reef,NA,
+NA,Sphyraena argentea,NA,NA,145,4.481651192,pelagic,NA,
+NA,Stereolepis gigas,NA,NA,250,4.481651192,habitat_benthic,NA,
+NA,Synodus lucioceps,NA,NA,64,4.481651192,habitat_reef,NA,
+NA,Tetronarce californica,NA,NA,140,4.481651192,habitat_benthic,NA,
+NA,Triakis semifasciata,NA,NA,198,3.67,habitat_benthic,NA,
+NA,Ulvicola sanctaerosae,NA,NA,29,3.304919519,habitat_benthic,NA,

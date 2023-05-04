@@ -1,0 +1,194 @@
+predicted_PLD,species,observed_PLD,family,geog_range,movement_keyword,demers_pelag,length,common_name,kfin,diet_troph3,Class,iucn_category,genus,r_fin,references
+27.878445516560177,Acanthopagrus latus,33.7,Sparidae,4432500,habitat_coastal,demersal,40,yellowfin seabream,3432.6538454980846,3.865511506302735,Actinopteri,DD,NA,NA,NA
+25.19301120483059,Alosa pseudoharengus,5.484285714285714,Clupeidae,887500,habitat_coastal,pelagic-neritic,40,NA,24511.51959734142,3.39,Actinopteri,LC,NA,NA,NA
+26.649737792818275,Alosa sapidissima,8.916666666666666,Clupeidae,690000,pelagic,pelagic-neritic,76,NA,4287.867606198165,3.48,Actinopteri,LC,NA,NA,NA
+17.29292266522366,Auxis thazard,10,Scombridae,24452500,pelagic,pelagic-neritic,65,NA,1188784.85326621,4.37,Actinopteri,NA,NA,NA,NA
+38.667245745954716,Bolbometopon muricatum,31,Scaridae,10460000,habitat_reef,reef-associated,130,NA,921.4817530292988,2.7726231123167726,Actinopteri,VU,NA,NA,NA
+59.72893272236653,Boops boops,16.799999999999997,Sparidae,2757500,pelagic,demersal,40,NA,289938.8997189822,2.79,Actinopteri,LC,NA,NA,NA
+40.899178158074946,Caranx melampygus,57.6,Carangidae,13410000,habitat_reef,reef-associated,117,NA,47.645174421439854,4.49,Actinopteri,LC,NA,NA,NA
+28.290941971487022,Cephalopholis argus,27.5,Serranidae,10685000,habitat_reef,reef-associated,60,peacock hind,173.614566478561,4.48,Actinopteri,LC,NA,NA,NA
+33.25183867335202,Cephalopholis boenak,31,Serranidae,10042500,habitat_reef,reef-associated,30,brown-banded seabass,467414.1571591848,4.07,Actinopteri,LC,NA,NA,NA
+41.22282693595788,Chanos chanos,40.282000000000004,Chanidae,11060000,habitat_reef,benthopelagic,180,NA,23425.16313784026,2.5204181874020284,Actinopteri,LC,NA,NA,NA
+41.50587284740763,Cheilinus undulatus,34.3,Labridae,7215000,habitat_reef,reef-associated,229,humphead wrasse,5398.268449362704,4.0056254029676035,Actinopteri,EN,NA,NA,NA
+92.19013000671544,Clupea harengus,160,Clupeidae,3810000,migratory,benthopelagic,45,NA,829839.7885025496,3.38,Actinopteri,LC,NA,NA,NA
+58.653987521001234,Coregonus albula,28,Salmonidae,32500,migratory,benthopelagic,48,NA,20850.238192933677,3.1369191901962172,Actinopteri,LC,NA,NA,NA
+30.041166805655184,Coregonus lavaretus,19,Salmonidae,1395000,habitat_coastal,demersal,73,NA,18551.5565582474,3.13,Actinopteri,VU,NA,NA,NA
+29.730567197741163,Cromileptes altivelis,24,Serranidae,7332500,habitat_reef,reef-associated,70,NA,191382.41702813693,4.4820126516281515,Actinopteri,DD,NA,NA,NA
+30.11085302523015,Ctenolabrus rupestris,20.9,Labridae,1272500,habitat_reef,reef-associated,18,NA,2070.185700919061,3.58,Actinopteri,LC,NA,NA,NA
+33.18633133461195,Cynoscion nebulosus,19.5,Sciaenidae,557500,habitat_coastal,demersal,100,NA,23214.895825921372,3.9962844765232783,Actinopteri,LC,NA,NA,NA
+27.843176412767136,Dactylopterus volitans,24,Dactylopteridae,5692500,habitat_coastal,reef-associated,50,NA,6.205821294015757,3.65,Actinopteri,LC,NA,NA,NA
+41.19290997254851,Dicentrarchus labrax,49.17666666666667,Moronidae,1665000,habitat_coastal,demersal,103,european seabass,51902.739342871406,3.5198972278627303,Actinopteri,LC,NA,NA,NA
+72.42082169719171,Engraulis encrasicolus,37,Engraulidae,3817500,migratory,pelagic-neritic,20,NA,222703.88886957665,3.1929648023113737,Actinopteri,LC,NA,NA,NA
+60.76950851284269,Engraulis japonicus,47,Engraulidae,760000,pelagic,pelagic-neritic,18,NA,1215063.2728582197,3.14,Actinopteri,LC,NA,NA,NA
+50.43560134617605,Engraulis mordax,32.5,Engraulidae,360000,pelagic,pelagic-neritic,24.799999237060547,NA,424727.45552127366,3.1742829494227247,Actinopteri,LC,NA,NA,NA
+66.96203077950933,Engraulis ringens,74,Engraulidae,470000,pelagic,pelagic-neritic,20,NA,6557901.088773522,2.9501006167687196,Actinopteri,LC,NA,NA,NA
+24.504757426372578,Epinephelus areolatus,18,Serranidae,12137500,habitat_coastal,reef-associated,47,NA,5778.412723123169,3.74,Actinopteri,LC,NA,NA,NA
+31.521800919191953,Epinephelus marginatus,24.6,Serranidae,2530000,territorial,reef-associated,150,dusky grouper,43372.701856460466,4.43,Actinopteri,VU,NA,NA,NA
+29.936141061476516,Epinephelus merra,34.3,Serranidae,9600000,habitat_reef,reef-associated,32,NA,15891.938161673068,3.82,Actinopteri,LC,NA,NA,NA
+45.06755200334107,Epinephelus morio,40,Serranidae,3007500,habitat_benthic,reef-associated,125,red grouper,44841.13184234522,3.5,Actinopteri,VU,NA,NA,NA
+39.27758219607149,Epinephelus striatus,42,Serranidae,2580000,habitat_reef,reef-associated,122,nassau grouper,2316.178742948387,4.06,Actinopteri,CR,NA,NA,NA
+32.67208220858033,Euthynnus alletteratus,24,Scombridae,5647500,hms,pelagic-oceanic,122,NA,115033.1048848034,4.49,Actinopteri,LC,NA,NA,NA
+81.84982674774112,Gadus morhua,120.25,Gadidae,4322500,migratory,benthopelagic,200,atlantic cod,1024823.8232062228,4.09,Actinopteri,VU,NA,NA,NA
+37.19962902692574,Gasterosteus aculeatus,35,Gasterosteidae,6017500,habitat_coastal,benthopelagic,11,NA,579.82452838535,3.31,Actinopteri,LC,NA,NA,NA
+26.66677543324871,Haemulon plumierii,22.6,Haemulidae,2540000,habitat_reef,reef-associated,53,NA,431.55926458169665,3.82,Actinopteri,LC,NA,NA,NA
+27.934954737860927,Hoplopagrus guentherii,21.5,Lutjanidae,632500,habitat_reef,reef-associated,92,NA,273.06185256926335,3.8,Actinopteri,LC,NA,NA,NA
+32.50766466522368,Katsuwonus pelamis,21.1,Scombridae,251292500,pelagic,pelagic-oceanic,110,NA,4403649.089942738,4.43,Actinopteri,LC,NA,NA,NA
+30.47206213737931,Lachnolaimus maximus,25.9,Labridae,1942500,habitat_reef,reef-associated,91,hogfish,1005.5872694257348,4.17,Actinopteri,VU,NA,NA,NA
+31.787458616479796,Lethrinus harak,28,Lethrinidae,8735000,habitat_reef,reef-associated,50,thumbprint emperor,139.7279869826892,3.59,Actinopteri,LC,NA,NA,NA
+29.821054263635897,Lethrinus nebulosus,32.7,Lethrinidae,11485000,habitat_reef,reef-associated,87,spangled emperor,540.0978941589677,3.76,Actinopteri,LC,NA,NA,NA
+26.25275692709137,Lethrinus obsoletus,19.85,Lethrinidae,8592500,habitat_reef,reef-associated,60,NA,988.3063252351756,3.89,Actinopteri,LC,NA,NA,NA
+29.290332783801716,Lethrinus xanthochilus,26.65,Lethrinidae,10410000,habitat_reef,reef-associated,70,NA,137.262990158257,3.78,Actinopteri,LC,NA,NA,NA
+32.98084524269296,Lutjanus analis,31,Lutjanidae,2712500,habitat_reef,reef-associated,94,mutton snapper,158.9383908151658,3.91,Actinopteri,NT,NA,NA,NA
+32.08588385910585,Lutjanus argentiventris,22.9,Lutjanidae,712500,habitat_reef,reef-associated,71,NA,14303.98732552084,4.052329999556419,Actinopteri,LC,NA,NA,NA
+25.750478569114513,Lutjanus buccanella,26,Lutjanidae,2275000,habitat_coastal,reef-associated,75,NA,59.155507841759295,3.9215570649686824,Actinopteri,DD,NA,NA,NA
+33.20224427356907,Lutjanus campechanus,28,Lutjanidae,2282500,habitat_reef,reef-associated,100,red snapper,16964.466804844546,3.9402389178573314,Actinopteri,VU,NA,NA,NA
+29.992309723637415,Lutjanus cyanopterus,29,Lutjanidae,2590000,habitat_reef,reef-associated,160,NA,292.07096859594736,4.36,Actinopteri,VU,NA,NA,NA
+38.4590437661004,Lutjanus gibbus,54,Lutjanidae,12437500,habitat_reef,reef-associated,50,NA,844.8831363554173,4.12,Actinopteri,LC,NA,NA,NA
+31.011654619125345,Lutjanus griseus,32.4,Lutjanidae,2207500,habitat_reef,reef-associated,89,grey snapper,1831.6955488690537,4.23,Actinopteri,LC,NA,NA,NA
+30.164062222738533,Lutjanus guttatus,24.15,Lutjanidae,542500,habitat_reef,reef-associated,80,NA,983.5538907562784,4.04,Actinopteri,LC,NA,NA,NA
+29.845777378021097,Lutjanus kasmira,31,Lutjanidae,12822500,habitat_reef,reef-associated,40,NA,40.4510834358233,3.87,Actinopteri,LC,NA,NA,NA
+26.288965165642054,Lutjanus synagris,23.87,Lutjanidae,3455000,habitat_reef,reef-associated,60,NA,28340.631546246917,3.82,Actinopteri,NT,NA,NA,NA
+87.32076986385836,Mallotus villosus,150,Osmeridae,13647500,migratory,pelagic-oceanic,20,NA,7400552.679579394,3.15,Actinopteri,NA,NA,NA,NA
+91.64515390122098,Melanogrammus aeglefinus,141,Gadidae,2797500,migratory,demersal,112,NA,589371.6330108319,4.03,Actinopteri,VU,NA,NA,NA
+37.291872950735254,Menidia menidia,35,Atherinopsidae,912500,habitat_coastal,pelagic-neritic,15,NA,1323.357542505811,3.19,Actinopteri,LC,NA,NA,NA
+39.766499663614155,Merluccius productus,88,Merlucciidae,960000,migratory,pelagic-neritic,91,NA,7061680.777931809,4.35,Actinopteri,LC,NA,NA,NA
+39.3994693865579,Micromesistius poutassou,7.75,Gadidae,11370000,migratory,bathypelagic,55.5,NA,2238132.13949822,4.13,Actinopteri,NA,NA,NA,NA
+33.506938686798684,Monotaxis grandoculis,33.3,Lethrinidae,11135000,habitat_reef,reef-associated,60,NA,113.77294246688996,3.37,Actinopteri,LC,NA,NA,NA
+39.78405221928812,Morone saxatilis,33,Moronidae,565000,habitat_coastal,demersal,200,striped bass,27392.26209916924,4.65,Actinopteri,LC,NA,NA,NA
+34.681522899538784,Mulloidichthys flavolineatus,60.1,Mullidae,11047500,habitat_reef,reef-associated,43,white goatfish,351.5035609914876,3.84,Actinopteri,LC,NA,NA,NA
+35.98376502397602,Mullus surmuletus,30.1,Mullidae,2882500,habitat_benthic,demersal,40,NA,17341.664032193712,3.45,Actinopteri,LC,NA,NA,NA
+35.081332556035065,Mycteroperca microlepis,43,Serranidae,1780000,habitat_reef,reef-associated,145,gag,14127.232098197635,3.65,Actinopteri,VU,NA,NA,NA
+46.058893469803095,Naso unicornis,73.9,Acanthuridae,11817500,habitat_reef,reef-associated,70,bluespine unicornfish,2152.0863835424575,2.305576790100549,Actinopteri,LC,NA,NA,NA
+23.71166533492175,Oblada melanura,16,Sparidae,1805000,habitat_reef,benthopelagic,36.599998474121094,NA,6862.353237887897,3.43582888986381,Actinopteri,LC,NA,NA,NA
+34.16171078804341,Ocyurus chrysurus,30.9,Lutjanidae,2962500,habitat_reef,reef-associated,86.30000305175781,yellowtail snapper,106024.54373527516,4.03,Actinopteri,DD,NA,NA,NA
+38.79912337735164,Pagrus major,47,Sparidae,1235000,habitat_reef,demersal,100,NA,27715.417406655444,4.46,Actinopteri,LC,NA,NA,NA
+30.250668030140545,Pagrus pagrus,38,Sparidae,5512500,habitat_reef,benthopelagic,91,red porgy,69501.76972717891,3.86,Actinopteri,LC,NA,NA,NA
+59.704086934807066,Paralichthys dentatus,102.77,Paralichthyidae,360000,habitat_benthic,demersal,94,NA,19381.14190323905,4.49,Actinopteri,LC,NA,NA,NA
+30.678107509496023,Plectropomus leopardus,25.2,Serranidae,8795000,habitat_reef,reef-associated,120,coral trout,148319.65185550548,4.42,Actinopteri,LC,NA,NA,NA
+82.18151393186814,Pleuronectes platessa,100,Pleuronectidae,1712500,migratory,demersal,100,NA,184703.56240926232,3.17,Actinopteri,LC,NA,NA,NA
+53.21038050623557,Pseudopleuronectes americanus,87,Pleuronectidae,760000,habitat_benthic,demersal,64,NA,48209.724205089755,3.62,Actinopteri,NA,NA,NA,NA
+54.707755812842706,Sardina pilchardus,40,Clupeidae,2405000,pelagic,pelagic-neritic,27.5,NA,909343.101910535,3.06,Actinopteri,LC,NA,NA,NA
+75.41875282258852,Sardinops sagax,46.4875,Clupeidae,7210000,migratory,pelagic-neritic,39.5,NA,6612312.474791046,2.84,Actinopteri,LC,NA,NA,NA
+33.56018531681276,Sargocentron spiniferum,39.8,Holocentridae,11040000,habitat_reef,reef-associated,51,NA,134.95470381242433,3.6,Actinopteri,LC,NA,NA,NA
+39.90034420725318,Sarpa salpa,31.6,Sparidae,1802500,habitat_reef,benthopelagic,51,salema,8456.209714603301,2,Actinopteri,LC,NA,NA,NA
+38.77106666868263,Scarus ghobban,29.7,Scaridae,12940000,habitat_reef,reef-associated,75,NA,350.92462992694,2,Actinopteri,LC,NA,NA,NA
+38.19926325730935,Sciaenops ocellatus,22,Sciaenidae,987500,habitat_benthic,demersal,155,NA,55.282501631207474,3.7721022418594914,Actinopteri,LC,NA,NA,NA
+32.044719451378434,Scomber japonicus,19.06,Scombridae,6372500,hms,pelagic-neritic,64,NA,5259513.121755151,3.38,Actinopteri,LC,NA,NA,NA
+27.568921637728348,Scomber scombrus,45.14666666666667,Scombridae,2945000,hms,pelagic-neritic,60,NA,3765502.186793366,3.63,Actinopteri,LC,NA,NA,NA
+22.48765837301591,Scomberomorus cavalla,12,Scombridae,2745000,hms,pelagic-neritic,184,NA,42236.37570465762,4.42,Actinopteri,LC,NA,NA,NA
+25.00254213997119,Scomberomorus maculatus,9.903333333333332,Scombridae,832500,hms,pelagic-neritic,91,NA,23170.024141511494,4.53,Actinopteri,LC,NA,NA,NA
+47.929771603341145,Scophthalmus maximus,45.01,Scophthalmidae,1410000,habitat_benthic,demersal,100,NA,62251.19120500022,4.36,Actinopteri,NA,NA,NA,NA
+36.53186077210863,Sebastes crameri,90,Sebastidae,1632500,habitat_benthic,bathydemersal,58,NA,29240.00377813338,3.764736842105263,Actinopteri,NA,NA,NA,NA
+32.69365786171197,Semicossyphus pulcher,47.46666666666667,Labridae,222500,habitat_reef,reef-associated,91,california sheephead,27.00400647520341,3.6039655658616505,Actinopteri,VU,NA,NA,NA
+48.093581999372866,Solea solea,45,Soleidae,1462500,habitat_benthic,demersal,70,NA,164180.23103109017,3.21,Actinopteri,DD,NA,NA,NA
+29.77385344764769,Sparus aurata,52,Sparidae,1810000,habitat_reef,demersal,70,gilthead seabream,52530.50872683109,3.7,Actinopteri,LC,NA,NA,NA
+33.691093680055424,Spondyliosoma cantharus,34.775000000000006,Sparidae,3510000,habitat_reef,benthopelagic,60,NA,62479.581659343385,3.34,Actinopteri,LC,NA,NA,NA
+27.56834651587304,Thunnus albacares,26.53,Scombridae,238802500,hms,pelagic-oceanic,239,yellowfin tuna,2632284.9072994697,4.41,Actinopteri,NT,NA,NA,NA
+35.91130679949593,Thunnus maccoyii,24,Scombridae,81205000,hms,pelagic-oceanic,245,NA,678424.4268565642,3.9495799066590673,Actinopteri,CR,NA,NA,NA
+37.12823437633474,Thunnus thynnus,31,Scombridae,59672500,pelagic,pelagic-oceanic,458,NA,893507.9524669491,4.45,Actinopteri,EN,NA,NA,NA
+32.61100270464827,Trachinus draco,12.9,Trachinidae,2867500,habitat_benthic,demersal,53,NA,3639.605606778412,4.183103005409768,Actinopteri,LC,NA,NA,NA
+25.59771169758018,Trachurus symmetricus,1.5,Carangidae,12545000,pelagic,pelagic-oceanic,81,NA,97859.78073388584,3.57,Actinopteri,LC,NA,NA,NA
+30.537724255995318,Xyrichtys novacula,39,Labridae,4975000,habitat_coastal,reef-associated,38,pearly razorfish,179.8277477472612,3.51,Actinopteri,LC,NA,NA,NA
+31.055006828744943,Sebastes paucispinis,NA,NA,732500,habitat_reef,NA,91,NA,15963.77887,3.557260934,NA,NA,Sebastes,0.106073465,"Bradley et al., 2023?"
+37.850631700889814,Sebastes mystinus,NA,NA,680000,habitat_reef,NA,61,NA,5301.71384,2.71,NA,NA,Sebastes,0.103740039,"Bradley et al., 2023?"
+32.69365786171197,Semicossyphus pulcher,NA,NA,222500,habitat_reef,NA,91,NA,27.00400648,3.603965566,NA,NA,Semicossyphus,0.707450578,"Bradley et al., 2023?"
+25.59771169758018,Trachurus symmetricus,NA,NA,12545000,pelagic,NA,81,NA,97859.78073,3.57,NA,NA,Trachurus,0.238376295,"Bradley et al., 2023?"
+31.062323185558878,Sebastes flavidus,NA,NA,622500,habitat_reef,NA,66,NA,159936.5521,4.15,NA,NA,Sebastes,0.058523207,"Bradley et al., 2023?"
+39.072314591852596,Sebastes carnatus,NA,NA,112500,territorial,NA,39,NA,2351.425635,3.660011125,NA,NA,Sebastes,0.085905332,"Bradley et al., 2023?"
+32.497352223009564,Hexagrammos decagrammus,NA,NA,1112500,habitat_reef,NA,61,NA,481.1467603,3.631988265,NA,NA,Hexagrammos,0.340852342,"Bradley et al., 2023?"
+51.452628631868095,Ophiodon elongatus,NA,NA,722500,migratory,NA,152,NA,37899.04791,4.53,NA,NA,Ophiodon,0.142917331,"Bradley et al., 2023?"
+45.913534989055385,Scorpaenichthys marmoratus,NA,NA,410000,habitat_benthic,NA,99,NA,642.5057606,3.660011018,NA,NA,Scorpaenichthys,0.3221761,"Bradley et al., 2023?"
+29.209272788733504,Sebastes melanops,NA,NA,1035000,habitat_reef,NA,63,NA,27787.10688,4.38,NA,NA,Sebastes,0.085048452,"Bradley et al., 2023?"
+27.2058712895966,Sebastes entomelas,NA,NA,927500,habitat_reef,NA,60,NA,127872.2023,3.7,NA,NA,Sebastes,0.085905332,"Bradley et al., 2023?"
+36.06064645254745,Citharichthys sordidus,NA,NA,720000,habitat_benthic,NA,41,NA,98.62677426,3.46,NA,NA,Citharichthys,0.949478483,"Bradley et al., 2023?"
+34.98844613855864,Caulolatilus princeps,NA,NA,812500,habitat_reef,NA,102,NA,12.12291218,3.81,NA,NA,Caulolatilus,0.360639419,"Bradley et al., 2023?"
+40.33760523005216,Mugil cephalus,NA,NA,15862500,habitat_coastal,NA,100,NA,609274.372,2.59514551,NA,NA,Mugil,0.277257899,"Bradley et al., 2023?"
+38.17118753627216,Seriola lalandi,NA,NA,18980000,habitat_reef,NA,250,NA,3829.661199,4.16,NA,NA,Seriola,0.434484387,"Bradley et al., 2023?"
+27.14368481009072,Sebastes pinniger,NA,NA,487500,habitat_reef,NA,76,NA,51977.33195,3.828147801,NA,NA,Sebastes,0.038909064,"Bradley et al., 2023?"
+35.24062776349208,Alopias vulpinus,NA,NA,225200000,hms,NA,573.2999878,NA,2806.783836,4.5,NA,NA,Alopias,0.047303963,"Bradley et al., 2023?"
+39.47826793667445,Sebastes diploproa,NA,NA,647500,habitat_benthic,NA,46,NA,29520.86836,3.764736842,NA,NA,Sebastes,0.085905332,"Bradley et al., 2023?"
+50.43560134617605,Engraulis mordax,NA,NA,360000,pelagic,NA,24.799999239999998,NA,424727.4555,3.174282949,NA,NA,Engraulis,0.452423043,"Bradley et al., 2023?"
+27.722346404761936,Prionace glauca,NA,NA,183387500,hms,NA,400,NA,336291.1917,4.35,NA,NA,Prionace,0.055184365,"Bradley et al., 2023?"
+46.70241550969034,Stereolepis gigas,NA,NA,632500,habitat_benthic,NA,250,NA,33.70154285,4.482012652,NA,NA,Stereolepis,0.278444226,"Bradley et al., 2023?"
+44.468026198579246,Paralichthys californicus,NA,NA,375000,habitat_benthic,NA,152,NA,215.8677611,4.482012652,NA,NA,Paralichthys,0.686346119,"Bradley et al., 2023?"
+75.41875282258852,Sardinops sagax,NA,NA,7210000,migratory,NA,39.5,NA,6612312.475,2.84,NA,NA,Sardinops,0.348585234,"Bradley et al., 2023?"
+32.044719451378434,Scomber japonicus,NA,NA,6372500,hms,NA,64,NA,5259513.122,3.38,NA,NA,Scomber,0.39773042,"Bradley et al., 2023?"
+27.82443240476192,Galeorhinus galeus,NA,NA,9010000,hms,NA,193,NA,60630.74761,4.34,NA,NA,Galeorhinus,0.04309589,"Bradley et al., 2023?"
+37.87596522077922,Sarda chiliensis,NA,NA,307500,pelagic,NA,102,NA,271116.5089,4.49,NA,NA,Sarda,0.474168676,"Bradley et al., 2023?"
+40.638559382706205,Squatina californica,NA,NA,415000,habitat_benthic,NA,152,NA,8857.049935,4.14,NA,NA,Squatina,0.075553373,"Bradley et al., 2023?"
+30.294067654597256,Atractoscion nobilis,NA,NA,522500,habitat_coastal,NA,166,NA,1870.644824,4.332557971,NA,NA,Atractoscion,0.296616436,"Bradley et al., 2023?"
+47.74835263186811,Squalus acanthias,NA,NA,7900000,migratory,NA,160,NA,1203407.423,4.37,NA,NA,Squalus,0.044399482999999997,"Bradley et al., 2023?"
+46.750432176356995,Hexanchus griseus,NA,NA,38262500,deep,NA,482,NA,336.9225229,4.48,NA,NA,Hexanchus,0.164192051,"Bradley et al., 2023?"
+45.70769160016646,Anarrhichthys ocellatus,NA,NA,NA,habitat_benthic,NA,240,NA,NA,3.557076306,NA,NA,NA,NA,NA
+41.328502946711794,Anisotremus davidsonii,NA,NA,NA,habitat_benthic,NA,58,NA,NA,3.585093727,NA,NA,NA,NA,NA
+36.442225293095824,Artedius corallinus,NA,NA,NA,habitat_benthic,NA,14,NA,NA,3.7,NA,NA,NA,NA,NA
+38.31047135413479,Atractoscion nobilis,NA,NA,NA,habitat_benthic,NA,166,NA,NA,4.332225091,NA,NA,NA,NA,NA
+28.97070209877686,Aulorhynchus flavidus,NA,NA,NA,habitat_deep,NA,18,NA,NA,3.445006721,NA,NA,NA,NA,NA
+28.450503113680284,Balistes polylepis,NA,NA,NA,habitat_reef,NA,76,NA,NA,3.398310921,NA,NA,NA,NA,NA
+41.187798070873555,Brachyistius frenatus,NA,NA,NA,habitat_benthic,NA,22,NA,NA,3.547737166,NA,NA,NA,NA,NA
+45.29578639345657,Cebidichthys violaceus,NA,NA,NA,habitat_benthic,NA,76,NA,NA,2.33,NA,NA,NA,NA,NA
+45.36883700175379,Cephaloscyllium ventriosum,NA,NA,NA,habitat_benthic,NA,110,NA,NA,3.883946215,NA,NA,NA,NA,NA
+43.13312388905537,Cheilotrema saturnum,NA,NA,NA,habitat_benthic,NA,45,NA,NA,3.594432867,NA,NA,NA,NA,NA
+39.28195422238873,Chitonotus pugetensis,NA,NA,NA,habitat_benthic,NA,23,NA,NA,3.594432867,NA,NA,NA,NA,NA
+45.13741774044862,Chromis punctipinnis,NA,NA,NA,habitat_reef,NA,25,NA,NA,2.828623365,NA,NA,NA,NA,NA
+37.61333801531801,Citharichthys stigmaeus,NA,NA,NA,habitat_benthic,NA,17,NA,NA,3.454345763,NA,NA,NA,NA,NA
+51.53912065146522,Cymatogaster aggregata,NA,NA,NA,habitat_benthic,NA,20.299999239999998,NA,NA,3.071441012,NA,NA,NA,NA,NA
+44.50022700651569,Embiotoca jacksoni,NA,NA,NA,habitat_benthic,NA,39,NA,NA,3.370293501,NA,NA,NA,NA,NA
+36.711210190642674,Embiotoca lateralis,NA,NA,NA,habitat_benthic,NA,38,NA,NA,3.388971781,NA,NA,NA,NA,NA
+50.43560134617605,Engraulis mordax,NA,NA,NA,pelagic,NA,24.799999239999998,NA,NA,3.174171555,NA,NA,NA,NA,NA
+40.421669148120635,Girella nigricans,NA,NA,NA,habitat_deep,NA,66,NA,NA,2.146866126,NA,NA,NA,NA,NA
+49.14601001127764,Gymnothorax mordax,NA,NA,NA,habitat_benthic,NA,152,NA,NA,4.5,NA,NA,NA,NA,NA
+37.78217487104023,Halichoeres semicinctus,NA,NA,NA,habitat_reef,NA,38,NA,NA,3.323597799,NA,NA,NA,NA,NA
+45.314660383499806,Heterodontus francisci,NA,NA,NA,habitat_benthic,NA,122,NA,NA,3.2,NA,NA,NA,NA,NA
+37.33566230746216,Heterostichus rostratus,NA,NA,NA,habitat_benthic,NA,61,NA,NA,3.911963636,NA,NA,NA,NA,NA
+46.01394151814034,Hexagrammos decagrammus,NA,NA,NA,habitat_benthic,NA,61,NA,NA,3.631789348,NA,NA,NA,NA,NA
+40.97046678798166,Hexagrammos lagocephalus,NA,NA,NA,habitat_benthic,NA,61,NA,NA,3.67,NA,NA,NA,NA,NA
+37.312817912864915,Hyperprosopon argenteum,NA,NA,NA,habitat_benthic,NA,30,NA,NA,3.547737166,NA,NA,NA,NA,NA
+34.94547116086706,Hypsypops rubicundus,NA,NA,NA,habitat_reef,NA,30,NA,NA,3.230206397,NA,NA,NA,NA,NA
+36.46246757881009,Liparis mucosus,NA,NA,NA,habitat_benthic,NA,13,NA,NA,3.77,NA,NA,NA,NA,NA
+41.173188152619616,Lythrypnus dalli,NA,NA,NA,habitat_benthic,NA,6.400000095,NA,NA,3.276902098,NA,NA,NA,NA,NA
+40.29740429663114,Medialuna californiensis,NA,NA,NA,habitat_benthic,NA,48,NA,NA,2.772588524,NA,NA,NA,NA,NA
+48.25240249908426,Micrometrus minimus,NA,NA,NA,habitat_benthic,NA,16,NA,NA,2.875319066,NA,NA,NA,NA,NA
+59.03612439696969,Mola mola,NA,NA,NA,pelagic,NA,333,NA,NA,3.34227608,NA,NA,NA,NA,NA
+40.33760523005216,Mugil cephalus,NA,NA,NA,habitat_deep,NA,100,NA,NA,2.595144859,NA,NA,NA,NA,NA
+38.87743810334109,Neoclinus uninotatus,NA,NA,NA,habitat_benthic,NA,25,NA,NA,3.547737166,NA,NA,NA,NA,NA
+42.09280186921412,Oxyjulis californica,NA,NA,NA,habitat_benthic,NA,25,NA,NA,3.211528116,NA,NA,NA,NA,NA
+39.10096433349982,Oxylebius pictus,NA,NA,NA,habitat_benthic,NA,25,NA,NA,3.473024044,NA,NA,NA,NA,NA
+25.741718791336726,Paralabrax clathratus,NA,NA,NA,habitat_deep,NA,72,NA,NA,3.93,NA,NA,NA,NA,NA
+27.38331630634659,Paralabrax maculatofasciatus,NA,NA,NA,habitat_reef,NA,60,NA,NA,4.201476984,NA,NA,NA,NA,NA
+33.55856415364821,Paralabrax nebulifer,NA,NA,NA,habitat_reef,NA,67,NA,NA,3.575754586,NA,NA,NA,NA,NA
+44.468026198579246,Paralichthys californicus,NA,NA,NA,habitat_benthic,NA,152,NA,NA,4.481651192,NA,NA,NA,NA,NA
+44.90157569222997,Platyrhinoidis triseriata,NA,NA,NA,habitat_benthic,NA,91,NA,NA,3.473024044,NA,NA,NA,NA,NA
+41.97707764540459,Pleuronichthys coenosus,NA,NA,NA,habitat_benthic,NA,36,NA,NA,3.230206397,NA,NA,NA,NA,NA
+36.823733008103055,Porichthys notatus,NA,NA,NA,habitat_benthic,NA,38,NA,NA,4.05205074,NA,NA,NA,NA,NA
+38.978328479698234,Prognathodes falcifer,NA,NA,NA,habitat_reef,NA,15,NA,NA,3.370293501,NA,NA,NA,NA,NA
+45.47470866365854,Pseudobatos productus,NA,NA,NA,habitat_benthic,NA,119,NA,NA,3.59,NA,NA,NA,NA,NA
+38.76309978515929,Rathbunella hypoplecta,NA,NA,NA,habitat_benthic,NA,16,NA,NA,3.594432867,NA,NA,NA,NA,NA
+37.09053315817515,Rhinogobiops nicholsii,NA,NA,NA,habitat_benthic,NA,15,NA,NA,3.426328235,NA,NA,NA,NA,NA
+40.243415396991914,Scorpaena guttata,NA,NA,NA,habitat_benthic,NA,43,NA,NA,3.76375,NA,NA,NA,NA,NA
+45.913534989055385,Scorpaenichthys marmoratus,NA,NA,NA,habitat_benthic,NA,99,NA,NA,3.659806742,NA,NA,NA,NA,NA
+36.185284071595056,Sebastes atrovirens,NA,NA,NA,habitat_benthic,NA,42,NA,NA,3.407650062,NA,NA,NA,NA,NA
+36.565247212584815,Sebastes auriculatus,NA,NA,NA,habitat_benthic,NA,56,NA,NA,4.0427116,NA,NA,NA,NA,NA
+37.08591768270622,Sebastes carnatus,NA,NA,NA,habitat_benthic,NA,39,NA,NA,3.659806849,NA,NA,NA,NA,NA
+37.21545033127168,Sebastes caurinus,NA,NA,NA,habitat_benthic,NA,58,NA,NA,4.06,NA,NA,NA,NA,NA
+37.69282438905539,Sebastes chrysomelas,NA,NA,NA,habitat_benthic,NA,39,NA,NA,3.519719745,NA,NA,NA,NA,NA
+37.15042277794429,Sebastes dallii,NA,NA,NA,habitat_benthic,NA,25,NA,NA,3.764736842,NA,NA,NA,NA,NA
+29.809944389699048,Sebastes hopkinsi,NA,NA,NA,habitat_reef,NA,29,NA,NA,3.764736842,NA,NA,NA,NA,NA
+29.820724258080343,Sebastes miniatus,NA,NA,NA,habitat_reef,NA,91,NA,NA,3.764736842,NA,NA,NA,NA,NA
+34.08475793335464,Sebastes nebulosus,NA,NA,NA,habitat_reef,NA,45,NA,NA,3.9,NA,NA,NA,NA,NA
+31.055006828744943,Sebastes paucispinis,NA,NA,NA,habitat_reef,NA,91,NA,NA,3.557076306,NA,NA,NA,NA,NA
+39.69941498603361,Sebastes pinniger,NA,NA,NA,habitat_benthic,NA,76,NA,NA,3.827911374,NA,NA,NA,NA,NA
+35.03403196655307,Sebastes rastrelliger,NA,NA,NA,habitat_benthic,NA,56,NA,NA,3.893285356,NA,NA,NA,NA,NA
+35.25863015889669,Sebastes rosaceus,NA,NA,NA,habitat_benthic,NA,36,NA,NA,3.764736842,NA,NA,NA,NA,NA
+36.67137443667445,Sebastes rubrivinctus,NA,NA,NA,habitat_benthic,NA,51,NA,NA,3.764736842,NA,NA,NA,NA,NA
+35.472073492230024,Sebastes saxicola,NA,NA,NA,habitat_benthic,NA,38,NA,NA,3.764736842,NA,NA,NA,NA,NA
+37.15042277794429,Sebastes semicinctus,NA,NA,NA,habitat_benthic,NA,25,NA,NA,3.764736842,NA,NA,NA,NA,NA
+29.12217675079104,Sebastes serranoides,NA,NA,NA,habitat_reef,NA,61,NA,NA,4.15,NA,NA,NA,NA,NA
+35.09169053984907,Sebastes serriceps,NA,NA,NA,habitat_benthic,NA,41,NA,NA,3.764736842,NA,NA,NA,NA,NA
+32.69365786171197,Semicossyphus pulcher,NA,NA,NA,habitat_reef,NA,91,NA,NA,3.603772007,NA,NA,NA,NA,NA
+33.69729110966811,Sphyraena argentea,NA,NA,NA,pelagic,NA,145,NA,NA,4.481651192,NA,NA,NA,NA,NA
+46.70241550969034,Stereolepis gigas,NA,NA,NA,habitat_benthic,NA,250,NA,NA,4.481651192,NA,NA,NA,NA,NA
+29.978608152286625,Synodus lucioceps,NA,NA,NA,habitat_reef,NA,64,NA,NA,4.481651192,NA,NA,NA,NA,NA
+45.337946836674476,Tetronarce californica,NA,NA,NA,habitat_benthic,NA,140,NA,NA,4.481651192,NA,NA,NA,NA,NA
+44.825285511277606,Triakis semifasciata,NA,NA,NA,habitat_benthic,NA,198,NA,NA,3.67,NA,NA,NA,NA,NA
+40.11596704223,Ulvicola sanctaerosae,NA,NA,NA,habitat_benthic,NA,29,NA,NA,3.304919519,NA,NA,NA,NA,NA
