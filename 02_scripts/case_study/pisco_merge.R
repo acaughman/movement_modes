@@ -1,5 +1,5 @@
 library(tidyverse)
-
+library(lmtest)
 
 # Data Loading ------------------------------------------------------------
 
@@ -7,7 +7,11 @@ library(tidyverse)
 pisco_hr <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_hr_predict.csv")) %>% 
   select(observed_homerange, predicted_homerange, species)
 pisco_pld <- read_csv(here::here("01_data", "02_processed_data", "pisco_rf_pld_predict.csv")) %>% 
-  select(observed_PLD, predicted_PLD, species)
+  select(observed_PLD, predicted_PLD, species) %>% 
+  mutate(predicted_PLD = case_when(
+    species %in% c("Prionace glauca", "Alopias vulpinus") ~ 0,
+    TRUE ~ predicted_PLD
+  ))
 pisco = read_csv(here::here("01_data", "01_raw_data", "PISCO_kelpforest_fish.1.3.csv"))
 pisco_site <- read_csv(here::here("01_data", "01_raw_data", "PISCO_kelpforest_site_table.1.2.csv"))
 pisco_taxa <- read_csv(here::here("01_data", "01_raw_data", "PISCO_kelpforest_taxon_table.1.2.csv"))
@@ -467,3 +471,33 @@ ggplot(anapaca_SMCA_sum, aes(month_year, average_count)) +
   geom_point(aes(color = class), size = 2.5) +
   theme_bw()
 
+
+
+
+# Granger Test Playground -------------------------------------------------
+
+vand_ts = vand_SMR %>% 
+  select(-count) %>% 
+  distinct() %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = species, values_from = average_count) %>%
+  select(month_year, "Embiotoca jacksoni", "Hexagrammos decagrammus", "Embiotoca lateralis", "Sebastes auriculatus", "Sebastes carnatus", "Sebastes atrovirens","Sebastes caurinus") %>% 
+  distinct() 
+
+names(vand_ts) = c("month_year", "species1", "species2", "species3", "species4", "species5", "species6", "species7")
+
+ggplot(vand_ts) +
+  geom_line(aes(month_year, species1), color = "red") +
+  # geom_line(aes(month_year, species2), color = "blue") +
+  # geom_line(aes(month_year, species3)) +
+  # geom_line(aes(month_year, species4), color = "green") +
+  # geom_line(aes(month_year, species5), color = "purple") +
+  # geom_line(aes(month_year, species6), color = "pink") +
+  geom_line(aes(month_year, species7), color = "gold") +
+  theme_bw()
+
+grangertest(species1 ~ species2, order = 1, data = vand_ts)
+grangertest(species1 ~ species3, order = 1, data = vand_ts)
+grangertest(species1 ~ species5, order = 1, data = vand_ts)
+grangertest(species1 ~ species6, order = 1, data = vand_ts)
+grangertest(species1 ~ species7, order = 1, data = vand_ts)
