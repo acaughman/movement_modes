@@ -102,9 +102,14 @@ full_sum = pisco_sum %>%
 
 # Full Plots --------------------------------------------------------------
 
-ggplot(pisco_class, aes(magnitude_homerange, month_pld, color = class)) +
+f1 = ggplot(pisco_class, aes(magnitude_homerange, month_pld, color = class)) +
   geom_jitter(size = 2.5) +
-  theme_bw()
+  theme_bw() + 
+  labs(x = "Order of Magnitude of Home Range",
+       y = "Pelgaic Larval Duratino Month")
+f1
+
+#ggsave(f1, file = paste0("pisco_class.png"), path = here::here("04_figs", "chanel_islands"))
 
 ggplot(pisco_data %>% filter(count > 5)) +
   #geom_point(aes(month_year, average_count, color = class)) +
@@ -113,15 +118,26 @@ ggplot(pisco_data %>% filter(count > 5)) +
   theme_bw() + 
   guides(linetype = FALSE)
 
-ggplot(full_sum, aes(month_year, average_count)) +
+ggplot(full_sum, aes(month_year, log(average_count))) +
   geom_point(aes(color = class), size = 2.5) +
-  facet_wrap(~MPA_Name) +
+  facet_wrap(~MPA_Name, scales = "free") +
   theme_bw()
+  #geom_smooth(method = "lm", aes(color = class), se = FALSE)
 
-ggplot(full_sum %>% filter(class != 3 & class != 4), aes(month_year, average_count)) +
+full_sum_sub = full_sum %>% 
+  filter(MPA_Name %in% c("Anacapa Island SMR", "Campus Point SMCA", "Edward Ricketts SMCA", "Naples SMCA", "Point Dume SMR", "Scorpion SMR", "Santa Barbara Island SMR", "South Point SMR"))
+
+f2 = ggplot(full_sum_sub, aes(month_year, log(average_count))) +
   geom_point(aes(color = class), size = 2.5) +
-  facet_wrap(~MPA_Name) +
-  theme_bw()
+  facet_wrap(~MPA_Name, scales = "free", nrow = 2) +
+  theme_bw(base_size = 20) + geom_smooth(method = "lm", aes(color = class), se = FALSE) +
+  theme(strip.text = element_text(face = "bold"),
+        strip.background = element_rect(fill = "white"),
+        axis.text.x = element_text(angle = 60, hjust=1)) +
+  labs(x = "Time", y = "Log of Average Count")
+f2
+
+#ggsave(f2, file = paste0("class_sum.png"), path = here::here("04_figs", "chanel_islands"), height = 10, width = 15)
 
 # Vandenberg --------------------------------------------------------------
 
@@ -133,7 +149,7 @@ ggplot(vand_SMR, aes(magnitude_homerange, month_pld, color = class)) +
   theme_bw()
 
 ggplot(vand_SMR) +
-  #geom_point(aes(date, average_count, color = species)) +
+  #geom_point(aes(date, average_c count, color = species)) +
   geom_line(aes(month_year, average_count, color = class, linetype = species)) +
   theme_bw() +
   guides(linetype = FALSE)
@@ -449,7 +465,6 @@ ggplot(anapaca_SMR_sum, aes(month_year, average_count)) +
 
 # Anacapa Island SMCA -----------------------------------------------------
 
-
 anapaca_SMCA = pisco_data %>% 
   filter(MPA_Name == "Anacapa Island SMCA")
 
@@ -470,9 +485,6 @@ anapaca_SMCA_sum = anapaca_SMCA %>%
 ggplot(anapaca_SMCA_sum, aes(month_year, average_count)) +
   geom_point(aes(color = class), size = 2.5) +
   theme_bw()
-
-
-
 
 # Granger Test Playground -------------------------------------------------
 
