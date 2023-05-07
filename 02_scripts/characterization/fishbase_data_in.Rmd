@@ -13,6 +13,7 @@ library(tidyverse)
 library(here)
 library(rfishbase)
 library(naniar)
+library(car)
 ```
 
 ### Read in data
@@ -113,7 +114,7 @@ fish <- left_join(fish, temp) # this was making fish have 607 rows, removed repe
 
 ```
 
-### Collect climate/range data
+### Collect climate/range data - LOOK INTO FURTHER ------------------------------------------------------------
 
 ```{r}
 
@@ -126,6 +127,55 @@ eco <- ecosystem() %>%
   mutate(climate = tolower(climate))
 
 eco <- eco[!duplicated(eco$spec_code), ]
+
+eco <- within(eco, {
+             northern_lat <- ifelse(nrange_ns=="N", northern_lat, -northern_lat)
+             southern_lat <- ifelse(srange_ns=="N", southern_lat, -southern_lat)
+             western_lat <- ifelse(wrange_ew=="E", western_lat, -western_lat)
+             eastern_lat <- ifelse(erange_ew=="E", eastern_lat, -eastern_lat) })
+
+# eco2 = eco
+# 
+# eco2 <- eco2 %>% 
+#   mutate(northern_lat = as.numeric(northern_lat),
+#          southern_lat = as.numeric(southern_lat),
+#          western_lat = as.numeric(western_lat),
+#          eastern_lat = as.numeric(eastern_lat)) %>% 
+#   mutate(ocean = case_when(
+#     northern_lat <= 65  & southern_lat >= -60 & western_lat >= -179  & eastern_lat <= -75  ~ "east pacific",
+#     northern_lat <= 65  & southern_lat >= -60 & western_lat >= 120  & eastern_lat <= 180  ~ "west pacific",
+#     northern_lat <= 65  & southern_lat >= -60 & western_lat >= -75  & eastern_lat <= -30  ~ "west atlantic",
+#   ))
+#   mutate(ocean = case_when(
+#     northern_lat <= 65  & southern_lat >= 0 & western_lat >= -175  & eastern_lat <= -70  ~ "northeast pacific",
+#     northern_lat <= 65  & southern_lat >= 0 & western_lat >= 120  & eastern_lat <= -175  ~ "northwest pacific",
+#     northern_lat <= 65  & southern_lat >= 0 & western_lat <= -175  & eastern_lat <= -175  ~ "northwest pacific",
+#     northern_lat <= 65  & southern_lat >= 0 & western_lat >= 120  & eastern_lat >= 120  ~ "northwest pacific",
+#     northern_lat <= 0  & southern_lat >= -60 & western_lat >= -175  & eastern_lat <= -70  ~ "southeast pacific",
+#     northern_lat <= 0 & southern_lat >= -60 & western_lat >= 120 & eastern_lat <= -175 ~ "southwest pacific",
+#     northern_lat <= 25 & southern_lat >= -40 & western_lat >= 20 & eastern_lat <= 100 ~ "indian",
+#     northern_lat <= 25 & southern_lat >= -25 & western_lat >= 100 & eastern_lat <= 120 ~ "indo-pacific",
+#     northern_lat <= 65 & southern_lat >= 0 & western_lat >= -45 & eastern_lat <= 0 ~ "northeast atlantic",
+#     northern_lat <= 65 & southern_lat >= 0 & western_lat >= -80 & eastern_lat <= -45 ~ "northwest atlantic",
+#     northern_lat <= 0 & southern_lat >= -60 & western_lat >= -20 & eastern_lat <= 20 ~ "southeast atlantic",
+#     northern_lat <= 0 & southern_lat >= -60 & western_lat >= -70 & eastern_lat <= -20 ~ "southwest atlantic",
+#   )
+# )
+
+# northeast pacific: -175ºW to -100ºW, 65ºN to 0ºN
+# northwest pacific: 120ºE to -175ºW, 65ºN to 0ºN
+# southeast pacific: -175ºW to -70ºW, 0ºN to -60ºS
+# southwest pacific: 120ºE to -175ºW, 0ºN to -60ºS
+# 
+# indian: 20ºE to 100ºE, 25ºN to -40ºS
+# 
+# indo-pacfic? 100ºE to 120ºE, 25ºN to -25ºS
+# 
+# northeast atlantic: -45ºW to 0ºW, 65ºN to 0ºN
+# northwest atlantic: -80ºW to -45ºW, 65ºN to 0ºN
+# southeast atlantic: -20ºW to 20ºE, 0ºN to -60ºS
+# southwest atlantic: -70ºW to -20ºW, 0ºN to -60ºS
+
 
 fish <- left_join(fish, eco)
 
@@ -149,12 +199,6 @@ fecund <- fecund %>%  # average the values for a given spec code
   distinct()
 
 fish <- left_join(fish, fecund)
-
-
-
-
-
-
 
 ```
 
@@ -209,6 +253,48 @@ larvae <- larvae() %>%
 larvae <- larvae[!duplicated(larvae$spec_code), ]
 
 fish <- left_join(fish, larvae)
+
+```
+
+### Collect species richness by family data
+
+```{r}
+
+sp_rich <- load_taxa() %>% 
+  filter(Family %in% data$family) %>% 
+  select(Family, Species) %>%
+  count(Family) %>% 
+  rename(family = Family, sp_richness = n)
+
+fish <- left_join(fish, sp_rich)
+
+```
+
+### Collect nocturnal/diurnal data - LOOK INTO FURTHER -----------------------------------------------------
+
+```{r}
+
+# filtering for spec_codes in fish gave only 17 rows
+
+noct <- species() %>% 
+  select(SpecCode, Comments) %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
+  filter(grepl("nocturnal|diurnal|crepuscular", Comments))
+
+# filtering for genus in fish gave 39 rows
+
+noct2 <- species() %>% 
+  select(SpecCode, Genus, Comments) %>% 
+  filter(Genus %in% fish$genus) %>% 
+  filter(grepl("nocturnal|diurnal|crepuscular", Comments))
+
+
+# filtering for "night" using genus in fish gave 116 rows
+
+noct3 <- species() %>% 
+  select(SpecCode, Genus, Comments) %>% 
+  filter(Genus %in% fish$genus) %>% 
+  filter(grepl("night", Comments))
 
 ```
 
@@ -404,6 +490,7 @@ filled_data <- filled_data %>%
 # 571 missing to now 456 missing
 
 
+
 missing <- miss_var_summary(filled_data)
 
 
@@ -498,8 +585,8 @@ missing_filled2_fig
 
 ```{r}
 
-write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
-write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+#write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
 
 ```
 
@@ -518,14 +605,35 @@ write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2
 
 ```{r}
 
-# for numeric variables, omit NAs?
-data_cor <- data %>% 
+# for original data
+corr <- data %>% 
   select(where(is.numeric)) %>% 
-  select(temp_preferred, fecundity_mean, longevity_wild, length, kfin, r_fin, diet_troph3) %>% 
-  na.omit()
+  select(temp_preferred, temp_range, fecundity_max, fecundity_mean, longevity_wild, 
+         oxygen_cons, sp_richness, length, kfin, r_fin, diet_troph3)
 
-cor_mat <- round(cor(data_cor),2) # length and weight = 0.88, age_mat_min/2 and longevity_wild > 0.70 for all three
+cor_mat <- round(cor(corr, use="complete.obs"), 2)
 cor_mat
+
+# oxygen_cons, temp_preferred, temp_range, and sp_richness all VERY highly correlated with lots of others?
+# length and kfin 100% inverse relationship?
+# temp_range and r_fin 100% inverse relationship?
+# fecundity, longevity, r_fin
+# diet_troph3 and fecundity
+
+
+# for filled data
+corr_filled <- filled_data %>% 
+  select(where(is.numeric)) %>% 
+  select(temp_preferred, temp_range, fecundity_max, fecundity_mean, longevity_wild, 
+         oxygen_cons, sp_richness, length, kfin, r_fin, diet_troph3)
+
+cor_mat_filled <- round(cor(corr_filled, use="complete.obs"), 2)
+cor_mat_filled
+
+# temp_preferred, kfin, diet_troph3
+# temp_range and oxygen_cons
+# fecundity, longevity, r_fin
+# sp_richness, temp_preferred, length!, diet_troph3!
 
 
 ```
