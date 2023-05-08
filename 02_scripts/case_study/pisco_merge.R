@@ -1,5 +1,8 @@
 library(tidyverse)
+library(lme4)
 library(lmtest)
+library(emmeans)
+library(effects)
 
 # Data Loading ------------------------------------------------------------
 
@@ -47,20 +50,26 @@ pisco_rf = full_join(pisco_hr, pisco_pld, multiple = "all") %>%
     magnitude_homerange %in% c(-2, -3) & month_pld %in% c(2) ~ 8
   )) %>% 
   select(species, class, magnitude_homerange, month_pld) %>% 
-  mutate(class = as.factor(class))
+  mutate(class = as.factor(class)) %>% 
+  distinct() 
+
+sebastes_1 = c("Sebastes atrovirens/carnatus/chrysomelas/caurinus", 8, -2, 2)
+sebastes_2 = c("Sebastes carnatus/caurinus" , 8, -2, 2)
+sebastes_3 = c("Sebastes chrysomelas/carnatus", 8, -2, 2)
+
+pisco_rf = rbind(pisco_rf, sebastes_1)
+pisco_rf = rbind(pisco_rf, sebastes_2)
+pisco_rf = rbind(pisco_rf, sebastes_3)
 
 pisco = full_join(pisco, pisco_rf, multiple = "all") %>%
   filter(!is.na(count)) %>%
-  filter(!is.na(species))
+  filter(!is.na(species)) %>% 
+  mutate(magnitude_homerange = as.numeric(magnitude_homerange))
 
 pisco_species <- pisco %>%
   select(species, magnitude_homerange, month_pld, class) %>%
   distinct() %>% 
   na.omit()
-
-ggplot(pisco_species, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
 
 species_list <- pisco_species %>%
   pull(species)
@@ -117,6 +126,19 @@ ggplot(pisco_data %>% filter(count > 5)) +
   facet_wrap(~MPA_Name, scales = "free") +
   theme_bw() + 
   guides(linetype = FALSE)
+
+pisco_data_sub = pisco_data %>% 
+  filter(MPA_Name %in% c("Anacapa Island SMR", "Campus Point SMCA", "Edward Ricketts SMCA", "Naples SMCA", "Point Dume SMR", "Scorpion SMR", "Santa Barbara Island SMR", "South Point SMR"))
+
+f3 = ggplot(pisco_data_sub %>% filter(count > 5)) +
+  #geom_point(aes(month_year, average_count, color = class)) +
+  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
+  facet_wrap(~MPA_Name, scales = "free", nrow = 2) +
+  theme_bw() + 
+  guides(linetype = FALSE)
+f3
+
+#ggsave(f3, file = paste0("species_ts.png"), path = here::here("04_figs", "chanel_islands"), height = 10, width = 15)
 
 ggplot(full_sum, aes(month_year, log(average_count))) +
   geom_point(aes(color = class), size = 2.5) +
@@ -513,3 +535,33 @@ grangertest(species1 ~ species3, order = 1, data = vand_ts)
 grangertest(species1 ~ species5, order = 1, data = vand_ts)
 grangertest(species1 ~ species6, order = 1, data = vand_ts)
 grangertest(species1 ~ species7, order = 1, data = vand_ts)
+
+
+# Mixed Effects Model Playground ------------------------------------------
+
+lmer1 = lmer(average_count ~ class + (1 + class|MPA_Name), data = full_sum)
+summary(lmer1)
+
+lm1 = lm(average_count ~ class, data = full_sum)
+summary(lm1)
+anova(lm1)
+
+emmeans(lmer1, pairwise ~ class)
+
+emmeans(lmer1, eff ~ class) %>%
+  pluck("contrasts")
+emmeans(lmer1, del.eff ~ class) %>%
+  pluck("contrasts")
+
+sjPlot::plot_model(lmer1, show.values=TRUE, show.p=TRUE)
+
+effects <- effect(term= "class", mod= lmer1) 
+summary(effects)
+effects_df = effects %>% 
+  as.data.frame()
+
+ggplot() + 
+  geom_point(data = full_sum, aes(class, average_count)) +
+  geom_point(data=effects_df, aes(x=class, y=fit), color="blue")+
+  geom_line(data=effects_df, aes(x=class, y=fit),group =1, color="blue")+
+  geom_ribbon(data= effects_df, aes(x=class, ymin=lower, ymax=upper), alpha= 0.3, fill="blue") 
