@@ -189,6 +189,7 @@ fecund <- fecundity() %>%
   filter(SpecCode %in% fish$spec_code) %>% 
   select(SpecCode, FecundityMax, FecundityMin, FecundityMean) %>% 
   mutate(FecundityMeanCalc = (FecundityMax - FecundityMin)/2) %>% 
+  filter(FecundityMeanCalc > 0) %>% #remove inconsistent data
   janitor::clean_names()
 
 fecund <- fecund %>%  # average the values for a given spec code
@@ -318,7 +319,6 @@ data <- full_join(data, clusters)
 data[data == "pelagic-oceanic"] <- "pelagic_oceanic"
 data[data == "pelagic-neritic"] <- "pelagic_neritic"
 data[data == "pelagic"] <- "pelagic_oceanic"
-
 
 ```
 
