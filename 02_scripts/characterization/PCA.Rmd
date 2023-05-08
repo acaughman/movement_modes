@@ -360,7 +360,6 @@ set.seed(123)
 nmds = metaMDS(m_com, distance = "euclidean")
 nmds # stress: 0.1716711, weak ties
 
-
 #extract NMDS scores (x and y coordinates)
 filled_scores = as.data.frame(scores(nmds)$sites)
 
@@ -372,16 +371,22 @@ filled_scores$order = com_data$order
 filled_scores <- filled_scores %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
+species_scores = as.data.frame(nmds[["species"]]) %>% 
+  rownames_to_column(var = "var")
 
 nmds_plot1 = ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) + 
     geom_point(aes(color = class2)) +
     labs(x = "NMDS1", y = "NMDS2") +
-    stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)
+    stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
+  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  
 
 nmds_plot1 # classes 3 and 4 are distinct!
 # coloring by order gave four plus distinct groups..?
 
 #ggsave(nmds_plot1, file = paste0("nmds_plot1.png"), path = here::here("04_figs"))
+
 
 ```
 
