@@ -371,6 +371,7 @@ filled_scores$order = com_data$order
 filled_scores <- filled_scores %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
+
 species_scores = as.data.frame(nmds[["species"]]) %>% 
   rownames_to_column(var = "var")
 
