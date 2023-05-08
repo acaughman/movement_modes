@@ -378,9 +378,9 @@ species_scores = as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
 nmds_plot1 = ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) + 
-    geom_point(aes(color = class2)) +
-    labs(x = "NMDS1", y = "NMDS2") +
-    stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
+  geom_point(aes(color = class2)) +
+  labs(x = "NMDS1", y = "NMDS2") +
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
   geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
   ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
   
@@ -432,7 +432,9 @@ nmds_plot2 = ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   #theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)+
+  geom_segment(data = filled_scores2, aes(x = 0, xend=NMDS1, y=0, yend=NMDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
+  ggrepel::geom_text_repel(data = filled_scores2, aes(x=NMDS1, y=NMDS2, label = class2), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot2 # 2 and 3 are pretty distinct, 3 and 7 as well
 
