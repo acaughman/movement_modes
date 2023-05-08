@@ -14,21 +14,245 @@ library(rfishbase)
 library(FactoMineR)
 library(factoextra)
 library(vcd)
-
+library(purrr)
+library(car)
 ```
 
-
-### Load and clean data
+### Load data
 
 ```{r}
-fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv"))
-fishbase_data[fishbase_data == "pelagic-oceanic"] <- "pelagic_oceanic"
-fishbase_data[fishbase_data == "pelagic-neritic"] <- "pelagic_neritic"
-fishbase_data[fishbase_data == "pelagic"] <- "pelagic_oceanic"
+fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+  mutate_if(is.character, as.factor)
+filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>% 
+  mutate_if(is.character, as.factor)
+filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>% 
+  mutate_if(is.character, as.factor)
+```
+
+### Plot data
+
+
+```{r}
+
+# continuous
+
+plot_data = fishbase_data %>% 
+  mutate(class2 = as.factor(class2), order = as.factor(order))
+
+response = "class2"
+expl_cont = c("temp_preferred", "fecundity_max", "fecundity_mean",
+         "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3")
+
+scatter_data = function(x, y) {
+     ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]]) ) +
+          geom_jitter(aes(color = order)) +
+          theme_bw() +
+          theme(legend.position = "none")
+}
+
+#scatter_data(x = "temp_preferred", y = "class2")
+
+plots_cont = map(expl_cont, ~scatter_data(.x, "class2"))
+plots_cont
+
 ```
 
 
-### Plot data
+```{r}
+
+# categorical
+
+expl_cat = c("climate", "body_shape_i", "dev_place", "movement_keyword", 
+             "demers_pelag", "iucn_category", "food_i")
+
+plots_cat = map(expl_cat, ~scatter2_data(.x, "class2"))
+plots_cat
+
+
+```
+
+
+### Look at filled data
+
+```{r}
+
+# continuous
+
+plot_filled = filled_data %>% 
+  mutate(class2 = as.factor(class2), order = as.factor(order))
+
+expl_cont_filled = c("temp_preferred", "fecundity_max", "fecundity_mean",
+         "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3")
+
+scatter_filled = function(x, y) {
+     ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]]) ) +
+          geom_jitter(aes(color = order)) +
+          theme_bw() +
+          theme(legend.position = "none")
+}
+
+plots_cont_filled = map(expl_cont_filled, ~scatter_filled(.x, "class2"))
+plots_cont_filled
+
+```
+
+
+```{r}
+
+# categorical
+
+expl_cat_filled = c("climate", "body_shape_i", "dev_place", "movement_keyword", "demers_pelag",
+                    "iucn_category", "food_i")
+
+plots_cat_filled = map(expl_cat_filled, ~scatter_filled(.x, "class2"))
+plots_cat_filled
+
+
+```
+
+
+### Look at filled data including oxygen_cons and temp_range
+
+```{r}
+
+# continuous
+
+plot_filled2 = filled_data2 %>% 
+  mutate(class2 = as.factor(class2), order = as.factor(order))
+
+expl_cont_filled2 = c("temp_preferred", "fecundity_max", "fecundity_mean",
+         "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3",
+         "oxygen_cons", "temp_range")
+
+scatter_filled2 = function(x, y) {
+     ggplot(plot_filled2, aes(x = .data[[x]], y = .data[[y]]) ) +
+          geom_jitter(aes(color = order)) +
+          theme_bw() +
+          theme(legend.position = "none")
+}
+
+plots_cont_filled2 = map(expl_cont_filled2, ~scatter_filled2(.x, "class2"))
+plots_cont_filled2
+
+```
+
+Sort by variable and color by class
+
+```{r}
+
+plot2_data = filled_data2 %>% 
+  filter(r_fin != "NA") 
+
+#plot2_data = filled_data2
+
+plot2_data <- plot2_data %>%  
+  mutate(r_fin = sort(r_fin)) %>% 
+  mutate(species = as.factor(species)) %>% 
+  mutate(class2 = as.factor(class2)) %>% 
+  mutate(species = fct_relevel(plot2_data$species))
+
+ggplot(plot2_data, aes(species, r_fin)) +
+  geom_point(aes(color = class2)) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+  theme(legend.position = "none")
+
+```
+
+
+### Check Variable Inflation Factors (VIF)
+
+none are above 5
+
+```{r}
+
+model <- lm(class2 ~ temp_preferred + fecundity_mean + #fecundity_max + longevity_wild + 
+              sp_richness + length + kfin + r_fin + diet_troph3, 
+            data = filled_data)
+
+summary(model)
+
+vif(model) # when including both fecundity variables, they have a VIF over 5
+
+#create vector of VIF values
+vif_values <- vif(model)
+
+#create horizontal bar chart to display each VIF value
+barplot(vif_values, main = "VIF Values", horiz = TRUE, col = "steelblue", xlim = c(0,6), las = 2)
+
+#add vertical line at 5
+abline(v = 5, lwd = 3, lty = 2)
+
+
+#model2 <- lm(class2 ~ temp_preferred + length + r_fin, data = filled_data)
+#summary(model)
+
+```
+
+
+### Run nMDS and FAMD
+
+
+#### FAMD
+
+```{r}
+
+# getting error when I include demers_pelag! non-unique row value when setting row names?
+
+
+famd_filled <- filled_data %>% 
+   select(temp_preferred, fecundity_mean, #fecundity_max, longevity_wild, 
+          sp_richness, 
+          length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place, 
+          movement_keyword, #demers_pelag, iucn_category, 
+          food_i, class2) %>% 
+   mutate(class2 = as.factor(class2)) %>% 
+   na.omit()
+ 
+
+f1 <- FAMD(famd_filled[,1:12], graph=FALSE)
+f1
+
+eigen_f1 <- f1$eig
+eigen_f1 # only 8% of variance explained by first 2 components......
+
+
+f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_filled$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+  theme_minimal()
+
+f1_fig
+
+# ggsave(f1_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
+
+
+```
+
+
+#### nMDS
+
+```{r}
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```{r}
 #continuous 
@@ -47,19 +271,25 @@ fishbase_data[fishbase_data == "pelagic"] <- "pelagic_oceanic"
 #   geom_point(aes(color = class2))
 
 
-plot1_data = fishbase_data 
+# sort by variable and color by class
 
-#option 2 sort by class
-plot1_data = plot1_data %>% 
-  select(r_fin, species, class2)%>% 
-  mutate(class2 = sort(class2)) %>% 
+plot2_data = filled_data2 %>% 
+  filter(temp_preferred != "NA") 
+
+#plot2_data = filled_data2
+
+plot2_data <- plot2_data %>%  
+  mutate(temp_preferred = sort(temp_preferred)) %>% 
   mutate(species = as.factor(species)) %>% 
   mutate(class2 = as.factor(class2)) %>% 
-  mutate(species = fct_relevel(plot1_data$species))
+  mutate(species = fct_relevel(plot2_data$species))
 
 #more descriptive**** # USE THESE PLOTS for continuous 
-ggplot(plot1_data, aes(r_fin, class2)) +
-  geom_point(aes(color = r_fin))
+ggplot(plot2_data, aes(species, temp_preferred)) +
+  geom_point(aes(color = class2)) +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+
+
 
 # #more to find groupings
 # ggplot(plot1_data, aes(species, r_fin)) +
@@ -78,10 +308,10 @@ plot2_data = fishbase_data %>%
 #   geom_point(aes(color = family)) +
 #   theme(legend.position = "none")
 
-#more descriptive*** - USE THIS FOR CATEGORICAl
+#more descriptive*** - USE THIS FOR CATEGORICAL
 ggplot(plot2_data, aes(demers_pelag, class2)) +
-  geom_point(aes(color = demers_pelag)) +
-  #geom_jitter(aes(color = demers_pelag)) +
+  #geom_point(aes(color = demers_pelag)) +
+  geom_jitter(aes(color = demers_pelag)) +
   theme_bw() +
   labs(x = "Habitat Type",
        y = "Movement Class") +
@@ -119,8 +349,7 @@ ggplot(plot2_data, aes(oxygen_cons, class2)) +
        y = "O2 Consumption Rate") # +
   #scale_color_viridis_d()
 
-# no noteworthy groupings for class - try coloring by genus/family/order
-# COLORING BY GENUS GAVE PERFECT LOOKING GRAPH??
+# no noteworthy groupings for class - try coloring by family/order
 
 
 #option 2 sort by class

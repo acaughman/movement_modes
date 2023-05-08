@@ -185,18 +185,26 @@ fish <- left_join(fish, eco)
 
 ```{r}
 
-fecund <- fecundity() %>%  # load stocks info, then
-  filter(SpecCode %in% fish$spec_code) %>%  # filter rows by spec codes in fish, then
-  select(SpecCode, FecundityMax, FecundityMean) %>%   # select columns
+fecund <- fecundity() %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
+  select(SpecCode, FecundityMax, FecundityMin, FecundityMean) %>% 
+  mutate(FecundityMeanCalc = (FecundityMax - FecundityMin)/2) %>% 
   janitor::clean_names()
 
 fecund <- fecund %>%  # average the values for a given spec code
+  select(-fecundity_min) %>% 
   group_by(spec_code) %>% 
   mutate(fecundity_max = mean(fecundity_max, na.rm = TRUE), 
-         fecundity_mean = mean(fecundity_mean, na.rm = TRUE)) %>% 
-  mutate_at(vars(fecundity_max, fecundity_mean), ~ifelse(is.nan(.), NA, .)) %>% 
+         fecundity_mean = mean(fecundity_mean, na.rm = TRUE),
+         fecundity_mean_calc = mean(fecundity_mean_calc, na.rm = TRUE)) %>% 
+  mutate_at(vars(fecundity_max, fecundity_mean, fecundity_mean_calc), ~ifelse(is.nan(.), NA, .)) %>% 
   ungroup() %>% 
   distinct()
+
+fecund <- fecund %>%  # combine actual mean with calculated mean
+  mutate(fecundity_mean = coalesce(fecundity_mean,fecundity_mean_calc)) %>% 
+  select(-fecundity_mean_calc)
+
 
 fish <- left_join(fish, fecund)
 
@@ -206,8 +214,8 @@ fish <- left_join(fish, fecund)
 
 ```{r}
 
-spec <- species() %>%  # load stocks info, then
-  filter(SpecCode %in% fish$spec_code) %>%  # filter rows by spec codes in fish, then
+spec <- species() %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
   select(SpecCode, BodyShapeI, LongevityWild) %>% 
   janitor::clean_names()
 
@@ -298,7 +306,7 @@ noct3 <- species() %>%
 
 ```
 
-### Join new variables with data
+### Join new variables with data and clean names
 
 ```{r}
 
@@ -307,6 +315,11 @@ data <- left_join(fish, data) %>%
 
 data <- full_join(data, clusters)
 
+data[data == "pelagic-oceanic"] <- "pelagic_oceanic"
+data[data == "pelagic-neritic"] <- "pelagic_neritic"
+data[data == "pelagic"] <- "pelagic_oceanic"
+
+
 ```
 
 ### Write new csv including added variables
@@ -314,6 +327,7 @@ data <- full_join(data, clusters)
 ```{r}
 
 #write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+
 
 ```
 
@@ -487,8 +501,7 @@ filled_data <- filled_data %>%
         mutate(fecundity_mean = coalesce(fecundity_mean.x, fecundity_mean.y)) %>% 
         select(-fecundity_mean.x, -fecundity_mean.y)
 
-# 571 missing to now 456 missing
-
+# 571 missing to now 323 missing
 
 
 missing <- miss_var_summary(filled_data)
