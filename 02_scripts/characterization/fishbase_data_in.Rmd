@@ -660,15 +660,16 @@ fishbase_data_gmm <- data %>%
 
 gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   geom_jitter(aes(color = class2)) +
-  theme_bw() +
+  theme_bw(base_size = 20) +
   labs(
     x = "Order of Magnitude of Predicted Home Range",
-    y = "Predicted Pelagic Larval Duration (Month)"
+    y = "Predicted Pelagic Larval Duration (Month)",
+    color = "Class"
   )
 
 gmm_new_fig
 
-# ggsave(gmm_new_fig, file = paste0("gmm_new_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
+#ggsave(gmm_new_fig, file = paste0("gmm_new_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
 
 ```
 

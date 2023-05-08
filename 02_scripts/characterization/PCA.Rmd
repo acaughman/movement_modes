@@ -87,13 +87,16 @@ expl_cont_filled = c("temp_preferred", "fecundity_max", "fecundity_mean",
 
 scatter_filled = function(x, y) {
      ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_jitter(aes(color = order)) +
+          geom_jitter(aes(color = class2)) +
           theme_bw() +
           theme(legend.position = "none")
 }
 
 plots_cont_filled = map(expl_cont_filled, ~scatter_filled(.x, "class2"))
 plots_cont_filled
+
+scatter_filled(x = "length", y = "class2")
+
 
 ```
 
@@ -127,13 +130,19 @@ expl_cont_filled2 = c("temp_preferred", "fecundity_max", "fecundity_mean",
 
 scatter_filled2 = function(x, y) {
      ggplot(plot_filled2, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_jitter(aes(color = order)) +
+          geom_jitter(aes(color = class2)) +
           theme_bw() +
           theme(legend.position = "none")
 }
 
 plots_cont_filled2 = map(expl_cont_filled2, ~scatter_filled2(.x, "class2"))
 plots_cont_filled2
+
+
+
+ind1_1 <- scatter_filled2(x = "length", y = "class2")
+ind1_1
+
 
 ```
 
@@ -147,7 +156,7 @@ plot2_data = filled_data2 %>%
 #plot2_data = filled_data2
 
 plot2_data <- plot2_data %>%  
-  mutate(r_fin = sort(r_fin)) %>% 
+  #mutate(r_fin = sort(r_fin)) %>% 
   mutate(species = as.factor(species)) %>% 
   mutate(class2 = as.factor(class2)) %>% 
   mutate(species = fct_relevel(plot2_data$species))
@@ -224,12 +233,6 @@ f1_fig
 
 #ggsave(f1_fig, file = paste0("f1.png"), path = here::here("04_figs", "current_pca_famd"))
 
-
-
-
-fecundity_mean, length, r_fin, diet_troph3
-
-
 ```
 
 
@@ -257,11 +260,11 @@ eigen_f2
 
 
 f2_fig <- fviz_famd_ind(f2, label = "none", habillage = famd_filled2$class2, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
+  theme_bw()
 
 f2_fig # 2 and 3 completely separate, 2 and 5 as well
 
-#ggsave(f2_fig, file = paste0("f2.png"), path = here::here("04_figs", "current_pca_famd"))
+ggsave(f2_fig, file = paste0("f2.png"), path = here::here("04_figs", "current_pca_famd"))
 
 ```
 
@@ -292,7 +295,7 @@ eigen_f3
 
 
 f3_fig <- fviz_famd_ind(f3, label = "none", habillage = famd_filled3$class2, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
+  theme_bw()
 
 f3_fig # 2 and 3 completely separate, 2 and 5 as well
 
@@ -376,9 +379,9 @@ species_scores = as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
 nmds_plot1 = ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) + 
-    geom_point(aes(color = class2)) +
-    labs(x = "NMDS1", y = "NMDS2") +
-    stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
+  geom_point(aes(color = class2)) +
+  labs(x = "NMDS1", y = "NMDS2") +
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
   geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
   ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
   
@@ -430,7 +433,9 @@ nmds_plot2 = ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   #theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)+
+  geom_segment(data = filled_scores2, aes(x = 0, xend=NMDS1, y=0, yend=NMDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
+  ggrepel::geom_text_repel(data = filled_scores2, aes(x=NMDS1, y=NMDS2, label = class2), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot2 # 2 and 3 are pretty distinct, 3 and 7 as well
 
@@ -648,17 +653,6 @@ nmds_plot6 # 2, 3, 4
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 ```{r}
 #continuous 
 
@@ -681,19 +675,27 @@ nmds_plot6 # 2, 3, 4
 plot2_data = filled_data2 %>% 
   filter(temp_preferred != "NA") 
 
-#plot2_data = filled_data2
+plot2_data = filled_data2
 
 plot2_data <- plot2_data %>%  
-  mutate(temp_preferred = sort(temp_preferred)) %>% 
+  #mutate(length = sort(length)) %>% 
   mutate(species = as.factor(species)) %>% 
-  mutate(class2 = as.factor(class2)) %>% 
+  mutate(class2 = as.factor(class2)) %>%
+  mutate(order = as.factor(order)) %>% 
   mutate(species = fct_relevel(plot2_data$species))
 
 #more descriptive**** # USE THESE PLOTS for continuous 
-ggplot(plot2_data, aes(species, temp_preferred)) +
-  geom_point(aes(color = class2)) +
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+ind3 <- ggplot(plot2_data, aes(r_fin, class2)) +
+  geom_boxplot(aes(color = class2)) +
+  theme_bw(base_size  = 20) +
+  labs(y = "Movement Class",
+       x = "Growth Rate", color = "Class")
+  #theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+  #theme(legend.position = "none")
+ind3
 
+
+ggsave(ind3, file = paste0("ind3.png"), path = here::here("04_figs", "individual_plots"))
 
 
 # #more to find groupings
@@ -701,10 +703,43 @@ ggplot(plot2_data, aes(species, temp_preferred)) +
 #   geom_point(aes(color = class2))
 ```
 
+
+```{r}
+
+plot2_data = filled_data2
+
+plot2_data <- plot2_data %>%  
+  #mutate(length = sort(length)) %>% 
+  mutate(species = as.factor(species)) %>% 
+  mutate(class2 = as.factor(class2)) %>%
+  mutate(movement_keyword = as.factor(movement_keyword)) %>% 
+  mutate(species = fct_relevel(plot2_data$species))
+
+#more descriptive**** # USE THESE PLOTS for continuous 
+ind2 <- ggplot(plot2_data, aes(movement_keyword, class2)) +
+  geom_jitter(aes(color = class2)) +
+  theme_bw(base_size  = 20) +
+  labs(y = "Movement Class",
+       x = "Movement Keyword", color = "Class") +
+  theme(axis.text.x = element_text(angle = 30, hjust=1, size = 8))
+  #theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+  #theme(legend.position = "none")
+ind2
+
+
+ggsave(ind2, file = paste0("ind2.png"), path = here::here("04_figs", "individual_plots"))
+
+```
+
+
+
+
+
+
 ```{r}
 #categorical
-plot2_data = fishbase_data %>% 
-  select(demers_pelag, r_fin, species, class2, family, 
+plot2_data = filled_data %>% 
+  select(demers_pelag, r_fin, species, class2, family, movement_keyword, 
          order, class_taxon, longevity_wild, diet_troph3) %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
@@ -714,13 +749,13 @@ plot2_data = fishbase_data %>%
 #   theme(legend.position = "none")
 
 #more descriptive*** - USE THIS FOR CATEGORICAL
-ggplot(plot2_data, aes(demers_pelag, class2)) +
+ggplot(plot2_data, aes(class2, movement_keyword)) +
   #geom_point(aes(color = demers_pelag)) +
-  geom_jitter(aes(color = demers_pelag)) +
+  geom_boxplot(aes(color = class2)) +
   theme_bw() +
-  labs(x = "Habitat Type",
+  labs(x = "Movement Keyword",
        y = "Movement Class") +
-  theme(legend.position = "none") +
+  #theme(legend.position = "none") +
   scale_color_viridis_d() +
   theme(axis.text.x = element_text(angle = 30, hjust=1)) 
   #scale_color_manual(values = c("", ""))
