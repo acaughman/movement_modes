@@ -46,7 +46,7 @@ expl_cont = c("temp_preferred", "fecundity_max", "fecundity_mean",
 
 scatter_data = function(x, y) {
      ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_jitter(aes(color = order)) +
+          geom_jitter(aes(color = .data[[y]])) +
           theme_bw() +
           theme(legend.position = "none")
 }
@@ -66,7 +66,7 @@ plots_cont
 expl_cat = c("climate", "body_shape_i", "dev_place", "movement_keyword", 
              "demers_pelag", "iucn_category", "food_i")
 
-plots_cat = map(expl_cat, ~scatter2_data(.x, "class2"))
+plots_cat = map(expl_cat, ~scatter_data(.x, "class2"))
 plots_cat
 
 
