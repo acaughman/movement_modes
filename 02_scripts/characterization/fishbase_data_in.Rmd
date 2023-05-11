@@ -138,7 +138,7 @@ eco <- within(eco, {
 }) %>% 
   dplyr::select(-nrange_ns, -srange_ns, -wrange_ew, -erange_ew)
 
-#seperates lats and lons
+#separates lats and lons
 east = eco %>% 
   dplyr::select(spec_code, climate, eastern_lat) %>% 
   rename(lat = eastern_lat) 

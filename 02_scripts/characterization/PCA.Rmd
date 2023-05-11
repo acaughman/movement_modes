@@ -175,8 +175,8 @@ none are above 5
 
 ```{r}
 
-model <- lm(class2 ~ temp_preferred + fecundity_mean + #fecundity_max + longevity_wild + 
-              sp_richness + length + kfin + r_fin + diet_troph3, 
+model <- lm(class2 ~ temp_preferred + fecundity_mean + #fecundity_max +  
+            longevity_wild + sp_richness + length + kfin + r_fin + diet_troph3, 
             data = filled_data)
 
 summary(model)
@@ -210,7 +210,7 @@ abline(v = 5, lwd = 3, lty = 2)
 
 
 famd_filled <- filled_data %>% 
-   select(temp_preferred, fecundity_mean, #fecundity_max, longevity_wild, 
+   dplyr::select(temp_preferred, fecundity_mean, #fecundity_max, longevity_wild, 
           sp_richness, 
           length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place, 
           movement_keyword, #demers_pelag, iucn_category, 
@@ -239,7 +239,7 @@ f1_fig
 ```{r}
 
 famd_filled2 <- filled_data %>% 
-   select(fecundity_mean, length, r_fin, diet_troph3, 
+   dplyr::select(fecundity_mean, length, r_fin, diet_troph3, 
           #climate, 
           body_shape_i, 
           dev_place, 
@@ -272,7 +272,7 @@ ggsave(f2_fig, file = paste0("f2.png"), path = here::here("04_figs", "current_pc
 ```{r}
 
 famd_filled3 <- filled_data2 %>% 
-   select(fecundity_mean, length, r_fin, diet_troph3,
+   dplyr::select(fecundity_mean, length, r_fin, diet_troph3,
           oxygen_cons,
           #temp_range,
           climate, 
@@ -307,7 +307,7 @@ f3_fig # 2 and 3 completely separate, 2 and 5 as well
 ```{r}
 
 famd_filled4 <- filled_data2 %>% 
-   select(fecundity_mean, 
+   dplyr::select(fecundity_mean, 
           length, 
           r_fin, 
           #diet_troph3,
@@ -348,14 +348,14 @@ f4_fig # 2 and 3 completely separate, 2 and 5 as well
 ```{r}
 
 com_data <- filled_data %>% 
-   select(temp_preferred, fecundity_mean, #fecundity_max, longevity_wild, 
+   dplyr::select(temp_preferred, fecundity_mean, #fecundity_max, longevity_wild, 
           sp_richness, length, kfin, r_fin, diet_troph3, 
           species, order, class2) %>% 
    filter(temp_preferred > 0) %>% 
    na.omit()
 
 com <- com_data %>% 
-  select(-species, -order, -class2)
+  dplyr::select(-species, -order, -class2)
 
 m_com = as.matrix(com) # make matrix from dataframe
 
@@ -399,7 +399,7 @@ nmds_plot1 # classes 3 and 4 are distinct!
 ```{r}
 
 com_data2 <- filled_data %>% 
-   select(temp_preferred, #fecundity_mean, #fecundity_max, 
+   dplyr::select(temp_preferred, #fecundity_mean, #fecundity_max, 
           longevity_wild, 
           #sp_richness, 
           length, kfin, r_fin, diet_troph3, 
@@ -408,7 +408,7 @@ com_data2 <- filled_data %>%
    na.omit()
 
 com2 <- com_data2 %>% 
-  select(-species, -order, -class2)
+  dplyr::select(-species, -order, -class2)
 
 m_com2 = as.matrix(com2) # make matrix from dataframe
 
@@ -428,14 +428,17 @@ filled_scores2$order = com_data2$order
 filled_scores2 <- filled_scores2 %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
+species_scores = as.data.frame(nmds[["species"]]) %>% 
+  rownames_to_column(var = "var")
+
 
 nmds_plot2 = ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   #theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)+
-  geom_segment(data = filled_scores2, aes(x = 0, xend=NMDS1, y=0, yend=NMDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
-  ggrepel::geom_text_repel(data = filled_scores2, aes(x=NMDS1, y=NMDS2, label = class2), cex = 3, direction = "both", segment.size = 0.25)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
+  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot2 # 2 and 3 are pretty distinct, 3 and 7 as well
 
@@ -448,7 +451,7 @@ nmds_plot2 # 2 and 3 are pretty distinct, 3 and 7 as well
 ```{r}
 
 com_data3 <- filled_data %>% 
-   select(temp_preferred, #fecundity_mean, 
+   dplyr::select(temp_preferred, #fecundity_mean, 
           fecundity_max, 
           #longevity_wild, 
           #sp_richness, 
@@ -458,7 +461,7 @@ com_data3 <- filled_data %>%
    na.omit()
 
 com3 <- com_data3 %>% 
-  select(-species, -order, -class2)
+  dplyr::select(-species, -order, -class2)
 
 m_com3 = as.matrix(com3) # make matrix from dataframe
 
@@ -479,11 +482,17 @@ filled_scores3 <- filled_scores3 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
 
+species_scores = as.data.frame(nmds[["species"]]) %>% 
+  rownames_to_column(var = "var")
+
+
 nmds_plot3 = ggplot(filled_scores3, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   #theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
+  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot3 # 2 and 3 are pretty distinct, 3 and 4 as well
 
@@ -496,7 +505,7 @@ nmds_plot3 # 2 and 3 are pretty distinct, 3 and 4 as well
 ```{r}
 
 com_data4 <- filled_data %>% 
-   select(temp_preferred, #fecundity_mean, 
+   dplyr::select(temp_preferred, #fecundity_mean, 
           #fecundity_max, 
           #longevity_wild, 
           #sp_richness, 
@@ -506,7 +515,7 @@ com_data4 <- filled_data %>%
    na.omit()
 
 com4 <- com_data4 %>% 
-  select(-species, -order, -class2)
+  dplyr::select(-species, -order, -class2)
 
 m_com4 = as.matrix(com4) # make matrix from dataframe
 
@@ -526,12 +535,16 @@ filled_scores4$order = com_data4$order
 filled_scores4 <- filled_scores4 %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
+species_scores = as.data.frame(nmds[["species"]]) %>% 
+  rownames_to_column(var = "var")
 
 nmds_plot4 = ggplot(filled_scores4, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   #theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
+  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot4 # 2, 3, 4, 7 
 
@@ -544,7 +557,7 @@ nmds_plot4 # 2, 3, 4, 7
 ```{r}
 
 com_data5 <- filled_data %>% 
-   select(temp_preferred, 
+   dplyr::select(temp_preferred, 
           fecundity_mean, 
           #fecundity_max, 
           #longevity_wild, 
@@ -558,7 +571,7 @@ com_data5 <- filled_data %>%
    na.omit()
 
 com5 <- com_data5 %>% 
-  select(-species, -order, -class2)
+  dplyr::select(-species, -order, -class2)
 
 m_com5 = as.matrix(com5) # make matrix from dataframe
 
@@ -578,12 +591,17 @@ filled_scores5$order = com_data5$order
 filled_scores5 <- filled_scores5 %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
+species_scores = as.data.frame(nmds[["species"]]) %>% 
+  rownames_to_column(var = "var")
+
 
 nmds_plot5 = ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   #theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
+  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot5 # 2, 3, 4
 
@@ -597,7 +615,7 @@ nmds_plot5 # 2, 3, 4
 ```{r}
 
 com_data6 <- filled_data %>% 
-   select(#temp_preferred, 
+   dplyr::select(#temp_preferred, 
           fecundity_mean, 
           #fecundity_max, 
           #longevity_wild, 
@@ -611,7 +629,7 @@ com_data6 <- filled_data %>%
    na.omit()
 
 com6 <- com_data6 %>% 
-  select(-species, -order, -class2)
+  dplyr::select(-species, -order, -class2)
 
 m_com6 = as.matrix(com6) # make matrix from dataframe
 
@@ -632,11 +650,16 @@ filled_scores6 <- filled_scores6 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
 
+species_scores = as.data.frame(nmds[["species"]]) %>% 
+  rownames_to_column(var = "var")
+
 nmds_plot6 = ggplot(filled_scores6, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   #theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
+  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot6 # 2, 3, 4
 
@@ -660,7 +683,7 @@ nmds_plot6 # 2, 3, 4
 
 # #option1 sort by variable
 # plot1_data = plot1_data %>% 
-#   select(r_fin, species, class2) %>% 
+#   dplyr::select(r_fin, species, class2) %>% 
 #   mutate(r_fin = sort(r_fin)) %>% 
 #   mutate(species = as.factor(species)) %>% 
 #   mutate(class2 = as.factor(class2)) %>% 
@@ -739,7 +762,7 @@ ggsave(ind2, file = paste0("ind2.png"), path = here::here("04_figs", "individual
 ```{r}
 #categorical
 plot2_data = filled_data %>% 
-  select(demers_pelag, r_fin, species, class2, family, movement_keyword, 
+  dplyr::select(demers_pelag, r_fin, species, class2, family, movement_keyword, 
          order, class_taxon, longevity_wild, diet_troph3) %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
@@ -774,7 +797,7 @@ ggplot(plot2_data, aes(oxygen_cons, class2)) +
 
 #option1 sort by oxygen_cons
 plot2_data = plot2_data %>% 
-  select(oxygen_cons, species, class2, genus, order, temp_preferred) %>% 
+  dplyr::select(oxygen_cons, species, class2, genus, order, temp_preferred) %>% 
   mutate(oxygen_cons = sort(oxygen_cons)) %>% 
   mutate(species = as.factor(species)) %>% 
   mutate(class2 = as.factor(class2)) %>% 
@@ -794,7 +817,7 @@ ggplot(plot2_data, aes(oxygen_cons, class2)) +
 
 #option 2 sort by class
 plot2_data = plot2_data %>% 
-  select(oxygen_cons, species, class2, order, temp_preferred)%>% 
+  dplyr::select(oxygen_cons, species, class2, order, temp_preferred)%>% 
   mutate(class2 = sort(class2)) %>% 
   mutate(species = as.factor(species)) %>% 
   mutate(class2 = as.factor(class2)) %>% 
@@ -818,7 +841,7 @@ ggplot(plot2_data, aes(temp_preferred, class2)) +
 ```{r}
 # 
 # plot3_data = fishbase_data %>% 
-#   select(demers_pelag, env_temp, body_shape_i, species, class, class2) %>% 
+#   dplyr::select(demers_pelag, env_temp, body_shape_i, species, class, class2) %>% 
 #   mutate(class = as.factor(class), class2 = as.factor(class2))
 # 
 # #to find groupings
@@ -837,7 +860,7 @@ ggplot(plot2_data, aes(temp_preferred, class2)) +
 #   #scale_color_manual(values = c("", ""))
 # 
 # plot4_data = fishbase_data %>% 
-#   select(length, species, class2) %>% 
+#   dplyr::select(length, species, class2) %>% 
 #   #mutate(class2 = sort(length)) %>% this line is causing problemssssss
 #   mutate(species = as.factor(species)) %>% 
 #   mutate(class2 = as.factor(class2)) %>% 
@@ -858,8 +881,8 @@ Most of this can probably go in old now and then doing overall NMDS and FAMD the
 
 ```{r}
 fishbase_p1 <- fishbase_data %>% 
-  select(where(is.numeric)) %>% 
-  select(r_fin, longevity_wild, length, fecundity_mean, diet_troph3, class2) %>% 
+  dplyr::select(where(is.numeric)) %>% 
+  dplyr::select(r_fin, longevity_wild, length, fecundity_mean, diet_troph3, class2) %>% 
   na.omit() # YOU WANT TO REMOVE COLUMNS WITH NAS FOR PCA, AND PROBABLY NMDS TOO
  
 p1 <- PCA(fishbase_p1[,1:5], graph = FALSE) # runs the PCA on the first 5 columns (not class)
@@ -898,8 +921,8 @@ components_p1 <- gridExtra::grid.arrange(p1_c1, p1_c2, ncol = 2)
 
 ```{r}
 fishbase_p2 <- fishbase_data %>% 
-  select(where(is.numeric)) %>% 
-  select(r_fin, length, diet_troph3, class2) %>% 
+  dplyr::select(where(is.numeric)) %>% 
+  dplyr::select(r_fin, length, diet_troph3, class2) %>% 
   mutate(class2 = as.factor(class2)) %>% 
   na.omit()
 
@@ -925,7 +948,7 @@ p2_fig
 ```{r}
 
 fishbase_f1 <- fishbase_data %>% 
-   select(weight, env_temp, temp_preferred, fecundity_mean, r_fin, class2) %>% 
+   dplyr::select(weight, env_temp, temp_preferred, fecundity_mean, r_fin, class2) %>% 
    mutate(class2 = as.factor(class2), 
           env_temp = as.factor(env_temp)) %>% 
    na.omit()
@@ -950,7 +973,7 @@ f1_fig
 ```{r}
 
 fishbase_f2 <- fishbase_data %>% 
-   select(r_fin, env_temp, temp_preferred, demers_pelag, 
+   dplyr::select(r_fin, env_temp, temp_preferred, demers_pelag, 
           body_shape_i, fecundity_mean, longevity_wild, movement_keyword, length, class2, kfin, diet_troph3, food_i) %>% 
    mutate(class2 = as.factor(class2), 
           env_temp = as.factor(env_temp),
@@ -982,7 +1005,7 @@ fviz_famd_var(f2, geom = "arrow", )
 ```{r}
 
 fishbase_f3 <- fishbase_data %>% 
-  select(length, diet_troph3, demers_pelag, order) %>% 
+  dplyr::select(length, diet_troph3, demers_pelag, order) %>% 
   mutate(order = as.factor(order), demers_pelag = as.factor(demers_pelag)) %>% 
   na.omit()
 
@@ -1012,8 +1035,8 @@ f3_fig
 
 ```{r}
 fishbase_pca1 <- fishbase_data %>% 
-  select(where(is.numeric)) %>% 
-  select(r_fin, kfin, length, diet_troph3, class) %>% 
+  dplyr::select(where(is.numeric)) %>% 
+  dplyr::select(r_fin, kfin, length, diet_troph3, class) %>% 
   mutate(class = as.factor(class))
 
 # this will only work if all variables are numeric
@@ -1045,8 +1068,8 @@ pca1_fig
 ```{r}
 
 fishbase_pca2 <- fishbase_data %>% 
-  select(where(is.numeric)) %>% 
-  select(r_fin, length, diet_troph3, class) %>% 
+  dplyr::select(where(is.numeric)) %>% 
+  dplyr::select(r_fin, length, diet_troph3, class) %>% 
   mutate(class = as.factor(class))
 
 pca2 <- PCA(fishbase_pca2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
@@ -1070,8 +1093,8 @@ pca2_fig
 ```{r}
 
 fishbase_pca3 <- fishbase_data %>% 
-  select(where(is.numeric)) %>% 
-  select(kfin, length, diet_troph3, class) %>% 
+  dplyr::select(where(is.numeric)) %>% 
+  dplyr::select(kfin, length, diet_troph3, class) %>% 
   mutate(class = as.factor(class))
 
 pca3 <- PCA(fishbase_pca3[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
@@ -1095,8 +1118,8 @@ pca3_fig
 ```{r}
 
 fishbase_pca4 <- fishbase_data %>% 
-  select(where(is.numeric)) %>% 
-  select(length, diet_troph3, class) %>% 
+  dplyr::select(where(is.numeric)) %>% 
+  dplyr::select(length, diet_troph3, class) %>% 
   mutate(class = as.factor(class))
 
 pca4 <- PCA(fishbase_pca4[,1:2], graph = FALSE) # runs the PCA on the first 4 columns (not class)
@@ -1122,7 +1145,7 @@ pca4_fig # group 6 pretty clearly defined?
 ```{r}
 
 fishbase_famd1 <- fishbase_data %>% 
-  select(r_fin, kfin, length, diet_troph3, movement_keyword, food_i, class) %>% 
+  dplyr::select(r_fin, kfin, length, diet_troph3, movement_keyword, food_i, class) %>% 
   mutate(class = as.factor(class), movement_keyword = as.factor(movement_keyword), food_i = as.factor(food_i)) %>% 
   na.omit(fishbase_famd1)
 
@@ -1147,7 +1170,7 @@ famd1_fig
 ```{r}
 
 fishbase_famd2 <- fishbase_data %>% 
-  select(length, food_i, class) %>% 
+  dplyr::select(length, food_i, class) %>% 
   mutate(class = as.factor(class), food_i = as.factor(food_i)) %>% 
   na.omit(fishbase_famd2)
 
@@ -1170,7 +1193,7 @@ famd2_fig
 ```{r}
 
 fishbase_famd3 <- fishbase_data %>% 
-  select(r_fin, kfin, diet_troph3, iucn_category, class) %>% 
+  dplyr::select(r_fin, kfin, diet_troph3, iucn_category, class) %>% 
   mutate(class = as.factor(class), iucn_category = as.factor(iucn_category)) %>% 
   na.omit(fishbase_famd3)
 
@@ -1194,7 +1217,7 @@ famd3_fig
 ```{r}
 
 fishbase_famd4 <- fishbase_data %>% 
-  select(length, iucn_category, class) %>% 
+  dplyr::select(length, iucn_category, class) %>% 
   mutate(class = as.factor(class), iucn_category = as.factor(iucn_category)) %>% 
   na.omit(fishbase_famd4)
 
@@ -1218,7 +1241,7 @@ famd4_fig
 ```{r}
 
 fishbase_famd5 <- fishbase_data %>% 
-  select(length, demers_pelag, diet_troph3, class) %>% 
+  dplyr::select(length, demers_pelag, diet_troph3, class) %>% 
   mutate(class = as.factor(class), 
          demers_pelag = as.factor(demers_pelag), 
          diet_troph3 = as.factor(diet_troph3)) %>% 
@@ -1243,7 +1266,7 @@ ggsave(famd5_fig, file = paste0("famd5_fig.png"), path = here::here("04_figs"))
 ```{r}
 
 fishbase_famd6 <- fishbase_data %>% 
-  select(length, diet_troph3, demers_pelag, class) %>% 
+  dplyr::select(length, diet_troph3, demers_pelag, class) %>% 
   mutate(class = as.factor(class), demers_pelag = as.factor(demers_pelag)) %>% 
   na.omit()
 
@@ -1279,7 +1302,7 @@ famd6_1_fig # really interesting.. what does it mean?
 ```{r}
 # 
 # fishbase_famd5 <- fishbase_data %>% 
-#   select(r_fin, kfin, length, diet_troph3, movement_keyword, demers_pelag, food_i, class) %>% 
+#   dplyr::select(r_fin, kfin, length, diet_troph3, movement_keyword, demers_pelag, food_i, class) %>% 
 #   mutate(class = as.factor(class), 
 #          movement_keyword = as.factor(movement_keyword), 
 #          food_i = as.factor(food_i), 
@@ -1307,7 +1330,7 @@ famd6_1_fig # really interesting.. what does it mean?
 ```{r}
 # 
 # fishbase_famd5 <- fishbase_data %>% 
-#   select(r_fin, kfin, length, diet_troph3, food_i, movement_keyword, iucn_category, demers_pelag, class) %>% 
+#   dplyr::select(r_fin, kfin, length, diet_troph3, food_i, movement_keyword, iucn_category, demers_pelag, class) %>% 
 #   mutate(class = as.factor(class), 
 #          demers_pelag = as.factor(demers_pelag), 
 #          iucn_category = as.factor(iucn_category), 
