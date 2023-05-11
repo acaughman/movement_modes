@@ -144,17 +144,36 @@ eco2 <- eco2 %>%
     western_lat = as.numeric(western_lat),
     eastern_lat = as.numeric(eastern_lat)
   ) %>%
-  mutate(ocean = case_when()) %>%
-  mutate(basin = case_when())
-
-
+  mutate(pacific = case_when(
+    condition ~ "pacifc",
+    TRUE ~ NA
+  )) %>% 
+    mutate(atlantic  = case_when(
+    condition ~ "atlantic",
+    TRUE ~ NA
+  )) %>% 
+    mutate(indian  = case_when(
+    condition ~ "indian",
+    TRUE ~ NA
+  )) %>% 
+  mutate(ocean = paste0(pacific, atlantic, indian)) %>% 
+  mutate(basin = case_when(
+    ocean == "Pacific" & condition ~ "East",
+    ocean == "Pacific" & condition ~ "West",
+    ocean == "Atlantic" & condition ~ "East",
+    ocean == "Atlantic" & condition ~ "West",
+    ocean == "Indian" ~ "Indian",
+    TRUE ~ "Multiple"
+  ))
+  
 # indian ocean
 # pacific ocean
 # atlantic ocean
 
-# indo-pacific
-# eastern atlantic
-# wester atlantic
+# eastern Atlantic
+# western atlantic
+# eastern pacific
+# western pacific
 
 
 #     northern_lat <= 65  & southern_lat >= -60 & western_lat >= -179  & eastern_lat <= -75  ~ "east pacific",
