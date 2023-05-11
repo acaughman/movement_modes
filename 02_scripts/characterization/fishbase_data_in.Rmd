@@ -14,6 +14,9 @@ library(here)
 library(rfishbase)
 library(naniar)
 library(car)
+library(sf)
+library(sp) 
+library(raster) #because of this package you have to use dplyr::select specifically
 ```
 
 ### Read in data
@@ -65,7 +68,7 @@ clusters <- clusters %>%
 ```{r}
 
 fish <- load_taxa() %>% # load all taxonomic info from fishbase into fish, then
-  filter(Species %in% data$species) %>% # select only the rows containing species listed in data
+  filter(Species %in% data$species) %>% # dplyr::select only the rows containing species listed in data
   janitor::clean_names()
 ```
 
@@ -86,7 +89,7 @@ diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodII
 diet <- janitor::clean_names(diet)
 
 data <- left_join(data, diet) %>%
-  select(-food_ii, -food_iii)
+  dplyr::select(-food_ii, -food_iii)
 ```
 
 ### Collect temperature data
@@ -95,7 +98,7 @@ data <- left_join(data, diet) %>%
 
 temp <- stocks() %>% # load stocks info, then
   filter(SpecCode %in% fish$spec_code) %>% # filter rows by spec codes in fish, then
-  select(SpecCode, TempMin, TempMax, TempPreferred) %>% # select columns
+  dplyr::select(SpecCode, TempMin, TempMax, TempPreferred) %>% # select columns
   mutate(temp_range = TempMax - TempMin) %>%
   arrange(SpecCode)
 
@@ -117,7 +120,7 @@ fish <- left_join(fish, temp) # this was making fish have 607 rows, removed repe
 
 eco <- ecosystem() %>%
   filter(SpecCode %in% fish$spec_code) %>%
-  select(
+  dplyr::select(
     SpecCode, Climate, NorthernLat, NrangeNS, SouthernLat, SrangeNS,
     WesternLat, WrangeEW, EasternLat, ErangeEW
   ) %>%
@@ -132,83 +135,49 @@ eco <- within(eco, {
   southern_lat <- ifelse(srange_ns == "N", southern_lat, -southern_lat)
   western_lat <- ifelse(wrange_ew == "E", western_lat, -western_lat)
   eastern_lat <- ifelse(erange_ew == "E", eastern_lat, -eastern_lat)
-})
+}) %>% 
+  dplyr::select(-nrange_ns, -srange_ns, -wrange_ew, -erange_ew)
 
-eco2 <- eco %>%
-  select(-nrange_ns, -srange_ns, -wrange_ew, -erange_ew)
+#seperates lats and lons
+east = eco %>% 
+  dplyr::select(spec_code, climate, eastern_lat) %>% 
+  rename(lat = eastern_lat) 
+west = eco %>% 
+  dplyr::select(spec_code, climate, western_lat) %>% 
+  rename(lat = western_lat)
+north = eco %>% 
+  dplyr::select(spec_code, climate, northern_lat) %>% 
+  rename(lon = northern_lat)
+south = eco %>% 
+  dplyr::select(spec_code, climate, southern_lat) %>% 
+  rename(lon = southern_lat)
 
-eco2 <- eco2 %>%
-  mutate(
-    northern_lat = as.numeric(northern_lat),
-    southern_lat = as.numeric(southern_lat),
-    western_lat = as.numeric(western_lat),
-    eastern_lat = as.numeric(eastern_lat)
-  ) %>%
-  mutate(pacific = case_when(
-    condition ~ "pacifc",
-    TRUE ~ NA
-  )) %>% 
-    mutate(atlantic  = case_when(
-    condition ~ "atlantic",
-    TRUE ~ NA
-  )) %>% 
-    mutate(indian  = case_when(
-    condition ~ "indian",
-    TRUE ~ NA
-  )) %>% 
-  mutate(ocean = paste0(pacific, atlantic, indian)) %>% 
-  mutate(basin = case_when(
-    ocean == "Pacific" & condition ~ "East",
-    ocean == "Pacific" & condition ~ "West",
-    ocean == "Atlantic" & condition ~ "East",
-    ocean == "Atlantic" & condition ~ "West",
-    ocean == "Indian" ~ "Indian",
-    TRUE ~ "Multiple"
-  ))
-  
-# indian ocean
-# pacific ocean
-# atlantic ocean
+#combines both lons and both lats
+lat = rbind(east, west)
+lon = rbind(north, south)
+eco_sf = full_join(lat, lon, multiple = "all") #join these together so we have 4 rows for species with a point at each corner of it's boundary
 
-# eastern Atlantic
-# western atlantic
-# eastern pacific
-# western pacific
+coordinates(eco_sf) <- ~lat+lon #assign which rows are coordinates
+proj4string(eco_sf) <- CRS("+proj=longlat +datum=WGS84") #projection (a spatial thing)
+eco_sf = st_as_sf(eco_sf,coords = 3:4) #create a spatial object
 
+# ggplot(eco_sf) +
+#   geom_sf(aes(color = as.factor(spec_code))) +
+#   theme(legend.position = "none")
 
-#     northern_lat <= 65  & southern_lat >= -60 & western_lat >= -179  & eastern_lat <= -75  ~ "east pacific",
-#     northern_lat <= 65  & southern_lat >= -60 & western_lat >= 120  & eastern_lat <= 180  ~ "west pacific",
-#     northern_lat <= 65  & southern_lat >= -60 & western_lat >= -75  & eastern_lat <= -30  ~ "west atlantic",
-#
-#   mutate(ocean = case_when(
-#     northern_lat <= 65  & southern_lat >= 0 & western_lat >= -175  & eastern_lat <= -70  ~ "northeast pacific",
-#     northern_lat <= 65  & southern_lat >= 0 & western_lat >= 120  & eastern_lat <= -175  ~ "northwest pacific",
-#     northern_lat <= 65  & southern_lat >= 0 & western_lat <= -175  & eastern_lat <= -175  ~ "northwest pacific",
-#     northern_lat <= 65  & southern_lat >= 0 & western_lat >= 120  & eastern_lat >= 120  ~ "northwest pacific",
-#     northern_lat <= 0  & southern_lat >= -60 & western_lat >= -175  & eastern_lat <= -70  ~ "southeast pacific",
-#     northern_lat <= 0 & southern_lat >= -60 & western_lat >= 120 & eastern_lat <= -175 ~ "southwest pacific",
-#     northern_lat <= 25 & southern_lat >= -40 & western_lat >= 20 & eastern_lat <= 100 ~ "indian",
-#     northern_lat <= 25 & southern_lat >= -25 & western_lat >= 100 & eastern_lat <= 120 ~ "indo-pacific",
-#     northern_lat <= 65 & southern_lat >= 0 & western_lat >= -45 & eastern_lat <= 0 ~ "northeast atlantic",
-#     northern_lat <= 65 & southern_lat >= 0 & western_lat >= -80 & eastern_lat <= -45 ~ "northwest atlantic",
-#     northern_lat <= 0 & southern_lat >= -60 & western_lat >= -20 & eastern_lat <= 20 ~ "southeast atlantic",
-#     northern_lat <= 0 & southern_lat >= -60 & western_lat >= -70 & eastern_lat <= -20 ~ "southwest atlantic",
-#   )
-# )
+#read in shapefiles for oceans
+indian = st_read(here::here("01_data" ,"01_raw_data", "indian.shp"))
+pacific = st_read(here::here("01_data" ,"01_raw_data", "pacific.shp"))
+atlantic = st_read(here::here("01_data" ,"01_raw_data", "atlantic.shp"))
 
-# northeast pacific: -175ºW to -100ºW, 65ºN to 0ºN
-# northwest pacific: 120ºE to -175ºW, 65ºN to 0ºN
-# southeast pacific: -175ºW to -70ºW, 0ºN to -60ºS
-# southwest pacific: 120ºE to -175ºW, 0ºN to -60ºS
-#
-# indian: 20ºE to 100ºE, 25ºN to -40ºS
-#
-# indo-pacfic? 100ºE to 120ºE, 25ºN to -25ºS
-#
-# northeast atlantic: -45ºW to 0ºW, 65ºN to 0ºN
-# northwest atlantic: -80ºW to -45ºW, 65ºN to 0ºN
-# southeast atlantic: -20ºW to 20ºE, 0ºN to -60ºS
-# southwest atlantic: -70ºW to -20ºW, 0ºN to -60ºS
+#get the intersection of the ocean with the species points
+indian_points = intersect(indian, eco_sf) %>% 
+  mutate(ocean = "indian")
+pacific_points = intersect(atlantic, eco_sf) %>% 
+  mutate(ocean = "pacific")
+atlantic_points = intersect(pacific, eco_sf) %>% 
+  mutate(ocean = "atlantic")
+
 
 
 fish <- left_join(fish, eco)
@@ -220,13 +189,13 @@ fish <- left_join(fish, eco)
 
 fecund <- fecundity() %>%
   filter(SpecCode %in% fish$spec_code) %>%
-  select(SpecCode, FecundityMax, FecundityMin, FecundityMean) %>%
+  dplyr::select(SpecCode, FecundityMax, FecundityMin, FecundityMean) %>%
   mutate(FecundityMeanCalc = (FecundityMax - FecundityMin) / 2) %>%
   filter(FecundityMeanCalc > 0) %>% # remove inconsistent data
   janitor::clean_names()
 
 fecund <- fecund %>% # average the values for a given spec code
-  select(-fecundity_min) %>%
+  dplyr::select(-fecundity_min) %>%
   group_by(spec_code) %>%
   mutate(
     fecundity_max = mean(fecundity_max, na.rm = TRUE),
@@ -239,7 +208,7 @@ fecund <- fecund %>% # average the values for a given spec code
 
 fecund <- fecund %>% # combine actual mean with calculated mean
   mutate(fecundity_mean = coalesce(fecundity_mean, fecundity_mean_calc)) %>%
-  select(-fecundity_mean_calc)
+  dplyr::select(-fecundity_mean_calc)
 
 
 fish <- left_join(fish, fecund)
@@ -251,7 +220,7 @@ fish <- left_join(fish, fecund)
 
 spec <- species() %>%
   filter(SpecCode %in% fish$spec_code) %>%
-  select(SpecCode, BodyShapeI, LongevityWild) %>%
+  dplyr::select(SpecCode, BodyShapeI, LongevityWild) %>%
   janitor::clean_names()
 
 
@@ -265,7 +234,7 @@ Only 68 species with oxygen consumption data:
 
 oxygen <- oxygen() %>%
   filter(SpecCode %in% fish$spec_code) %>%
-  select(SpecCode, OxygenCons, Temp) %>%
+  dplyr::select(SpecCode, OxygenCons, Temp) %>%
   janitor::clean_names()
 
 oxygen <- oxygen %>% # average the values for a given spec code
@@ -286,7 +255,7 @@ fish <- fish %>%
 
 larvae <- larvae() %>%
   filter(SpecCode %in% fish$spec_code) %>%
-  select(SpecCode, PlaceofDevelopment) %>%
+  dplyr::select(SpecCode, PlaceofDevelopment) %>%
   janitor::clean_names() %>%
   na.omit() %>%
   rename(dev_place = placeof_development)
@@ -302,7 +271,7 @@ fish <- left_join(fish, larvae)
 
 sp_rich <- load_taxa() %>%
   filter(Family %in% data$family) %>%
-  select(Family, Species) %>%
+  dplyr::select(Family, Species) %>%
   count(Family) %>%
   rename(family = Family, sp_richness = n)
 
@@ -316,14 +285,14 @@ fish <- left_join(fish, sp_rich)
 # filtering for spec_codes in fish gave only 17 rows
 
 noct <- species() %>%
-  select(SpecCode, Comments) %>%
+  dplyr::select(SpecCode, Comments) %>%
   filter(SpecCode %in% fish$spec_code) %>%
   filter(grepl("nocturnal|diurnal|crepuscular", Comments))
 
 # filtering for genus in fish gave 39 rows
 
 noct2 <- species() %>%
-  select(SpecCode, Genus, Comments) %>%
+  dplyr::select(SpecCode, Genus, Comments) %>%
   filter(Genus %in% fish$genus) %>%
   filter(grepl("nocturnal|diurnal|crepuscular", Comments))
 
@@ -331,7 +300,7 @@ noct2 <- species() %>%
 # filtering for "night" using genus in fish gave 116 rows
 
 noct3 <- species() %>%
-  select(SpecCode, Genus, Comments) %>%
+  dplyr::select(SpecCode, Genus, Comments) %>%
   filter(Genus %in% fish$genus) %>%
   filter(grepl("night", Comments))
 ```
@@ -341,7 +310,7 @@ noct3 <- species() %>%
 ```{r}
 
 data <- left_join(fish, data) %>%
-  select(-spec_code, -class, -temp_max, -temp_min)
+  dplyr::select(-spec_code, -class, -temp_max, -temp_min)
 
 data <- full_join(data, clusters)
 
@@ -365,7 +334,7 @@ data[data == "pelagic"] <- "pelagic_oceanic"
 missing_og <- miss_var_summary(data)
 
 missing_data <- data %>%
-  select(
+  dplyr::select(
     oxygen_cons, temp_range, fecundity_max, fecundity_mean,
     longevity_wild, temp_preferred, food_i, dev_place, iucn_category
   )
@@ -389,7 +358,7 @@ mode <- function(x) {
 
 fish2 <- load_taxa() %>%
   filter(Genus %in% data$genus) %>%
-  select(SpecCode, Genus) %>%
+  dplyr::select(SpecCode, Genus) %>%
   janitor::clean_names()
 
 
@@ -397,7 +366,7 @@ fish2 <- load_taxa() %>%
 
 missing_food <- fooditems() %>%
   filter(SpecCode %in% fish2$spec_code) %>%
-  select(SpecCode, FoodI) %>%
+  dplyr::select(SpecCode, FoodI) %>%
   janitor::clean_names() %>%
   group_by(spec_code) %>%
   summarise(food_i = paste(sort(unique(food_i)), collapse = ", ")) %>%
@@ -416,14 +385,14 @@ filled_data <- data
 filled_data <- filled_data %>%
   left_join(missing_food, by = "genus") %>%
   mutate(food_i = coalesce(food_i.x, food_i.y)) %>%
-  select(-food_i.x, -food_i.y)
+  dplyr::select(-food_i.x, -food_i.y)
 
 
 # Place of Development
 
 missing_dev <- larvae() %>%
   filter(SpecCode %in% fish2$spec_code) %>%
-  select(SpecCode, PlaceofDevelopment) %>%
+  dplyr::select(SpecCode, PlaceofDevelopment) %>%
   janitor::clean_names() %>%
   rename(dev_place = placeof_development)
 
@@ -438,14 +407,14 @@ missing_dev <- missing_dev %>%
 filled_data <- filled_data %>%
   left_join(missing_dev, by = "genus") %>%
   mutate(dev_place = coalesce(dev_place.x, dev_place.y)) %>%
-  select(-dev_place.x, -dev_place.y)
+  dplyr::select(-dev_place.x, -dev_place.y)
 
 
 # Longevity Wild
 
 missing_long <- species() %>%
   filter(SpecCode %in% fish2$spec_code) %>%
-  select(SpecCode, LongevityWild) %>%
+  dplyr::select(SpecCode, LongevityWild) %>%
   janitor::clean_names()
 
 missing_long <- left_join(fish2, missing_long)
@@ -460,14 +429,14 @@ missing_long <- missing_long %>%
 filled_data <- filled_data %>%
   left_join(missing_long, by = "genus") %>%
   mutate(longevity_wild = coalesce(longevity_wild.x, longevity_wild.y)) %>%
-  select(-longevity_wild.x, -longevity_wild.y)
+  dplyr::select(-longevity_wild.x, -longevity_wild.y)
 
 
 # Preferred Temp
 
 missing_temp <- stocks() %>%
   filter(SpecCode %in% fish2$spec_code) %>%
-  select(SpecCode, TempPreferred) %>%
+  dplyr::select(SpecCode, TempPreferred) %>%
   janitor::clean_names()
 
 missing_temp <- left_join(fish2, missing_temp)
@@ -482,14 +451,14 @@ missing_temp <- missing_temp %>%
 filled_data <- filled_data %>%
   left_join(missing_temp, by = "genus") %>%
   mutate(temp_preferred = coalesce(temp_preferred.x, temp_preferred.y)) %>%
-  select(-temp_preferred.x, -temp_preferred.y)
+  dplyr::select(-temp_preferred.x, -temp_preferred.y)
 
 
 # Fecundity Max
 
 missing_fmax <- fecundity() %>%
   filter(SpecCode %in% fish2$spec_code) %>%
-  select(SpecCode, FecundityMax) %>%
+  dplyr::select(SpecCode, FecundityMax) %>%
   janitor::clean_names()
 
 missing_fmax <- left_join(fish2, missing_fmax)
@@ -504,7 +473,7 @@ missing_fmax <- missing_fmax %>%
 filled_data <- filled_data %>%
   left_join(missing_fmax, by = "genus") %>%
   mutate(fecundity_max = coalesce(fecundity_max.x, fecundity_max.y)) %>%
-  select(-fecundity_max.x, -fecundity_max.y)
+  dplyr::select(-fecundity_max.x, -fecundity_max.y)
 
 # 371 missing to now 223 missing
 
@@ -513,7 +482,7 @@ filled_data <- filled_data %>%
 
 missing_fmean <- fecundity() %>%
   filter(SpecCode %in% fish2$spec_code) %>%
-  select(SpecCode, FecundityMean) %>%
+  dplyr::select(SpecCode, FecundityMean) %>%
   janitor::clean_names()
 
 missing_fmean <- left_join(fish2, missing_fmean)
@@ -528,7 +497,7 @@ missing_fmean <- missing_fmean %>%
 filled_data <- filled_data %>%
   left_join(missing_fmean, by = "genus") %>%
   mutate(fecundity_mean = coalesce(fecundity_mean.x, fecundity_mean.y)) %>%
-  select(-fecundity_mean.x, -fecundity_mean.y)
+  dplyr::select(-fecundity_mean.x, -fecundity_mean.y)
 
 # 571 missing to now 323 missing
 
@@ -539,7 +508,7 @@ missing <- miss_var_summary(filled_data)
 # New missing plot
 
 missing_data_filled <- filled_data %>%
-  select(
+  dplyr::select(
     oxygen_cons, temp_range, fecundity_max, fecundity_mean,
     longevity_wild, temp_preferred, iucn_category
   )
@@ -560,7 +529,7 @@ missing_filled_fig
 
 missing_ox <- oxygen() %>%
   filter(SpecCode %in% fish2$spec_code) %>%
-  select(SpecCode, OxygenCons) %>%
+  dplyr::select(SpecCode, OxygenCons) %>%
   janitor::clean_names()
 
 missing_ox <- left_join(fish2, missing_ox)
@@ -575,7 +544,7 @@ missing_ox <- missing_ox %>%
 filled_data2 <- filled_data %>%
   left_join(missing_ox, by = "genus") %>%
   mutate(oxygen_cons = coalesce(oxygen_cons.x, oxygen_cons.y)) %>%
-  select(-oxygen_cons.x, -oxygen_cons.y)
+  dplyr::select(-oxygen_cons.x, -oxygen_cons.y)
 
 # 538 missing to now 430 missing
 
@@ -584,7 +553,7 @@ filled_data2 <- filled_data %>%
 
 missing_range <- stocks() %>%
   filter(SpecCode %in% fish2$spec_code) %>%
-  select(SpecCode, TempMin, TempMax) %>%
+  dplyr::select(SpecCode, TempMin, TempMax) %>%
   mutate(temp_range = TempMax - TempMin) %>%
   janitor::clean_names()
 
@@ -600,7 +569,7 @@ missing_range <- missing_range %>%
 filled_data2 <- filled_data2 %>%
   left_join(missing_range, by = "genus") %>%
   mutate(temp_range = coalesce(temp_range.x, temp_range.y)) %>%
-  select(-temp_range.x, -temp_range.y)
+  dplyr::select(-temp_range.x, -temp_range.y)
 
 # 526 missing to now 391 missing
 
@@ -612,7 +581,7 @@ missing2 <- miss_var_summary(filled_data2)
 # New missing plot
 
 missing_data_filled2 <- filled_data2 %>%
-  select(
+  dplyr::select(
     oxygen_cons, temp_range, fecundity_max, fecundity_mean,
     longevity_wild, temp_preferred, iucn_category
   )
@@ -649,8 +618,8 @@ missing_filled2_fig
 
 # for original data
 corr <- data %>%
-  select(where(is.numeric)) %>%
-  select(
+  dplyr::select(where(is.numeric)) %>%
+  dplyr::select(
     temp_preferred, temp_range, fecundity_max, fecundity_mean, longevity_wild,
     oxygen_cons, sp_richness, length, kfin, r_fin, diet_troph3
   )
@@ -667,8 +636,8 @@ cor_mat
 
 # for filled data
 corr_filled <- filled_data %>%
-  select(where(is.numeric)) %>%
-  select(
+  dplyr::select(where(is.numeric)) %>%
+  dplyr::select(
     temp_preferred, temp_range, fecundity_max, fecundity_mean, longevity_wild,
     oxygen_cons, sp_richness, length, kfin, r_fin, diet_troph3
   )
@@ -717,7 +686,7 @@ gmm_new_fig
 ```{r}
 # rep <- reproduction() %>%
 #   filter(SpecCode %in% fish$spec_code) %>%
-#   select(SpecCode, RepGuild2, Spawning) %>%
+#   dplyr::select(SpecCode, RepGuild2, Spawning) %>%
 #   janitor::clean_names()
 #
 # fish <- left_join(fish, rep)
@@ -725,7 +694,7 @@ gmm_new_fig
 #
 # spawn <- spawning() %>%
 #   filter(SpecCode %in% fish$spec_code) %>%
-#   select(SpecCode, SpawningGround) %>%
+#   dplyr::select(SpecCode, SpawningGround) %>%
 #   janitor::clean_names() %>%
 #   na.omit()
 #
@@ -739,7 +708,7 @@ gmm_new_fig
 
 # missing_iucn <- stocks() %>%
 #   filter(SpecCode %in% fish2$spec_code) %>%
-#   select(SpecCode, IUCN_Code) %>%
+#   dplyr::select(SpecCode, IUCN_Code) %>%
 #   janitor::clean_names() %>%
 #   mutate_at("iucn_code", str_replace, ".", "")
 #
@@ -757,14 +726,14 @@ gmm_new_fig
 # filled_data <- filled_data %>%
 #         left_join(missing_iucn, by = "genus") %>%
 #         mutate(iucn_category = coalesce(iucn_category.x, iucn_category.y)) %>%
-#         select(-iucn_category.x, -iucn_category.y)
+#         dplyr::select(-iucn_category.x, -iucn_category.y)
 
 
 # # Reproduction Guild and Spawning - DO NOT NEED
 #
 # missing_rep <- reproduction() %>%
 #   filter(SpecCode %in% fish2$spec_code) %>%
-#   select(SpecCode, RepGuild2, Spawning) %>%
+#   dplyr::select(SpecCode, RepGuild2, Spawning) %>%
 #   janitor::clean_names()
 #
 # missing_rep <- left_join(fish2, missing_rep)
@@ -780,14 +749,14 @@ gmm_new_fig
 #         left_join(missing_rep, by = "genus") %>%
 #         mutate(rep_guild2 = coalesce(rep_guild2.x, rep_guild2.y),
 #                spawning = coalesce(spawning.x, spawning.y)) %>%
-#         select(-rep_guild2.x, -rep_guild2.y, -spawning.x, -spawning.y)
+#         dplyr::select(-rep_guild2.x, -rep_guild2.y, -spawning.x, -spawning.y)
 #
 #
 # # Spawning Ground - DO NOT NEED
 #
 # missing_spawn <- spawning() %>%
 #   filter(SpecCode %in% fish2$spec_code) %>%
-#   select(SpecCode, SpawningGround) %>%
+#   dplyr::select(SpecCode, SpawningGround) %>%
 #   janitor::clean_names()
 #
 # missing_spawn <- left_join(fish2, missing_spawn)
@@ -801,7 +770,7 @@ gmm_new_fig
 # filled_data <- filled_data %>%
 #         left_join(missing_spawn, by = "genus") %>%
 #         mutate(spawning_ground = coalesce(spawning_ground.x, spawning_ground.y)) %>%
-#         select(-spawning_ground.x, -spawning_ground.y)
+#         dplyr::select(-spawning_ground.x, -spawning_ground.y)
 #
 ```
 
@@ -857,8 +826,8 @@ gmm_new_fig
 # # get location data (lat and long)
 # coords <- stocks() %>%  # load stocks info, then
 #   filter(SpecCode %in% fish$SpecCode) %>%  # filter rows by specCodes in fish, then
-#   select(SpecCode, Northernmost, NorthSouthN, Southermost, NorthSouthS, Westernmost,
-#            WestEastW, Easternmost, WestEastE) # select columns
+#   dplyr::select(SpecCode, Northernmost, NorthSouthN, Southermost, NorthSouthS, Westernmost,
+#            WestEastW, Easternmost, WestEastE) # dplyr::select columns
 #
 # coords <- na.omit(coords) # remove NA values
 #
@@ -883,7 +852,7 @@ gmm_new_fig
 
 # matur <- maturity() %>%
 #   filter(SpecCode %in% fish$spec_code) %>%
-#   select(SpecCode, AgeMatMin, AgeMatMin2) %>%
+#   dplyr::select(SpecCode, AgeMatMin, AgeMatMin2) %>%
 #   janitor::clean_names() %>%
 #   na.omit()
 #
@@ -901,7 +870,7 @@ gmm_new_fig
 #
 # eco <- ecology() %>%
 #   filter(SpecCode %in% fish$spec_code) %>%
-#   select(SpecCode, SchoolingFrequency, SchoolingLifestage) %>%
+#   dplyr::select(SpecCode, SchoolingFrequency, SchoolingLifestage) %>%
 #   janitor::clean_names()
 ```
 
@@ -927,3 +896,84 @@ gmm_new_fig
 
 # Myzopsetta ferruginea for Limanda ferruginea, Oblada melanurus for Oblada melanura, Pennahia aneas for Pennahia anea
 ```
+
+```{r}
+# eco2 <- eco %>%
+#   dplyr::select(-nrange_ns, -srange_ns, -wrange_ew, -erange_ew)
+# 
+# eco2 <- eco2 %>%
+#   mutate(
+#     northern_lat = as.numeric(northern_lat),
+#     southern_lat = as.numeric(southern_lat),
+#     western_lat = as.numeric(western_lat),
+#     eastern_lat = as.numeric(eastern_lat)
+#   ) %>%
+#   mutate(pacific = case_when(
+#     condition ~ "pacifc",
+#     TRUE ~ NA
+#   )) %>% 
+#     mutate(atlantic  = case_when(
+#     condition ~ "atlantic",
+#     TRUE ~ NA
+#   )) %>% 
+#     mutate(indian  = case_when(
+#     condition ~ "indian",
+#     TRUE ~ NA
+#   )) %>% 
+#   mutate(ocean = paste0(pacific, atlantic, indian)) %>% 
+#   mutate(basin = case_when(
+#     ocean == "Pacific" & condition ~ "East",
+#     ocean == "Pacific" & condition ~ "West",
+#     ocean == "Atlantic" & condition ~ "East",
+#     ocean == "Atlantic" & condition ~ "West",
+#     ocean == "Indian" ~ "Indian",
+#     TRUE ~ "Multiple"
+#   ))
+#   
+# # indian ocean
+# # pacific ocean
+# # atlantic ocean
+# 
+# # eastern Atlantic
+# # western atlantic
+# # eastern pacific
+# # western pacific
+# 
+# eastern_lat %in% c(x:y, a:b) & western_lat %in% c(x:y) | eastern_lat %in% c(x:y, a:b) & western_lat %in% c(x:y)
+# 
+# 
+# #     northern_lat <= 65  & southern_lat >= -60 & western_lat >= -179  & eastern_lat <= -75  ~ "east pacific",
+# #     northern_lat <= 65  & southern_lat >= -60 & western_lat >= 120  & eastern_lat <= 180  ~ "west pacific",
+# #     northern_lat <= 65  & southern_lat >= -60 & western_lat >= -75  & eastern_lat <= -30  ~ "west atlantic",
+# #
+# #   mutate(ocean = case_when(
+# #     northern_lat <= 65  & southern_lat >= 0 & western_lat >= -175  & eastern_lat <= -70  ~ "northeast pacific",
+# #     northern_lat <= 65  & southern_lat >= 0 & western_lat >= 120  & eastern_lat <= -175  ~ "northwest pacific",
+# #     northern_lat <= 65  & southern_lat >= 0 & western_lat <= -175  & eastern_lat <= -175  ~ "northwest pacific",
+# #     northern_lat <= 65  & southern_lat >= 0 & western_lat >= 120  & eastern_lat >= 120  ~ "northwest pacific",
+# #     northern_lat <= 0  & southern_lat >= -60 & western_lat >= -175  & eastern_lat <= -70  ~ "southeast pacific",
+# #     northern_lat <= 0 & southern_lat >= -60 & western_lat >= 120 & eastern_lat <= -175 ~ "southwest pacific",
+# #     northern_lat <= 25 & southern_lat >= -40 & western_lat >= 20 & eastern_lat <= 100 ~ "indian",
+# #     northern_lat <= 25 & southern_lat >= -25 & western_lat >= 100 & eastern_lat <= 120 ~ "indo-pacific",
+# #     northern_lat <= 65 & southern_lat >= 0 & western_lat >= -45 & eastern_lat <= 0 ~ "northeast atlantic",
+# #     northern_lat <= 65 & southern_lat >= 0 & western_lat >= -80 & eastern_lat <= -45 ~ "northwest atlantic",
+# #     northern_lat <= 0 & southern_lat >= -60 & western_lat >= -20 & eastern_lat <= 20 ~ "southeast atlantic",
+# #     northern_lat <= 0 & southern_lat >= -60 & western_lat >= -70 & eastern_lat <= -20 ~ "southwest atlantic",
+# #   )
+# # )
+# 
+# # northeast pacific: -175ºW to -100ºW, 65ºN to 0ºN
+# # northwest pacific: 120ºE to -175ºW, 65ºN to 0ºN
+# # southeast pacific: -175ºW to -70ºW, 0ºN to -60ºS
+# # southwest pacific: 120ºE to -175ºW, 0ºN to -60ºS
+# #
+# # indian: 20ºE to 100ºE, 25ºN to -40ºS
+# #
+# # indo-pacfic? 100ºE to 120ºE, 25ºN to -25ºS
+# #
+# # northeast atlantic: -45ºW to 0ºW, 65ºN to 0ºN
+# # northwest atlantic: -80ºW to -45ºW, 65ºN to 0ºN
+# # southeast atlantic: -20ºW to 20ºE, 0ºN to -60ºS
+# # southwest atlantic: -70ºW to -20ºW, 0ºN to -60ºS
+```
+
