@@ -113,89 +113,11 @@ temp <- temp %>%
 fish <- left_join(fish, temp) # this was making fish have 607 rows, removed repeat spec_code
 ```
 
-### Collect climate/range data - LOOK INTO FURTHER ------------------------------------------------------------
+### Collect climate/range data
+
 
 ```{r}
-
-eco <- ecosystem() %>%
-  filter(SpecCode %in% fish$spec_code) %>%
-  dplyr::select(
-    SpecCode, Climate, NorthernLat, NrangeNS, SouthernLat, SrangeNS,
-    WesternLat, WrangeEW, EasternLat, ErangeEW
-  ) %>%
-  janitor::clean_names() %>%
-  na.omit() %>%
-  mutate(climate = tolower(climate))
-
-eco <- eco[!duplicated(eco$spec_code), ]
-
-eco <- within(eco, {
-  northern_lat <- ifelse(nrange_ns == "N", northern_lat, -northern_lat)
-  southern_lat <- ifelse(srange_ns == "N", southern_lat, -southern_lat)
-  western_lat <- ifelse(wrange_ew == "E", western_lat, -western_lat)
-  eastern_lat <- ifelse(erange_ew == "E", eastern_lat, -eastern_lat)
-}) %>% 
-  dplyr::select(-nrange_ns, -srange_ns, -wrange_ew, -erange_ew)
-
-#separates lats and lons
-east = eco %>% 
-  dplyr::select(spec_code, climate, eastern_lat) %>% 
-  rename(lat = eastern_lat) 
-west = eco %>% 
-  dplyr::select(spec_code, climate, western_lat) %>% 
-  rename(lat = western_lat)
-north = eco %>% 
-  dplyr::select(spec_code, climate, northern_lat) %>% 
-  rename(lon = northern_lat)
-south = eco %>% 
-  dplyr::select(spec_code, climate, southern_lat) %>% 
-  rename(lon = southern_lat)
-
-#combines both lons and both lats
-lat = rbind(east, west)
-lon = rbind(north, south)
-eco_sf = full_join(lat, lon, multiple = "all") #join these together so we have 4 rows for species with a point at each corner of it's boundary
-
-coordinates(eco_sf) <- ~lat+lon #assign which rows are coordinates
-proj4string(eco_sf) <- CRS("+proj=longlat +datum=WGS84") #projection (a spatial thing)
-eco_sf = st_as_sf(eco_sf,coords = 3:4) #create a spatial object
-
-#read in shapefiles for oceans
-indian = st_read(here::here("01_data" ,"01_raw_data", "indian.shp"))
-pacific = st_read(here::here("01_data" ,"01_raw_data", "pacific.shp"))
-atlantic = st_read(here::here("01_data" ,"01_raw_data", "atlantic.shp"))
-# 
-# library(spatialEco)
-# 
-# new_shape <- point.in.poly(pts, polys)
-
-ggplot() + 
-  geom_sf(indian) +
-  geom_sf(indian_points)
- 
-#get the intersection of the ocean with the species points
-indian_points = st_intersection(indian, eco_sf) %>% 
-  mutate(ocean = "indian") %>% 
-  mutate(basin = "indian")
-pacific_points_east = st_intersection(pacific[4, ], eco_sf) %>% 
-  mutate(ocean = "pacific") %>% 
-  mutate(basin = "east")
-pacific_points_west = st_intersection(pacific[1:3, ], eco_sf) %>% 
-  mutate(ocean = "pacific") %>% 
-  mutate(basin = "west")
-atlantic_points_east = st_intersection(atlantic[2,], eco_sf) %>% 
-  mutate(ocean = "atlantic") %>% 
-  mutate(basin = "east")
-atlantic_points_west = st_intersection(atlantic[1,], eco_sf) %>% 
-  mutate(ocean = "atlantic") %>% 
-  mutate(basin = "west")
-
-points = list(indian_points, pacific_points_east, pacific_points_west, atlantic_points_east, atlantic_points_west) %>% 
-  reduce(rbind) #merges the datasets together
-
-eco = st_join(eco_sf, points) %>% 
-  as.data.frame() %>%
-  dplyr::select(-geometry)
+eco = read_csv(here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 
 fish <- left_join(fish, eco)
 ```
@@ -692,6 +614,87 @@ gmm_new_fig
 
 
 
+### Process Geographic Info DO NOT RUN 
+
+```{r}
+eco <- ecosystem() %>%
+  filter(SpecCode %in% fish$spec_code) %>%
+  dplyr::select(
+    SpecCode, Climate, NorthernLat, NrangeNS, SouthernLat, SrangeNS,
+    WesternLat, WrangeEW, EasternLat, ErangeEW
+  ) %>%
+  janitor::clean_names() %>%
+  na.omit() %>%
+  mutate(climate = tolower(climate))
+
+eco <- eco[!duplicated(eco$spec_code), ]
+
+eco <- within(eco, {
+  northern_lat <- ifelse(nrange_ns == "N", northern_lat, -northern_lat)
+  southern_lat <- ifelse(srange_ns == "N", southern_lat, -southern_lat)
+  western_lat <- ifelse(wrange_ew == "E", western_lat, -western_lat)
+  eastern_lat <- ifelse(erange_ew == "E", eastern_lat, -eastern_lat)
+}) %>% 
+  dplyr::select(-nrange_ns, -srange_ns, -wrange_ew, -erange_ew)
+
+#separates lats and lons
+east = eco %>% 
+  dplyr::select(spec_code, climate, eastern_lat) %>% 
+  rename(lat = eastern_lat) 
+west = eco %>% 
+  dplyr::select(spec_code, climate, western_lat) %>% 
+  rename(lat = western_lat)
+north = eco %>% 
+  dplyr::select(spec_code, climate, northern_lat) %>% 
+  rename(lon = northern_lat)
+south = eco %>% 
+  dplyr::select(spec_code, climate, southern_lat) %>% 
+  rename(lon = southern_lat)
+
+#combines both lons and both lats
+lat = rbind(east, west)
+lon = rbind(north, south)
+eco_sf = full_join(lat, lon, multiple = "all") #join these together so we have 4 rows for species with a point at each corner of it's boundary
+
+coordinates(eco_sf) <- ~lat+lon #assign which rows are coordinates
+proj4string(eco_sf) <- CRS("+proj=longlat +datum=WGS84") #projection (a spatial thing)
+eco_sf = st_as_sf(eco_sf,coords = 3:4) #create a spatial object
+
+#read in shapefiles for oceans
+indian = st_read(here::here("01_data" ,"01_raw_data", "indian.shp"))
+pacific = st_read(here::here("01_data" ,"01_raw_data", "pacific.shp"))
+atlantic = st_read(here::here("01_data" ,"01_raw_data", "atlantic.shp"))
+# 
+# library(spatialEco)
+# 
+# new_shape <- point.in.poly(pts, polys)
+ 
+#get the intersection of the ocean with the species points
+indian_points = st_intersection(indian, eco_sf) %>% 
+  mutate(ocean = "indian") %>% 
+  mutate(basin = "indian")
+pacific_points_east = st_intersection(pacific[4, ], eco_sf) %>% 
+  mutate(ocean = "pacific") %>% 
+  mutate(basin = "east")
+pacific_points_west = st_intersection(pacific[1:3, ], eco_sf) %>% 
+  mutate(ocean = "pacific") %>% 
+  mutate(basin = "west")
+atlantic_points_east = st_intersection(atlantic[2,], eco_sf) %>% 
+  mutate(ocean = "atlantic") %>% 
+  mutate(basin = "east")
+atlantic_points_west = st_intersection(atlantic[1,], eco_sf) %>% 
+  mutate(ocean = "atlantic") %>% 
+  mutate(basin = "west")
+
+points = list(indian_points, pacific_points_east, pacific_points_west, atlantic_points_east, atlantic_points_west) %>% 
+  reduce(rbind) #merges the datasets together
+
+eco = st_join(eco_sf, points) %>% 
+  as.data.frame() %>%
+  dplyr::select(-geometry)
+
+write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
+```
 
 
 
