@@ -161,24 +161,34 @@ coordinates(eco_sf) <- ~lat+lon #assign which rows are coordinates
 proj4string(eco_sf) <- CRS("+proj=longlat +datum=WGS84") #projection (a spatial thing)
 eco_sf = st_as_sf(eco_sf,coords = 3:4) #create a spatial object
 
-# ggplot(eco_sf) +
-#   geom_sf(aes(color = as.factor(spec_code))) +
-#   theme(legend.position = "none")
-
 #read in shapefiles for oceans
 indian = st_read(here::here("01_data" ,"01_raw_data", "indian.shp"))
 pacific = st_read(here::here("01_data" ,"01_raw_data", "pacific.shp"))
 atlantic = st_read(here::here("01_data" ,"01_raw_data", "atlantic.shp"))
-
+ 
 #get the intersection of the ocean with the species points
 indian_points = intersect(indian, eco_sf) %>% 
-  mutate(ocean = "indian")
-pacific_points = intersect(atlantic, eco_sf) %>% 
-  mutate(ocean = "pacific")
-atlantic_points = intersect(pacific, eco_sf) %>% 
-  mutate(ocean = "atlantic")
+  mutate(ocean = "indian") %>% 
+  mutate(basin = "indian")
+pacific_points_east = intersect(pacific[4, ], eco_sf) %>% 
+  mutate(ocean = "pacific") %>% 
+  mutate(basin = "east")
+pacific_points_west = intersect(pacific[1:3, ], eco_sf) %>% 
+  mutate(ocean = "pacific") %>% 
+  mutate(basin = "west")
+atlantic_points_east = intersect(atlantic[2,], eco_sf) %>% 
+  mutate(ocean = "atlantic") %>% 
+  mutate(basin = "east")
+atlantic_points_west = intersect(atlantic[1,], eco_sf) %>% 
+  mutate(ocean = "atlantic") %>% 
+  mutate(basin = "west")
 
+points = list(indian_points, pacific_points_east, pacific_points_west, atlantic_points_east, atlantic_points_west) %>% 
+  reduce(rbind) #merges the datasets together
 
+eco = st_join(eco_sf, points) %>% 
+  as.data.frame() %>%
+  dplyr::select(-geometry)
 
 fish <- left_join(fish, eco)
 ```
