@@ -668,23 +668,29 @@ atlantic = st_read(here::here("01_data" ,"01_raw_data", "atlantic.shp"))
 # library(spatialEco)
 # 
 # new_shape <- point.in.poly(pts, polys)
+
  
 #get the intersection of the ocean with the species points
 indian_points = st_intersection(indian, eco_sf) %>% 
   mutate(ocean = "indian") %>% 
-  mutate(basin = "indian")
+  mutate(basin = "indian") %>% 
+  select(geometry, ocean, basin)
 pacific_points_east = st_intersection(pacific[4, ], eco_sf) %>% 
   mutate(ocean = "pacific") %>% 
-  mutate(basin = "east")
+  mutate(basin = "east") %>% 
+  select(geometry, ocean, basin)
 pacific_points_west = st_intersection(pacific[1:3, ], eco_sf) %>% 
   mutate(ocean = "pacific") %>% 
-  mutate(basin = "west")
+  mutate(basin = "west") %>% 
+  select(geometry, ocean, basin)
 atlantic_points_east = st_intersection(atlantic[2,], eco_sf) %>% 
   mutate(ocean = "atlantic") %>% 
-  mutate(basin = "east")
+  mutate(basin = "east") %>% 
+  select(geometry, ocean, basin)
 atlantic_points_west = st_intersection(atlantic[1,], eco_sf) %>% 
   mutate(ocean = "atlantic") %>% 
-  mutate(basin = "west")
+  mutate(basin = "west") %>% 
+  select(geometry, ocean, basin)
 
 points = list(indian_points, pacific_points_east, pacific_points_west, atlantic_points_east, atlantic_points_west) %>% 
   reduce(rbind) #merges the datasets together
