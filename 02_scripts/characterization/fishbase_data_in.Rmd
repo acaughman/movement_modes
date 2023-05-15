@@ -652,9 +652,11 @@ south = eco %>%
   rename(lon = southern_lat)
 
 #combines both lons and both lats
-lat = rbind(east, west)
-lon = rbind(north, south)
-eco_sf = full_join(lat, lon, multiple = "all") #join these together so we have 4 rows for species with a point at each corner of it's boundary
+lat1 = rbind(east, west)
+lon1 = rbind(north, south)
+lon2 = rbind(south, north)
+eco_sf = list(lat1, lon1, lon2) %>% 
+  reduce(full_join, multiple = "all")#join these together so we have 4 rows for species with a point at each corner of it's boundary
 
 coordinates(eco_sf) <- ~lat+lon #assign which rows are coordinates
 proj4string(eco_sf) <- CRS("+proj=longlat +datum=WGS84") #projection (a spatial thing)
@@ -697,7 +699,14 @@ points = list(indian_points, pacific_points_east, pacific_points_west, atlantic_
 
 eco = st_join(eco_sf, points) %>% 
   as.data.frame() %>%
-  dplyr::select(-geometry)
+  dplyr::select(-geometry) %>% 
+  distinct() %>% 
+  group_by(spec_code) %>%
+  summarise(
+    ocean = paste(sort(unique(ocean)), collapse = ", "),
+    basin = paste(sort(unique(basin)), collapse = ", ")
+  ) %>% 
+  distinct()
 
 write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 ```
