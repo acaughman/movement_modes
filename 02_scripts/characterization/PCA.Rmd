@@ -206,7 +206,7 @@ abline(v = 5, lwd = 3, lty = 2)
 
 ```{r}
 
-# getting error when I include demers_pelag! non-unique row value when setting row names?
+# getting error when I include demers_pelag! non-unique row value when setting row names? GOOGLE - try using distinct() 
 
 
 famd_filled <- filled_data %>% 
