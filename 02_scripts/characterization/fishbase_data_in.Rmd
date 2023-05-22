@@ -95,9 +95,9 @@ data <- left_join(data, diet) %>%
 
 ```{r}
 
-temp <- stocks() %>% # load stocks info, then
-  filter(SpecCode %in% fish$spec_code) %>% # filter rows by spec codes in fish, then
-  dplyr::select(SpecCode, TempMin, TempMax, TempPreferred) %>% # select columns
+temp <- stocks() %>% 
+  filter(SpecCode %in% fish$spec_code) %>% 
+  dplyr::select(SpecCode, TempMin, TempMax, TempPreferred) %>%
   mutate(temp_range = TempMax - TempMin) %>%
   arrange(SpecCode)
 
@@ -113,13 +113,28 @@ temp <- temp %>%
 fish <- left_join(fish, temp) # this was making fish have 607 rows, removed repeat spec_code
 ```
 
-### Collect climate/range data
-
+### Collect climate data
 
 ```{r}
-eco = read_csv(here::here("01_data", "02_processed_data", "ocean_basin.csv"))
+climate = ecosystem() %>% 
+  filter(SpecCode %in% fish$spec_code) %>%
+  dplyr::select(SpecCode, Climate) %>% 
+  janitor::clean_names() %>% 
+  mutate(climate = tolower(climate))
 
-fish <- left_join(fish, eco)
+climate <- climate[!duplicated(climate$spec_code), ]
+
+fish <- left_join(fish, climate)
+```
+
+### Collect range data
+
+```{r}
+
+#eco = read_csv(here::here("01_data", "02_processed_data", "ocean_basin.csv"))
+
+#fish <- left_join(fish, eco)
+
 ```
 
 ### Collect fecundity data
@@ -147,7 +162,7 @@ fecund <- fecund %>% # average the values for a given spec code
 
 fecund <- fecund %>% # combine actual mean with calculated mean
   mutate(fecundity_mean = coalesce(fecundity_mean, fecundity_mean_calc)) %>%
-  dplyr::select(-fecundity_mean_calc)
+  dplyr::select(-fecundity_mean_calc, -fecundity_max)
 
 
 fish <- left_join(fish, fecund)
@@ -217,31 +232,38 @@ sp_rich <- load_taxa() %>%
 fish <- left_join(fish, sp_rich)
 ```
 
-### Collect nocturnal/diurnal data - LOOK INTO FURTHER -----------------------------------------------------
+### Collect circadian data - LOOK INTO FURTHER? <-----------------------------------------------------
 
 ```{r}
 
-# filtering for spec_codes in fish gave only 17 rows
+# filtering for spec_codes in fish gave 86 obs, 45 had pertinent info
 
-noct <- species() %>%
+circ <- species() %>%
   dplyr::select(SpecCode, Comments) %>%
   filter(SpecCode %in% fish$spec_code) %>%
-  filter(grepl("nocturnal|diurnal|crepuscular", Comments))
+  filter(grepl("nocturnal|diurnal|crepuscular|day|night|daytime|nighttime|evening", Comments)) %>% 
+  mutate(circadian = case_when(SpecCode %in% c(646, 419, 420, 1895, 1917, 14129, 301, 401, 
+                                               69, 1494, 1844, 1407, 266, 162, 181, 1080, 
+                                               326, 188, 1747, 1342, 513, 6507, 117, 387, 
+                                               525, 1363, 5382) ~ "nocturnal",
+                               SpecCode %in% c(1893, 5537, 6447, 5604, 18, 216, 227, 785, 
+                                               1265, 4228, 4826, 524, 238, 118, 4493, 458, 
+                                               1288, 372) ~ "diurnal")) %>% 
+  na.omit() %>% 
+  janitor::clean_names()
 
-# filtering for genus in fish gave 39 rows
+fish <- left_join(fish, circ)
 
-noct2 <- species() %>%
+
+
+
+# filtering for genus in fish gave 200 obs
+
+circ2 <- species() %>%
   dplyr::select(SpecCode, Genus, Comments) %>%
   filter(Genus %in% fish$genus) %>%
-  filter(grepl("nocturnal|diurnal|crepuscular", Comments))
+  filter(grepl("nocturnal|diurnal|crepuscular|day|night|daytime|nighttime", Comments))
 
-
-# filtering for "night" using genus in fish gave 116 rows
-
-noct3 <- species() %>%
-  dplyr::select(SpecCode, Genus, Comments) %>%
-  filter(Genus %in% fish$genus) %>%
-  filter(grepl("night", Comments))
 ```
 
 ### Join new variables with data and clean names
@@ -253,16 +275,15 @@ data <- left_join(fish, data) %>%
 
 data <- full_join(data, clusters)
 
-data[data == "pelagic-oceanic"] <- "pelagic_oceanic"
-data[data == "pelagic-neritic"] <- "pelagic_neritic"
-data[data == "pelagic"] <- "pelagic_oceanic"
+data[data == "pelagic-oceanic"] <- "pelagic oceanic"
+data[data == "pelagic-neritic"] <- "pelagic neritic"
+data[data == "pelagic"] <- "pelagic oceanic"
 ```
 
 ### Write new csv including added variables
 
 ```{r}
-
-# write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 ```
 
 ### Look at missing data
@@ -273,16 +294,14 @@ data[data == "pelagic"] <- "pelagic_oceanic"
 missing_og <- miss_var_summary(data)
 
 missing_data <- data %>%
-  dplyr::select(
-    oxygen_cons, temp_range, fecundity_max, fecundity_mean,
-    longevity_wild, temp_preferred, food_i, dev_place, iucn_category
-  )
+  dplyr::select(oxygen_cons, temp_range, fecundity_mean, longevity_wild, 
+    temp_preferred, food_i, dev_place, iucn_category, circadian)
 
 missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
   theme_bw()
 missing_fig
 
-# ggsave(missing_fig, file = paste0("initial_missing_fig.png"), path = here::here("04_figs"))
+#ggsave(missing_fig, file = paste0("initial_missing_fig.png"), path = here::here("04_figs", "missing_data"))
 ```
 
 ### Fill in missing data from averages/max counts
@@ -393,30 +412,6 @@ filled_data <- filled_data %>%
   dplyr::select(-temp_preferred.x, -temp_preferred.y)
 
 
-# Fecundity Max
-
-missing_fmax <- fecundity() %>%
-  filter(SpecCode %in% fish2$spec_code) %>%
-  dplyr::select(SpecCode, FecundityMax) %>%
-  janitor::clean_names()
-
-missing_fmax <- left_join(fish2, missing_fmax)
-
-missing_fmax <- missing_fmax %>%
-  mutate(fecundity_max = as.numeric(fecundity_max)) %>%
-  na.omit() %>%
-  group_by(genus) %>%
-  summarise(fecundity_max = mean(fecundity_max)) %>%
-  ungroup()
-
-filled_data <- filled_data %>%
-  left_join(missing_fmax, by = "genus") %>%
-  mutate(fecundity_max = coalesce(fecundity_max.x, fecundity_max.y)) %>%
-  dplyr::select(-fecundity_max.x, -fecundity_max.y)
-
-# 371 missing to now 223 missing
-
-
 # Fecundity Mean
 
 missing_fmean <- fecundity() %>%
@@ -448,15 +443,15 @@ missing <- miss_var_summary(filled_data)
 
 missing_data_filled <- filled_data %>%
   dplyr::select(
-    oxygen_cons, temp_range, fecundity_max, fecundity_mean,
-    longevity_wild, temp_preferred, iucn_category
+    oxygen_cons, temp_range, fecundity_mean,
+    longevity_wild, temp_preferred, iucn_category, circadian
   )
 
 missing_filled_fig <- gg_miss_var(missing_data_filled) + # figure showing the missing data
   theme_bw()
 missing_filled_fig
 
-# ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs"))
+#ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs", "missing_data"))
 
 
 
@@ -521,37 +516,25 @@ missing2 <- miss_var_summary(filled_data2)
 
 missing_data_filled2 <- filled_data2 %>%
   dplyr::select(
-    oxygen_cons, temp_range, fecundity_max, fecundity_mean,
-    longevity_wild, temp_preferred, iucn_category
+    oxygen_cons, temp_range, fecundity_mean,
+    longevity_wild, temp_preferred, iucn_category, circadian
   )
 
 missing_filled2_fig <- gg_miss_var(missing_data_filled2) + # figure showing the missing data
   theme_bw()
 missing_filled2_fig
 
-# ggsave(missing_filled2_fig, file = paste0("missing_filled2_fig.png"), path = here::here("04_figs"))
+#ggsave(missing_filled2_fig, file = paste0("missing_filled2_fig.png"), path = here::here("04_figs", "missing_data"))
 ```
 
 ### Write new csv including filled variables
 
 ```{r}
-
-# write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
-# write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
 ```
 
-
-
-### Check Variable Inflation Factors (VIF) on top of collinearity
-
-```{r}
-
-```
-
-
-
-
-### Look at any correlated data
+### Look at correlation
 
 ```{r}
 
@@ -577,8 +560,8 @@ cor_mat
 corr_filled <- filled_data %>%
   dplyr::select(where(is.numeric)) %>%
   dplyr::select(
-    temp_preferred, temp_range, fecundity_max, fecundity_mean, longevity_wild,
-    oxygen_cons, sp_richness, length, kfin, r_fin, diet_troph3
+    temp_preferred, temp_range, fecundity_mean, longevity_wild,
+    oxygen_cons, sp_richness, length, kfin, r_fin, diet_troph3, circadian
   )
 
 cor_mat_filled <- round(cor(corr_filled, use = "complete.obs"), 2)

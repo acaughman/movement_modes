@@ -206,28 +206,30 @@ abline(v = 5, lwd = 3, lty = 2)
 
 ```{r}
 
-# getting error when I include demers_pelag! non-unique row value when setting row names? GOOGLE - try using distinct() 
+# getting error when I include demers_pelag:
 
+# Error in `.rowNamesDF<-`(x, value = value) : duplicate 'row.names' are not allowed
+
+# can't figure it out 
 
 famd_filled <- filled_data %>% 
-   dplyr::select(temp_preferred, fecundity_mean, #fecundity_max, longevity_wild, 
-          sp_richness, 
-          length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place, 
-          movement_keyword, #demers_pelag, iucn_category, 
+   dplyr::select(temp_preferred, fecundity_mean, #longevity_wild, 
+          sp_richness, length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place, 
+          movement_keyword, #demers_pelag, 
+          iucn_category, 
           food_i, class2) %>% 
    mutate(class2 = as.factor(class2)) %>% 
    na.omit()
  
 
-f1 <- FAMD(famd_filled[,1:12], graph=FALSE)
+f1 <- FAMD(famd_filled[,1:13], graph=FALSE)
 f1
 
 eigen_f1 <- f1$eig
 eigen_f1 # only 8% of variance explained by first 2 components......
 
 
-f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_filled$class2, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
+f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_filled$class2, addEllipses = TRUE, ellipse.level = 0.95)
 
 f1_fig
 
