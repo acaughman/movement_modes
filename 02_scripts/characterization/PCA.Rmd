@@ -41,7 +41,7 @@ plot_data = fishbase_data %>%
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
 response = "class2"
-expl_cont = c("temp_preferred", "fecundity_max", "fecundity_mean",
+expl_cont = c("temp_preferred", "fecundity_mean",
          "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3")
 
 scatter_data = function(x, y) {
@@ -82,7 +82,7 @@ plots_cat
 plot_filled = filled_data %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
-expl_cont_filled = c("temp_preferred", "fecundity_max", "fecundity_mean",
+expl_cont_filled = c("temp_preferred", "fecundity_mean",
          "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3")
 
 scatter_filled = function(x, y) {
@@ -124,7 +124,7 @@ plots_cat_filled
 plot_filled2 = filled_data2 %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
-expl_cont_filled2 = c("temp_preferred", "fecundity_max", "fecundity_mean",
+expl_cont_filled2 = c("temp_preferred",  "fecundity_mean",
          "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3",
          "oxygen_cons", "temp_range")
 
@@ -870,6 +870,11 @@ ggplot(plot2_data, aes(temp_preferred, class2)) +
 
 ```
 
+
+
+### Old
+
+
 ### DO NMDS HERE INSTEAD OF PCA WITH EUCLIDEAN DISTANCE FROM NOW ON 
 
 
@@ -1289,12 +1294,6 @@ famd6_1_fig # really interesting.. what does it mean?
 
 ```
 
-
-
-
-
-
-### Old
 
 
 ```{r}
