@@ -345,7 +345,7 @@ f4_fig # 2 and 3 completely separate, 2 and 5 as well
 
 
 
-#### nMDS
+#### NMDS Plot 1
 
 ```{r}
 
@@ -391,12 +391,12 @@ nmds_plot1 = ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) +
 nmds_plot1 # classes 3 and 4 are distinct!
 # coloring by order gave four plus distinct groups..?
 
-#ggsave(nmds_plot1, file = paste0("nmds_plot1.png"), path = here::here("04_figs"))
+#ggsave(nmds_plot1, file = paste0("nmds_plot1.png"), path = here::here("04_figs", "nmds"))
 
 
 ```
 
-##### another
+##### NMDS Plot 2
 
 ```{r}
 
@@ -444,17 +444,16 @@ nmds_plot2 = ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
 
 nmds_plot2 # 2 and 3 are pretty distinct, 3 and 7 as well
 
-#ggsave(nmds_plot2, file = paste0("nmds_plot2.png"), path = here::here("04_figs"))
+#ggsave(nmds_plot2, file = paste0("nmds_plot2.png"), path = here::here("04_figs", "nmds"))
 
 ```
 
-##### another
+##### NMDS Plot 3
 
 ```{r}
 
 com_data3 <- filled_data %>% 
-   dplyr::select(temp_preferred, #fecundity_mean, 
-          fecundity_max, 
+   dplyr::select(temp_preferred, fecundity_mean,
           #longevity_wild, 
           #sp_richness, 
           length, kfin, r_fin, diet_troph3, 
@@ -498,17 +497,16 @@ nmds_plot3 = ggplot(filled_scores3, aes(x = NMDS1, y = NMDS2)) +
 
 nmds_plot3 # 2 and 3 are pretty distinct, 3 and 4 as well
 
-#ggsave(nmds_plot3, file = paste0("nmds_plot3.png"), path = here::here("04_figs"))
+#ggsave(nmds_plot3, file = paste0("nmds_plot3.png"), path = here::here("04_figs", "nmds"))
 
 ```
 
-##### another
+##### NMDS Plot 4
 
 ```{r}
 
 com_data4 <- filled_data %>% 
-   dplyr::select(temp_preferred, #fecundity_mean, 
-          #fecundity_max, 
+   dplyr::select(temp_preferred, #fecundity_mean,
           #longevity_wild, 
           #sp_richness, 
           length, kfin, r_fin, diet_troph3, 
@@ -550,18 +548,17 @@ nmds_plot4 = ggplot(filled_scores4, aes(x = NMDS1, y = NMDS2)) +
 
 nmds_plot4 # 2, 3, 4, 7 
 
-#ggsave(nmds_plot4, file = paste0("nmds_plot4.png"), path = here::here("04_figs"))
+#ggsave(nmds_plot4, file = paste0("nmds_plot4.png"), path = here::here("04_figs", "nmds"))
 
 ```
 
-##### another
+##### NMDS Plot 5
 
 ```{r}
 
 com_data5 <- filled_data %>% 
    dplyr::select(temp_preferred, 
-          fecundity_mean, 
-          #fecundity_max, 
+          fecundity_mean,
           #longevity_wild, 
           #sp_richness, 
           #length, 
@@ -607,19 +604,18 @@ nmds_plot5 = ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
 
 nmds_plot5 # 2, 3, 4
 
-#ggsave(nmds_plot5, file = paste0("nmds_plot5.png"), path = here::here("04_figs"))
+#ggsave(nmds_plot5, file = paste0("nmds_plot5.png"), path = here::here("04_figs", "nmds"))
 
 ```
 
 
-##### another
+##### NMDS Plot 6
 
 ```{r}
 
 com_data6 <- filled_data %>% 
    dplyr::select(#temp_preferred, 
-          fecundity_mean, 
-          #fecundity_max, 
+          fecundity_mean,
           #longevity_wild, 
           #sp_richness, 
           length, 
@@ -665,7 +661,7 @@ nmds_plot6 = ggplot(filled_scores6, aes(x = NMDS1, y = NMDS2)) +
 
 nmds_plot6 # 2, 3, 4
 
-#ggsave(nmds_plot6, file = paste0("nmds_plot6.png"), path = here::here("04_figs"))
+#ggsave(nmds_plot6, file = paste0("nmds_plot6.png"), path = here::here("04_figs", "nmds"))
 
 ```
 
