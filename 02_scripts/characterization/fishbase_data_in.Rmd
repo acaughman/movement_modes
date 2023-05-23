@@ -639,11 +639,11 @@ gmm_new_fig
 
 #read in shapefiles for oceans/points
 # indian = st_read(here::here("01_data" ,"01_raw_data", "indian.shp"))
-pacific = st_read(here::here("01_data" ,"01_raw_data", "pacific.shp"))
-atlantic = st_read(here::here("01_data" ,"01_raw_data", "atlantic.shp"))
-artic = st_read(here::here("01_data" ,"01_raw_data", "artic.shp"))
-antartic = st_read(here::here("01_data" ,"01_raw_data", "antartic.shp"))
-eco_sf = st_read(here::here("01_data" ,"02_processed_data", "distribution_points.shp"))
+# pacific = st_read(here::here("01_data" ,"01_raw_data", "pacific.shp"))
+# atlantic = st_read(here::here("01_data" ,"01_raw_data", "atlantic.shp"))
+# artic = st_read(here::here("01_data" ,"01_raw_data", "artic.shp"))
+# antartic = st_read(here::here("01_data" ,"01_raw_data", "antartic.shp"))
+# eco_sf = st_read(here::here("01_data" ,"02_processed_data", "distribution_points.shp"))
 
 #get the intersection of the ocean with the species points
 # indian_points = st_intersection(indian, eco_sf) %>% 
