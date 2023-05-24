@@ -50,12 +50,40 @@ box_data = function(x, y) {
                color = "Class")
 }
 
-#box_data(x = "temp_preferred", y = "class2")
-
 plots_cont = map(expl_cont, ~box_data(.x, "class2"))
 plots_cont
 
 ```
+
+```{r}
+
+temp_plot <- box_data(x = "temp_preferred", y = "class2")
+fecund_plot <- box_data(x = "fecundity_mean", y = "class2")
+long_plot <- box_data(x = "longevity_wild", y = "class2")
+sp_rich_plot <- box_data(x = "sp_richness", y = "class2")
+length_plot <- box_data(x = "length", y = "class2")
+kfin_plot <- box_data(x = "kfin", y = "class2")
+r_fin_plot <- box_data(x = "r_fin", y = "class2")
+diet_plot <- box_data(x = "diet_troph3", y = "class2")
+
+
+ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots"))
+ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots"))
+ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots"))
+ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots"))
+ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs", "individual_plots"))
+ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots"))
+ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots"))
+ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots"))
+
+
+```
+
+
+
+
+
+
 
 
 ```{r}
