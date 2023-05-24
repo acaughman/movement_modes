@@ -436,29 +436,6 @@ filled_data <- filled_data %>%
 # 571 missing to now 323 missing
 
 
-missing <- miss_var_summary(filled_data)
-
-
-# New missing plot
-
-missing_data_filled <- filled_data %>%
-  dplyr::select(
-    oxygen_cons, temp_range, fecundity_mean,
-    longevity_wild, temp_preferred, iucn_category, circadian
-  )
-
-missing_filled_fig <- gg_miss_var(missing_data_filled) + # figure showing the missing data
-  theme_bw()
-missing_filled_fig
-
-#ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs", "missing_data"))
-
-
-
-
-# ______________________ FILLED DATA 2 (includes filled oxygen_cons and temp_range)
-
-
 # Oxygen Consumption
 
 missing_ox <- oxygen() %>%
@@ -475,7 +452,7 @@ missing_ox <- missing_ox %>%
   summarise(oxygen_cons = mean(oxygen_cons)) %>%
   ungroup()
 
-filled_data2 <- filled_data %>%
+filled_data <- filled_data %>%
   left_join(missing_ox, by = "genus") %>%
   mutate(oxygen_cons = coalesce(oxygen_cons.x, oxygen_cons.y)) %>%
   dplyr::select(-oxygen_cons.x, -oxygen_cons.y)
@@ -500,7 +477,7 @@ missing_range <- missing_range %>%
   summarise(temp_range = mean(temp_range)) %>%
   ungroup()
 
-filled_data2 <- filled_data2 %>%
+filled_data <- filled_data %>%
   left_join(missing_range, by = "genus") %>%
   mutate(temp_range = coalesce(temp_range.x, temp_range.y)) %>%
   dplyr::select(-temp_range.x, -temp_range.y)
@@ -508,30 +485,28 @@ filled_data2 <- filled_data2 %>%
 # 526 missing to now 391 missing
 
 
-
-missing2 <- miss_var_summary(filled_data2)
+missing <- miss_var_summary(filled_data)
 
 
 # New missing plot
 
-missing_data_filled2 <- filled_data2 %>%
+missing_data_filled <- filled_data %>%
   dplyr::select(
     oxygen_cons, temp_range, fecundity_mean,
     longevity_wild, temp_preferred, iucn_category, circadian
   )
 
-missing_filled2_fig <- gg_miss_var(missing_data_filled2) + # figure showing the missing data
+missing_filled_fig <- gg_miss_var(missing_data_filled) + # figure showing the missing data
   theme_bw()
-missing_filled2_fig
+missing_filled_fig
 
-#ggsave(missing_filled2_fig, file = paste0("missing_filled2_fig.png"), path = here::here("04_figs", "missing_data"))
+#ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs", "missing_data"))
 ```
 
 ### Write new csv including filled variables
 
 ```{r}
-write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
-write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
 ```
 
 ### Look at correlation

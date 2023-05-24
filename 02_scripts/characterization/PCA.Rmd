@@ -26,8 +26,6 @@ fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_d
   mutate_if(is.character, as.factor)
 filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>% 
   mutate_if(is.character, as.factor)
-filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>% 
-  mutate_if(is.character, as.factor)
 ```
 
 ### Plot data
@@ -41,18 +39,20 @@ plot_data = fishbase_data %>%
 
 response = "class2"
 expl_cont = c("temp_preferred", "fecundity_mean",
-         "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3")
+         "longevity_wild", "sp_richness", "length", "kfin", 
+         "r_fin", "diet_troph3")
 
-scatter_data = function(x, y) {
+box_data = function(x, y) {
      ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_jitter(aes(color = .data[[y]])) +
+          geom_boxplot(aes(color = .data[[y]])) +
           theme_bw() +
-          theme(legend.position = "none")
+          labs(y = "Movement Class",
+               color = "Class")
 }
 
-#scatter_data(x = "temp_preferred", y = "class2")
+#box_data(x = "temp_preferred", y = "class2")
 
-plots_cont = map(expl_cont, ~scatter_data(.x, "class2"))
+plots_cont = map(expl_cont, ~box_data(.x, "class2"))
 plots_cont
 
 ```
@@ -64,6 +64,14 @@ plots_cont
 
 expl_cat = c("climate", "body_shape_i", "dev_place", "movement_keyword", 
              "demers_pelag", "iucn_category", "food_i")
+
+scatter_data = function(x, y) {
+     ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]]) ) +
+          geom_jitter(aes(color = .data[[y]])) +
+          theme_bw() +
+          labs(y = "Movement Class",
+               color = "Class")
+}
 
 plots_cat = map(expl_cat, ~scatter_data(.x, "class2"))
 plots_cat
@@ -81,20 +89,21 @@ plots_cat
 plot_filled = filled_data %>% 
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
-expl_cont_filled = c("temp_preferred", "fecundity_mean",
-         "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3")
+expl_cont_filled = c("temp_preferred",  "fecundity_mean",
+         "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3",
+         "oxygen_cons", "temp_range")
 
-scatter_filled = function(x, y) {
+box_filled = function(x, y) {
      ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_jitter(aes(color = class2)) +
+          geom_boxplot(aes(color = class2)) +
           theme_bw() +
           theme(legend.position = "none")
 }
 
-plots_cont_filled = map(expl_cont_filled, ~scatter_filled(.x, "class2"))
+plots_cont_filled = map(expl_cont_filled, ~box_filled(.x, "class2"))
 plots_cont_filled
 
-scatter_filled(x = "length", y = "class2")
+box_filled(x = "length", y = "class2")
 
 
 ```
@@ -107,6 +116,14 @@ scatter_filled(x = "length", y = "class2")
 expl_cat_filled = c("climate", "body_shape_i", "dev_place", "movement_keyword", "demers_pelag",
                     "iucn_category", "food_i")
 
+scatter_filled = function(x, y) {
+     ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]]) ) +
+          geom_jitter(aes(color = class2)) +
+          theme_bw() +
+          theme(legend.position = "none")
+}
+
+
 plots_cat_filled = map(expl_cat_filled, ~scatter_filled(.x, "class2"))
 plots_cat_filled
 
@@ -114,45 +131,14 @@ plots_cat_filled
 ```
 
 
-### Look at filled data including oxygen_cons and temp_range
-
-```{r}
-
-# continuous
-
-plot_filled2 = filled_data2 %>% 
-  mutate(class2 = as.factor(class2), order = as.factor(order))
-
-expl_cont_filled2 = c("temp_preferred",  "fecundity_mean",
-         "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3",
-         "oxygen_cons", "temp_range")
-
-scatter_filled2 = function(x, y) {
-     ggplot(plot_filled2, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_jitter(aes(color = class2)) +
-          theme_bw() +
-          theme(legend.position = "none")
-}
-
-plots_cont_filled2 = map(expl_cont_filled2, ~scatter_filled2(.x, "class2"))
-plots_cont_filled2
-
-
-
-ind1_1 <- scatter_filled2(x = "length", y = "class2")
-ind1_1
-
-
-```
-
 Sort by variable and color by class
 
 ```{r}
 
-plot2_data = filled_data2 %>% 
+plot2_data = filled_data %>% 
   filter(r_fin != "NA") 
 
-#plot2_data = filled_data2
+#plot2_data = filled_data
 
 plot2_data <- plot2_data %>%  
   #mutate(r_fin = sort(r_fin)) %>% 
@@ -272,7 +258,7 @@ ggsave(f2_fig, file = paste0("f2.png"), path = here::here("04_figs", "current_pc
 
 ```{r}
 
-famd_filled3 <- filled_data2 %>% 
+famd_filled3 <- filled_data %>% 
    dplyr::select(fecundity_mean, length, r_fin, diet_troph3,
           oxygen_cons,
           #temp_range,
@@ -307,7 +293,7 @@ f3_fig # 2 and 3 completely separate, 2 and 5 as well
 
 ```{r}
 
-famd_filled4 <- filled_data2 %>% 
+famd_filled4 <- filled_data %>% 
    dplyr::select(fecundity_mean, 
           length, 
           r_fin, 
