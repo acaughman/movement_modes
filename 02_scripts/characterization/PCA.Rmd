@@ -100,9 +100,7 @@ scatter_data = function(x, y) {
 plots_cat = map(expl_cat, ~scatter_data(.x, "class2"))
 plots_cat
 
-
 ```
-
 
 ```{r}
 
@@ -128,9 +126,6 @@ ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "
 ```
 
 
-
-
-
 ### Plot filled data
 
 ```{r}
@@ -141,21 +136,36 @@ plot_filled = filled_data %>%
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
 expl_cont_filled = c("temp_preferred",  "fecundity_mean",
-         "longevity_wild", "sp_richness", "length", "kfin", "r_fin", "diet_troph3",
-         "oxygen_cons", "temp_range")
+         "longevity_wild", "oxygen_cons", "temp_range")
 
 box_filled = function(x, y) {
      ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]]) ) +
           geom_boxplot(aes(color = class2)) +
           theme_bw() +
-          theme(legend.position = "none")
+          labs(y = "Movement Class",
+               color = "Class") +
+          scale_color_viridis_d()
 }
 
 plots_cont_filled = map(expl_cont_filled, ~box_filled(.x, "class2"))
 plots_cont_filled
 
-box_filled(x = "length", y = "class2")
+```
 
+```{r}
+
+temp_fill_plot <- box_filled(x = "temp_preferred", y = "class2")
+fecund_fill_plot <- box_filled(x = "fecundity_mean", y = "class2")
+long_fill_plot <- box_filled(x = "longevity_wild", y = "class2")
+oxygen_plot <- box_filled(x = "oxygen_cons", y = "class2")
+temp_range_plot <- box_filled(x = "temp_range", y = "class2")
+
+
+ggsave(temp_fill_plot, file = paste0("temp_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
+ggsave(fecund_fill_plot, file = paste0("fecund_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
+ggsave(long_fill_plot, file = paste0("long_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
+ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
+ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
 
 ```
 
@@ -164,22 +174,35 @@ box_filled(x = "length", y = "class2")
 
 # categorical
 
-expl_cat_filled = c("climate", "body_shape_i", "dev_place", "movement_keyword", "demers_pelag",
-                    "iucn_category", "food_i")
+expl_cat_filled = c("dev_place", "food_i")
 
 scatter_filled = function(x, y) {
      ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]]) ) +
           geom_jitter(aes(color = class2)) +
           theme_bw() +
-          theme(legend.position = "none")
+          labs(y = "Movement Class",
+               color = "Class") +
+          scale_color_viridis_d() +
+          theme(axis.text.x = element_text(angle = 40, hjust=1))
 }
-
 
 plots_cat_filled = map(expl_cat_filled, ~scatter_filled(.x, "class2"))
 plots_cat_filled
 
+```
+
+```{r}
+
+dev_fill_plot <- scatter_filled(x = "dev_place", y = "class2")
+food_fill_plot <- scatter_filled(x = "food_i", y = "class2")
+
+
+ggsave(dev_fill_plot, file = paste0("dev_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "categorical"))
+ggsave(food_fill_plot, file = paste0("food_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "categorical"))
 
 ```
+
+
 
 
 Sort by variable and color by class
