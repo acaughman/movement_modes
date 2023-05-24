@@ -32,7 +32,6 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
 
 ### Plot data
 
-
 ```{r}
 
 # continuous
@@ -175,7 +174,7 @@ none are above 5
 
 ```{r}
 
-model <- lm(class2 ~ temp_preferred + fecundity_mean + #fecundity_max +  
+model <- lm(class2 ~ temp_preferred + fecundity_mean +  
             longevity_wild + sp_richness + length + kfin + r_fin + diet_troph3, 
             data = filled_data)
 
@@ -350,7 +349,7 @@ f4_fig # 2 and 3 completely separate, 2 and 5 as well
 ```{r}
 
 com_data <- filled_data %>% 
-   dplyr::select(temp_preferred, fecundity_mean, #fecundity_max, longevity_wild, 
+   dplyr::select(temp_preferred, fecundity_mean, #longevity_wild, 
           sp_richness, length, kfin, r_fin, diet_troph3, 
           species, order, class2) %>% 
    filter(temp_preferred > 0) %>% 
@@ -401,7 +400,7 @@ nmds_plot1 # classes 3 and 4 are distinct!
 ```{r}
 
 com_data2 <- filled_data %>% 
-   dplyr::select(temp_preferred, #fecundity_mean, #fecundity_max, 
+   dplyr::select(temp_preferred, #fecundity_mean, 
           longevity_wild, 
           #sp_richness, 
           length, kfin, r_fin, diet_troph3, 
