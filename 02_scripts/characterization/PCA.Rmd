@@ -47,7 +47,8 @@ box_data = function(x, y) {
           geom_boxplot(aes(color = .data[[y]])) +
           theme_bw() +
           labs(y = "Movement Class",
-               color = "Class")
+               color = "Class") +
+          scale_color_viridis_d()
 }
 
 plots_cont = map(expl_cont, ~box_data(.x, "class2"))
@@ -67,23 +68,16 @@ r_fin_plot <- box_data(x = "r_fin", y = "class2")
 diet_plot <- box_data(x = "diet_troph3", y = "class2")
 
 
-ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots"))
-ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots"))
-ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots"))
-ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots"))
-ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs", "individual_plots"))
-ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots"))
-ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots"))
-ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots"))
-
+ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
+ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
+ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
+ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
+ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
+ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
+ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
+ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
 
 ```
-
-
-
-
-
-
 
 
 ```{r}
@@ -91,14 +85,16 @@ ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "
 # categorical
 
 expl_cat = c("climate", "body_shape_i", "dev_place", "movement_keyword", 
-             "demers_pelag", "iucn_category", "food_i")
+             "demers_pelag", "iucn_category", "food_i", "circadian")
 
 scatter_data = function(x, y) {
      ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]]) ) +
           geom_jitter(aes(color = .data[[y]])) +
           theme_bw() +
           labs(y = "Movement Class",
-               color = "Class")
+               color = "Class") +
+          scale_color_viridis_d() +
+          theme(axis.text.x = element_text(angle = 40, hjust=1))
 }
 
 plots_cat = map(expl_cat, ~scatter_data(.x, "class2"))
@@ -108,7 +104,34 @@ plots_cat
 ```
 
 
-### Look at filled data
+```{r}
+
+climate_plot <- scatter_data(x = "climate", y = "class2")
+body_plot <- scatter_data(x = "body_shape_i", y = "class2")
+dev_plot <- scatter_data(x = "dev_place", y = "class2")
+move_keyword_plot <- scatter_data(x = "movement_keyword", y = "class2")
+demers_plot <- scatter_data(x = "demers_pelag", y = "class2")
+iucn_plot <- scatter_data(x = "iucn_category", y = "class2")
+food_plot <- scatter_data(x = "food_i", y = "class2")
+circ_plot <- scatter_data(x = "circadian", y = "class2")
+
+
+ggsave(climate_plot, file = paste0("climate_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
+ggsave(body_plot, file = paste0("body_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
+ggsave(dev_plot, file = paste0("dev_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
+ggsave(move_keyword_plot, file = paste0("move_keyword_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
+ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
+ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
+ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
+ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
+
+```
+
+
+
+
+
+### Plot filled data
 
 ```{r}
 
