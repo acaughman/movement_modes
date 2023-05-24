@@ -85,7 +85,8 @@ ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "
 # categorical
 
 expl_cat = c("climate", "body_shape_i", "dev_place", "movement_keyword", 
-             "demers_pelag", "iucn_category", "food_i", "circadian")
+             "demers_pelag", "iucn_category", "food_i", 
+             "circadian", "food_mode")
 
 scatter_data = function(x, y) {
      ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]]) ) +
@@ -110,7 +111,7 @@ dev_plot <- scatter_data(x = "dev_place", y = "class2")
 move_keyword_plot <- scatter_data(x = "movement_keyword", y = "class2")
 demers_plot <- scatter_data(x = "demers_pelag", y = "class2")
 iucn_plot <- scatter_data(x = "iucn_category", y = "class2")
-food_plot <- scatter_data(x = "food_i", y = "class2")
+food_plot <- scatter_data(x = "food_mode", y = "class2")
 circ_plot <- scatter_data(x = "circadian", y = "class2")
 
 
@@ -174,7 +175,7 @@ ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here(
 
 # categorical
 
-expl_cat_filled = c("dev_place", "food_i")
+expl_cat_filled = c("dev_place", "food_i", "food_mode")
 
 scatter_filled = function(x, y) {
      ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]]) ) +
@@ -194,7 +195,7 @@ plots_cat_filled
 ```{r}
 
 dev_fill_plot <- scatter_filled(x = "dev_place", y = "class2")
-food_fill_plot <- scatter_filled(x = "food_i", y = "class2")
+food_fill_plot <- scatter_filled(x = "food_mode", y = "class2")
 
 
 ggsave(dev_fill_plot, file = paste0("dev_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "categorical"))
