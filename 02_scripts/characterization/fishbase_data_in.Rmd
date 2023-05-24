@@ -83,9 +83,11 @@ diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodII
     FoodII = paste(sort(unique(FoodII)), collapse = ", "),
     FoodIII = paste(sort(unique(FoodIII)), collapse = ", ")
   ) %>%
-  ungroup()
+  ungroup() %>%
+  mutate(food_mode = case_when(grepl(",", FoodI) ~ "generalist",
+                               TRUE ~ "specialist")) %>% 
+  janitor::clean_names()
 
-diet <- janitor::clean_names(diet)
 
 data <- left_join(data, diet) %>%
   dplyr::select(-food_ii, -food_iii)
@@ -232,7 +234,7 @@ sp_rich <- load_taxa() %>%
 fish <- left_join(fish, sp_rich)
 ```
 
-### Collect circadian data - LOOK INTO FURTHER? <-----------------------------------------------------
+### Collect circadian data
 
 ```{r}
 
@@ -254,16 +256,6 @@ circ <- species() %>%
 
 fish <- left_join(fish, circ)
 
-
-
-
-# filtering for genus in fish gave 200 obs
-
-circ2 <- species() %>%
-  dplyr::select(SpecCode, Genus, Comments) %>%
-  filter(Genus %in% fish$genus) %>%
-  filter(grepl("nocturnal|diurnal|crepuscular|day|night|daytime|nighttime", Comments))
-
 ```
 
 ### Join new variables with data and clean names
@@ -283,7 +275,7 @@ data[data == "pelagic"] <- "pelagic oceanic"
 ### Write new csv including added variables
 
 ```{r}
-write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 ```
 
 ### Look at missing data
@@ -320,7 +312,7 @@ fish2 <- load_taxa() %>%
   janitor::clean_names()
 
 
-# Food I
+# Food I and Food Mode
 
 missing_food <- fooditems() %>%
   filter(SpecCode %in% fish2$spec_code) %>%
@@ -343,7 +335,9 @@ filled_data <- data
 filled_data <- filled_data %>%
   left_join(missing_food, by = "genus") %>%
   mutate(food_i = coalesce(food_i.x, food_i.y)) %>%
-  dplyr::select(-food_i.x, -food_i.y)
+  dplyr::select(-food_i.x, -food_i.y) %>% 
+  mutate(food_mode = case_when(grepl(",", food_i) ~ "generalist",
+                               TRUE ~ "specialist"))
 
 
 # Place of Development
