@@ -11,3 +11,5 @@
 *.prj
 *.shx
 01_data/fish_ranges
+*.cpg
+*.qmd
