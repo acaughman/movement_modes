@@ -21,6 +21,7 @@ library(sp)
 ### Read in data
 
 ```{r}
+
 data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")) %>%
   mutate(home_range = case_when(
     !is.na(observed_homerange) ~ observed_homerange,
@@ -35,12 +36,10 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
   mutate(month_pld = ceiling(pld / 30))
 ```
 
-
 ```{r}
-ocean <- read_csv(here::here("01_data", "02_processed_data", "ocean_data.csv"))
+
+ocean_data <- read_csv(here::here("01_data", "02_processed_data", "ocean_data.csv"))
 ```
-
-
 
 ### Rename incorect species
 
@@ -140,9 +139,17 @@ fish <- left_join(fish, climate)
 
 ```{r}
 
-#eco = read_csv(here::here("01_data", "02_processed_data", "ocean_basin.csv"))
+range <- ocean_data %>% 
+  mutate(ocean_basin = case_when(!is.na(basin) ~ paste(basin, ocean),
+                                 is.na(basin) ~ ocean)) %>% 
+  group_by(species) %>%
+  summarise(ocean = paste(sort(unique(ocean)), collapse = ", "),
+            basin = paste(sort(unique(basin)), collapse = ", "),
+            ocean_basin = paste(sort(unique(ocean_basin)), collapse = ", ")) %>%
+  ungroup() %>% 
+  mutate_all(na_if,"")
 
-#fish <- left_join(fish, eco)
+fish <- left_join(fish, range)
 
 ```
 
@@ -289,12 +296,11 @@ data[data == "pelagic"] <- "pelagic oceanic"
 
 ```{r}
 
-
 missing_og <- miss_var_summary(data)
 
 missing_data <- data %>%
   dplyr::select(oxygen_cons, temp_range, fecundity_mean, longevity_wild, 
-    temp_preferred, food_i, dev_place, iucn_category, circadian)
+    temp_preferred, food_i, dev_place, iucn_category, circadian, ocean, basin)
 
 missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
   theme_bw()
