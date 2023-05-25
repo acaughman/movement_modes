@@ -35,6 +35,13 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
   mutate(month_pld = ceiling(pld / 30))
 ```
 
+
+```{r}
+ocean <- read_csv(here::here("01_data", "02_processed_data", "ocean_data.csv"))
+```
+
+
+
 ### Rename incorect species
 
 ```{r}
