@@ -22,42 +22,43 @@ library(vegan)
 ### Load data
 
 ```{r}
-fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>% 
+fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>%
   mutate_if(is.character, as.factor)
-filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>% 
+filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>%
   mutate_if(is.character, as.factor)
 ```
 
 ### Plot data
 
 ```{r}
-
 # continuous
 
-plot_data = fishbase_data %>% 
+plot_data <- fishbase_data %>%
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
-response = "class2"
-expl_cont = c("temp_preferred", "fecundity_mean",
-         "longevity_wild", "sp_richness", "length", "kfin", 
-         "r_fin", "diet_troph3")
+response <- "class2"
+expl_cont <- c(
+  "temp_preferred", "fecundity_mean",
+  "longevity_wild", "sp_richness", "length", "kfin",
+  "r_fin", "diet_troph3"
+)
 
-box_data = function(x, y) {
-     ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_boxplot(aes(color = .data[[y]])) +
-          theme_bw() +
-          labs(y = "Movement Class",
-               color = "Class") +
-          scale_color_viridis_d()
+box_data <- function(x, y) {
+  ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]])) +
+    geom_boxplot(aes(color = .data[[y]])) +
+    theme_bw() +
+    labs(
+      y = "Movement Class",
+      color = "Class"
+    ) +
+    scale_color_viridis_d()
 }
 
-plots_cont = map(expl_cont, ~box_data(.x, "class2"))
+plots_cont <- map(expl_cont, ~ box_data(.x, "class2"))
 plots_cont
-
 ```
 
 ```{r}
-
 temp_plot <- box_data(x = "temp_preferred", y = "class2")
 fecund_plot <- box_data(x = "fecundity_mean", y = "class2")
 long_plot <- box_data(x = "longevity_wild", y = "class2")
@@ -76,35 +77,35 @@ ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs
 ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
 ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
 ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
-
 ```
 
 
 ```{r}
-
 # categorical
 
-expl_cat = c("climate", "body_shape_i", "dev_place", "movement_keyword", 
-             "demers_pelag", "iucn_category", "food_i", 
-             "circadian", "food_mode")
+expl_cat <- c(
+  "climate", "body_shape_i", "dev_place", "movement_keyword",
+  "demers_pelag", "iucn_category", "food_i",
+  "circadian", "food_mode"
+)
 
-scatter_data = function(x, y) {
-     ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_jitter(aes(color = .data[[y]])) +
-          theme_bw() +
-          labs(y = "Movement Class",
-               color = "Class") +
-          scale_color_viridis_d() +
-          theme(axis.text.x = element_text(angle = 40, hjust=1))
+scatter_data <- function(x, y) {
+  ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]])) +
+    geom_jitter(aes(color = .data[[y]])) +
+    theme_bw() +
+    labs(
+      y = "Movement Class",
+      color = "Class"
+    ) +
+    scale_color_viridis_d() +
+    theme(axis.text.x = element_text(angle = 40, hjust = 1))
 }
 
-plots_cat = map(expl_cat, ~scatter_data(.x, "class2"))
+plots_cat <- map(expl_cat, ~ scatter_data(.x, "class2"))
 plots_cat
-
 ```
 
 ```{r}
-
 climate_plot <- scatter_data(x = "climate", y = "class2")
 body_plot <- scatter_data(x = "body_shape_i", y = "class2")
 dev_plot <- scatter_data(x = "dev_place", y = "class2")
@@ -123,38 +124,38 @@ ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs
 ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
 ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
 ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
-
 ```
 
 
 ### Plot filled data
 
 ```{r}
-
 # continuous
 
-plot_filled = filled_data %>% 
+plot_filled <- filled_data %>%
   mutate(class2 = as.factor(class2), order = as.factor(order))
 
-expl_cont_filled = c("temp_preferred",  "fecundity_mean",
-         "longevity_wild", "oxygen_cons", "temp_range")
+expl_cont_filled <- c(
+  "temp_preferred", "fecundity_mean",
+  "longevity_wild", "oxygen_cons", "temp_range"
+)
 
-box_filled = function(x, y) {
-     ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_boxplot(aes(color = class2)) +
-          theme_bw() +
-          labs(y = "Movement Class",
-               color = "Class") +
-          scale_color_viridis_d()
+box_filled <- function(x, y) {
+  ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]])) +
+    geom_boxplot(aes(color = class2)) +
+    theme_bw() +
+    labs(
+      y = "Movement Class",
+      color = "Class"
+    ) +
+    scale_color_viridis_d()
 }
 
-plots_cont_filled = map(expl_cont_filled, ~box_filled(.x, "class2"))
+plots_cont_filled <- map(expl_cont_filled, ~ box_filled(.x, "class2"))
 plots_cont_filled
-
 ```
 
 ```{r}
-
 temp_fill_plot <- box_filled(x = "temp_preferred", y = "class2")
 fecund_fill_plot <- box_filled(x = "fecundity_mean", y = "class2")
 long_fill_plot <- box_filled(x = "longevity_wild", y = "class2")
@@ -167,65 +168,37 @@ ggsave(fecund_fill_plot, file = paste0("fecund_fill_plot.png"), path = here::her
 ggsave(long_fill_plot, file = paste0("long_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
 ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
 ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
-
 ```
 
 
 ```{r}
-
 # categorical
 
-expl_cat_filled = c("dev_place", "food_i", "food_mode")
+expl_cat_filled <- c("dev_place", "food_i", "food_mode")
 
-scatter_filled = function(x, y) {
-     ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]]) ) +
-          geom_jitter(aes(color = class2)) +
-          theme_bw() +
-          labs(y = "Movement Class",
-               color = "Class") +
-          scale_color_viridis_d() +
-          theme(axis.text.x = element_text(angle = 40, hjust=1))
+scatter_filled <- function(x, y) {
+  ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]])) +
+    geom_jitter(aes(color = class2)) +
+    theme_bw() +
+    labs(
+      y = "Movement Class",
+      color = "Class"
+    ) +
+    scale_color_viridis_d() +
+    theme(axis.text.x = element_text(angle = 40, hjust = 1))
 }
 
-plots_cat_filled = map(expl_cat_filled, ~scatter_filled(.x, "class2"))
+plots_cat_filled <- map(expl_cat_filled, ~ scatter_filled(.x, "class2"))
 plots_cat_filled
-
 ```
 
 ```{r}
-
 dev_fill_plot <- scatter_filled(x = "dev_place", y = "class2")
 food_fill_plot <- scatter_filled(x = "food_mode", y = "class2")
 
 
 ggsave(dev_fill_plot, file = paste0("dev_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "categorical"))
 ggsave(food_fill_plot, file = paste0("food_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "categorical"))
-
-```
-
-
-
-
-Sort by variable and color by class
-
-```{r}
-
-plot2_data = filled_data %>% 
-  filter(r_fin != "NA") 
-
-#plot2_data = filled_data
-
-plot2_data <- plot2_data %>%  
-  #mutate(r_fin = sort(r_fin)) %>% 
-  mutate(species = as.factor(species)) %>% 
-  mutate(class2 = as.factor(class2)) %>% 
-  mutate(species = fct_relevel(plot2_data$species))
-
-ggplot(plot2_data, aes(species, r_fin)) +
-  geom_point(aes(color = class2)) +
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
-  theme(legend.position = "none")
-
 ```
 
 
@@ -234,28 +207,28 @@ ggplot(plot2_data, aes(species, r_fin)) +
 none are above 5
 
 ```{r}
-
-model <- lm(class2 ~ temp_preferred + fecundity_mean +  
-            longevity_wild + sp_richness + length + kfin + r_fin + diet_troph3, 
-            data = filled_data)
+model <- lm(
+  class2 ~ temp_preferred + fecundity_mean +
+    longevity_wild + sp_richness + length + kfin + r_fin + diet_troph3,
+  data = filled_data
+)
 
 summary(model)
 
 vif(model) # when including both fecundity variables, they have a VIF over 5
 
-#create vector of VIF values
+# create vector of VIF values
 vif_values <- vif(model)
 
-#create horizontal bar chart to display each VIF value
-barplot(vif_values, main = "VIF Values", horiz = TRUE, col = "steelblue", xlim = c(0,6), las = 2)
+# create horizontal bar chart to display each VIF value
+barplot(vif_values, main = "VIF Values", horiz = TRUE, col = "steelblue", xlim = c(0, 6), las = 2)
 
-#add vertical line at 5
+# add vertical line at 5
 abline(v = 5, lwd = 3, lty = 2)
 
 
-#model2 <- lm(class2 ~ temp_preferred + length + r_fin, data = filled_data)
-#summary(model)
-
+# model2 <- lm(class2 ~ temp_preferred + length + r_fin, data = filled_data)
+# summary(model)
 ```
 
 
@@ -265,142 +238,200 @@ abline(v = 5, lwd = 3, lty = 2)
 #### FAMD
 
 ```{r}
-
 # getting error when I include demers_pelag, can't figure it out:
 
 # "Error in `.rowNamesDF<-`(x, value = value) : duplicate 'row.names' are not allowed"
 
 
-famd_filled <- filled_data %>% 
-   dplyr::select(temp_preferred, fecundity_mean, #longevity_wild, 
-          sp_richness, length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place, 
-          movement_keyword, #demers_pelag, 
-          iucn_category, 
-          food_mode, class2) %>% 
-   mutate(class2 = as.factor(class2)) %>% 
-   na.omit()
- 
+famd_filled <- filled_data %>%
+  dplyr::select(
+    temp_preferred, fecundity_mean, # longevity_wild,
+    sp_richness, length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place,
+    movement_keyword, # demers_pelag,
+    iucn_category,
+    food_mode, class2
+  ) %>%
+  mutate(class2 = as.factor(class2)) %>%
+  na.omit()
 
-f1 <- FAMD(famd_filled[,1:13], graph=FALSE)
+
+f1 <- FAMD(famd_filled[, 1:13], graph = FALSE)
 f1
+
+# Contribution to the first dimension
+fviz_contrib(f1, "var", axes = 1)
+# Contribution to the second dimension
+fviz_contrib(f1, "var", axes = 2)
+
+
+# PLOTS ARROWS
+p1 <- fviz_famd_var(f1, "quanti.var",
+  repel = TRUE,
+  col.var = "black"
+)
 
 eigen_f1 <- f1$eig
 eigen_f1 # only 8% of variance explained by first 2 components......
 
 
-f1_fig <- fviz_famd_ind(f1, habillage = famd_filled$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+f1_fig <- fviz_famd_ind(f1, habillage = famd_filled$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var", label = "none") +
   theme_bw()
 
 f1_fig
 
-#ggsave(f1_fig, file = paste0("f1.png"), path = here::here("04_figs", "current_pca_famd"))
+p1 + f1_fig
 
+# ggsave(f1_fig, file = paste0("f1.png"), path = here::here("04_figs", "current_pca_famd"))
 ```
 
 
 ```{r}
+famd_filled2 <- filled_data %>%
+  dplyr::select(
+    fecundity_mean, length, r_fin, diet_troph3,
+    # climate,
+    body_shape_i,
+    dev_place,
+    movement_keyword,
+    # demers_pelag,
+    # iucn_category,
+    # food_i,
+    class2
+  ) %>%
+  mutate(class2 = as.factor(class2)) %>%
+  na.omit()
 
-famd_filled2 <- filled_data %>% 
-   dplyr::select(fecundity_mean, length, r_fin, diet_troph3, 
-          #climate, 
-          body_shape_i, 
-          dev_place, 
-          movement_keyword, 
-          #demers_pelag, 
-          #iucn_category, 
-          #food_i, 
-          class2) %>% 
-   mutate(class2 = as.factor(class2)) %>% 
-   na.omit()
- 
 
-f2 <- FAMD(famd_filled2[,1:8], graph=FALSE)
+f2 <- FAMD(famd_filled2[, 1:8], graph = FALSE)
 f2
 
 eigen_f2 <- f2$eig
-eigen_f2 
+eigen_f2
+
+# Contribution to the first dimension
+fviz_contrib(f2, "var", axes = 1)
+# Contribution to the second dimension
+fviz_contrib(f2, "var", axes = 2)
 
 
-f2_fig <- fviz_famd_ind(f2, label = "none", habillage = famd_filled2$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+# PLOTS ARROWS
+p2 <- fviz_famd_var(f2, "quanti.var",
+  repel = TRUE,
+  col.var = "black"
+)
+
+
+
+f2_fig <- fviz_famd_ind(f2, label = "none", habillage = famd_filled2$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
   theme_bw()
 
 f2_fig # 2 and 3 completely separate, 2 and 5 as well
 
-ggsave(f2_fig, file = paste0("f2.png"), path = here::here("04_figs", "current_pca_famd"))
+p2 + f2_fig
 
+ggsave(f2_fig, file = paste0("f2.png"), path = here::here("04_figs", "current_pca_famd"))
 ```
 
 
 ```{r}
+famd_filled3 <- filled_data %>%
+  dplyr::select(
+    fecundity_mean, length, r_fin, diet_troph3,
+    oxygen_cons,
+    # temp_range,
+    climate,
+    # body_shape_i,
+    # dev_place,
+    movement_keyword,
+    # demers_pelag,
+    # iucn_category,
+    # food_i,
+    class2
+  ) %>%
+  mutate(class2 = as.factor(class2)) %>%
+  na.omit()
 
-famd_filled3 <- filled_data %>% 
-   dplyr::select(fecundity_mean, length, r_fin, diet_troph3,
-          oxygen_cons,
-          #temp_range,
-          climate, 
-          #body_shape_i, 
-          #dev_place, 
-          movement_keyword, 
-          #demers_pelag, 
-          #iucn_category, 
-          #food_i, 
-          class2) %>% 
-   mutate(class2 = as.factor(class2)) %>% 
-   na.omit()
- 
 
-f3 <- FAMD(famd_filled3[,1:7], graph=FALSE)
+f3 <- FAMD(famd_filled3[, 1:7], graph = FALSE)
 f3
 
 eigen_f3 <- f3$eig
-eigen_f3 
+eigen_f3
+
+# Contribution to the first dimension
+fviz_contrib(f3, "var", axes = 1)
+# Contribution to the second dimension
+fviz_contrib(f3, "var", axes = 2)
 
 
-f3_fig <- fviz_famd_ind(f3, label = "none", habillage = famd_filled3$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+# PLOTS ARROWS
+p3 <- fviz_famd_var(f3, "quanti.var",
+  repel = TRUE,
+  col.var = "black"
+)
+
+
+
+f3_fig <- fviz_famd_ind(f3, label = "none", habillage = famd_filled3$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
   theme_bw()
 
 f3_fig # 2 and 3 completely separate, 2 and 5 as well
 
-#ggsave(f3_fig, file = paste0("f3.png"), path = here::here("04_figs", "current_pca_famd"))
+p3 + f3_fig
 
+# ggsave(f3_fig, file = paste0("f3.png"), path = here::here("04_figs", "current_pca_famd"))
 ```
 
 
 ```{r}
+famd_filled4 <- filled_data %>%
+  dplyr::select(
+    fecundity_mean,
+    length,
+    r_fin,
+    # diet_troph3,
+    oxygen_cons,
+    temp_range,
+    # climate,
+    # body_shape_i,
+    # dev_place,
+    movement_keyword,
+    # demers_pelag,
+    # iucn_category,
+    # food_i,
+    class2
+  ) %>%
+  mutate(class2 = as.factor(class2)) %>%
+  na.omit()
 
-famd_filled4 <- filled_data %>% 
-   dplyr::select(fecundity_mean, 
-          length, 
-          r_fin, 
-          #diet_troph3,
-          oxygen_cons,
-          temp_range,
-          #climate, 
-          #body_shape_i, 
-          #dev_place, 
-          movement_keyword, 
-          #demers_pelag, 
-          #iucn_category, 
-          #food_i, 
-          class2) %>% 
-   mutate(class2 = as.factor(class2)) %>% 
-   na.omit()
- 
 
-f4 <- FAMD(famd_filled4[,1:6], graph=FALSE)
+f4 <- FAMD(famd_filled4[, 1:6], graph = FALSE)
 f4
 
 eigen_f4 <- f4$eig
-eigen_f4 
+eigen_f4
+
+# Contribution to the first dimension
+fviz_contrib(f4, "var", axes = 1)
+# Contribution to the second dimension
+fviz_contrib(f4, "var", axes = 2)
 
 
-f4_fig <- fviz_famd_ind(f4, label = "none", habillage = famd_filled4$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+# PLOTS ARROWS
+p4 <- fviz_famd_var(f4, "quanti.var",
+  repel = TRUE,
+  col.var = "black"
+)
+
+
+f4_fig <- fviz_famd_ind(f4, label = "none", habillage = famd_filled4$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
   theme_minimal()
 
 f4_fig # 2 and 3 completely separate, 2 and 5 as well
 
-#ggsave(f4_fig, file = paste0("f4.png"), path = here::here("04_figs", "current_pca_famd"))
+p4 + f4_fig
 
+# ggsave(f4_fig, file = paste0("f4.png"), path = here::here("04_figs", "current_pca_famd"))
 ```
 
 
@@ -408,375 +439,369 @@ f4_fig # 2 and 3 completely separate, 2 and 5 as well
 #### NMDS Plot 1
 
 ```{r}
+com_data <- filled_data %>%
+  dplyr::select(
+    temp_preferred, fecundity_mean, # longevity_wild,
+    sp_richness, length, kfin, r_fin, diet_troph3,
+    species, order, class2
+  ) %>%
+  filter(temp_preferred > 0) %>%
+  na.omit()
 
-com_data <- filled_data %>% 
-   dplyr::select(temp_preferred, fecundity_mean, #longevity_wild, 
-          sp_richness, length, kfin, r_fin, diet_troph3, 
-          species, order, class2) %>% 
-   filter(temp_preferred > 0) %>% 
-   na.omit()
-
-com <- com_data %>% 
+com <- com_data %>%
   dplyr::select(-species, -order, -class2)
 
-m_com = as.matrix(com) # make matrix from dataframe
+m_com <- as.matrix(com) # make matrix from dataframe
 
 set.seed(123)
-nmds = metaMDS(m_com, distance = "euclidean")
+nmds <- metaMDS(m_com, distance = "euclidean")
 nmds # stress: 0.1716711, weak ties
 
-#extract NMDS scores (x and y coordinates)
-filled_scores = as.data.frame(scores(nmds)$sites)
+# extract NMDS scores (x and y coordinates)
+filled_scores <- as.data.frame(scores(nmds)$sites)
 
-#add columns to data frame 
-filled_scores$class2 = com_data$class2
-filled_scores$species = com_data$species
-filled_scores$order = com_data$order
+# add columns to data frame
+filled_scores$class2 <- com_data$class2
+filled_scores$species <- com_data$species
+filled_scores$order <- com_data$order
 
-filled_scores <- filled_scores %>% 
+filled_scores <- filled_scores %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
 
-species_scores = as.data.frame(nmds[["species"]]) %>% 
+species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
-nmds_plot1 = ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) + 
+nmds_plot1 <- ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   labs(x = "NMDS1", y = "NMDS2") +
   stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
-  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
-  
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+
 
 nmds_plot1 # classes 3 and 4 are distinct!
 # coloring by order gave four plus distinct groups..?
 
-#ggsave(nmds_plot1, file = paste0("nmds_plot1.png"), path = here::here("04_figs", "nmds"))
-
-
+# ggsave(nmds_plot1, file = paste0("nmds_plot1.png"), path = here::here("04_figs", "nmds"))
 ```
 
 ##### NMDS Plot 2
 
 ```{r}
+com_data2 <- filled_data %>%
+  dplyr::select(
+    temp_preferred, # fecundity_mean,
+    longevity_wild,
+    # sp_richness,
+    length, kfin, r_fin, diet_troph3,
+    species, order, class2
+  ) %>%
+  filter(temp_preferred > 0) %>%
+  na.omit()
 
-com_data2 <- filled_data %>% 
-   dplyr::select(temp_preferred, #fecundity_mean, 
-          longevity_wild, 
-          #sp_richness, 
-          length, kfin, r_fin, diet_troph3, 
-          species, order, class2) %>% 
-   filter(temp_preferred > 0) %>% 
-   na.omit()
-
-com2 <- com_data2 %>% 
+com2 <- com_data2 %>%
   dplyr::select(-species, -order, -class2)
 
-m_com2 = as.matrix(com2) # make matrix from dataframe
+m_com2 <- as.matrix(com2) # make matrix from dataframe
 
 set.seed(123)
-nmds = metaMDS(m_com2, distance = "euclidean")
+nmds <- metaMDS(m_com2, distance = "euclidean")
 nmds # stress: 0.1432603, weak ties
 
 
-#extract NMDS scores (x and y coordinates)
-filled_scores2 = as.data.frame(scores(nmds)$sites)
+# extract NMDS scores (x and y coordinates)
+filled_scores2 <- as.data.frame(scores(nmds)$sites)
 
-#add columns to data frame 
-filled_scores2$class2 = com_data2$class2
-filled_scores2$species = com_data2$species
-filled_scores2$order = com_data2$order
+# add columns to data frame
+filled_scores2$class2 <- com_data2$class2
+filled_scores2$species <- com_data2$species
+filled_scores2$order <- com_data2$order
 
-filled_scores2 <- filled_scores2 %>% 
+filled_scores2 <- filled_scores2 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
-species_scores = as.data.frame(nmds[["species"]]) %>% 
+species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
 
-nmds_plot2 = ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
+nmds_plot2 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
-  #theme(legend.position = "none") +
+  # theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
-  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot2 # 2 and 3 are pretty distinct, 3 and 7 as well
 
-#ggsave(nmds_plot2, file = paste0("nmds_plot2.png"), path = here::here("04_figs", "nmds"))
-
+# ggsave(nmds_plot2, file = paste0("nmds_plot2.png"), path = here::here("04_figs", "nmds"))
 ```
 
 ##### NMDS Plot 3
 
 ```{r}
+com_data3 <- filled_data %>%
+  dplyr::select(
+    temp_preferred, fecundity_mean,
+    # longevity_wild,
+    # sp_richness,
+    length, kfin, r_fin, diet_troph3,
+    species, order, class2
+  ) %>%
+  filter(temp_preferred > 0) %>%
+  na.omit()
 
-com_data3 <- filled_data %>% 
-   dplyr::select(temp_preferred, fecundity_mean,
-          #longevity_wild, 
-          #sp_richness, 
-          length, kfin, r_fin, diet_troph3, 
-          species, order, class2) %>% 
-   filter(temp_preferred > 0) %>% 
-   na.omit()
-
-com3 <- com_data3 %>% 
+com3 <- com_data3 %>%
   dplyr::select(-species, -order, -class2)
 
-m_com3 = as.matrix(com3) # make matrix from dataframe
+m_com3 <- as.matrix(com3) # make matrix from dataframe
 
 set.seed(123)
-nmds = metaMDS(m_com3, distance = "euclidean")
+nmds <- metaMDS(m_com3, distance = "euclidean")
 nmds # stress: 0.1607562, weak ties
 
 
-#extract NMDS scores (x and y coordinates)
-filled_scores3 = as.data.frame(scores(nmds)$sites)
+# extract NMDS scores (x and y coordinates)
+filled_scores3 <- as.data.frame(scores(nmds)$sites)
 
-#add columns to data frame 
-filled_scores3$class2 = com_data3$class2
-filled_scores3$species = com_data3$species
-filled_scores3$order = com_data3$order
+# add columns to data frame
+filled_scores3$class2 <- com_data3$class2
+filled_scores3$species <- com_data3$species
+filled_scores3$order <- com_data3$order
 
-filled_scores3 <- filled_scores3 %>% 
+filled_scores3 <- filled_scores3 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
 
-species_scores = as.data.frame(nmds[["species"]]) %>% 
+species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
 
-nmds_plot3 = ggplot(filled_scores3, aes(x = NMDS1, y = NMDS2)) +
+nmds_plot3 <- ggplot(filled_scores3, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
-  #theme(legend.position = "none") +
+  # theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
-  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot3 # 2 and 3 are pretty distinct, 3 and 4 as well
 
-#ggsave(nmds_plot3, file = paste0("nmds_plot3.png"), path = here::here("04_figs", "nmds"))
-
+# ggsave(nmds_plot3, file = paste0("nmds_plot3.png"), path = here::here("04_figs", "nmds"))
 ```
 
 ##### NMDS Plot 4
 
 ```{r}
+com_data4 <- filled_data %>%
+  dplyr::select(
+    temp_preferred, # fecundity_mean,
+    # longevity_wild,
+    # sp_richness,
+    length, kfin, r_fin, diet_troph3,
+    species, order, class2
+  ) %>%
+  filter(temp_preferred > 0) %>%
+  na.omit()
 
-com_data4 <- filled_data %>% 
-   dplyr::select(temp_preferred, #fecundity_mean,
-          #longevity_wild, 
-          #sp_richness, 
-          length, kfin, r_fin, diet_troph3, 
-          species, order, class2) %>% 
-   filter(temp_preferred > 0) %>% 
-   na.omit()
-
-com4 <- com_data4 %>% 
+com4 <- com_data4 %>%
   dplyr::select(-species, -order, -class2)
 
-m_com4 = as.matrix(com4) # make matrix from dataframe
+m_com4 <- as.matrix(com4) # make matrix from dataframe
 
 set.seed(123)
-nmds = metaMDS(m_com4, distance = "euclidean")
+nmds <- metaMDS(m_com4, distance = "euclidean")
 nmds # stress: 0.1343541, weak ties
 
 
-#extract NMDS scores (x and y coordinates)
-filled_scores4 = as.data.frame(scores(nmds)$sites)
+# extract NMDS scores (x and y coordinates)
+filled_scores4 <- as.data.frame(scores(nmds)$sites)
 
-#add columns to data frame 
-filled_scores4$class2 = com_data4$class2
-filled_scores4$species = com_data4$species
-filled_scores4$order = com_data4$order
+# add columns to data frame
+filled_scores4$class2 <- com_data4$class2
+filled_scores4$species <- com_data4$species
+filled_scores4$order <- com_data4$order
 
-filled_scores4 <- filled_scores4 %>% 
+filled_scores4 <- filled_scores4 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
-species_scores = as.data.frame(nmds[["species"]]) %>% 
+species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
-nmds_plot4 = ggplot(filled_scores4, aes(x = NMDS1, y = NMDS2)) +
+nmds_plot4 <- ggplot(filled_scores4, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
-  #theme(legend.position = "none") +
+  # theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
-  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
-nmds_plot4 # 2, 3, 4, 7 
+nmds_plot4 # 2, 3, 4, 7
 
-#ggsave(nmds_plot4, file = paste0("nmds_plot4.png"), path = here::here("04_figs", "nmds"))
-
+# ggsave(nmds_plot4, file = paste0("nmds_plot4.png"), path = here::here("04_figs", "nmds"))
 ```
 
 ##### NMDS Plot 5
 
 ```{r}
+com_data5 <- filled_data %>%
+  dplyr::select(
+    temp_preferred,
+    fecundity_mean,
+    # longevity_wild,
+    # sp_richness,
+    # length,
+    # kfin,
+    r_fin,
+    diet_troph3,
+    species, order, class2
+  ) %>%
+  filter(temp_preferred > 0) %>%
+  na.omit()
 
-com_data5 <- filled_data %>% 
-   dplyr::select(temp_preferred, 
-          fecundity_mean,
-          #longevity_wild, 
-          #sp_richness, 
-          #length, 
-          #kfin, 
-          r_fin, 
-          diet_troph3, 
-          species, order, class2) %>% 
-   filter(temp_preferred > 0) %>% 
-   na.omit()
-
-com5 <- com_data5 %>% 
+com5 <- com_data5 %>%
   dplyr::select(-species, -order, -class2)
 
-m_com5 = as.matrix(com5) # make matrix from dataframe
+m_com5 <- as.matrix(com5) # make matrix from dataframe
 
 set.seed(123)
-nmds = metaMDS(m_com5, distance = "euclidean")
+nmds <- metaMDS(m_com5, distance = "euclidean")
 nmds # stress: 0.08614346, weak ties
 
 
-#extract NMDS scores (x and y coordinates)
-filled_scores5 = as.data.frame(scores(nmds)$sites)
+# extract NMDS scores (x and y coordinates)
+filled_scores5 <- as.data.frame(scores(nmds)$sites)
 
-#add columns to data frame 
-filled_scores5$class2 = com_data5$class2
-filled_scores5$species = com_data5$species
-filled_scores5$order = com_data5$order
+# add columns to data frame
+filled_scores5$class2 <- com_data5$class2
+filled_scores5$species <- com_data5$species
+filled_scores5$order <- com_data5$order
 
-filled_scores5 <- filled_scores5 %>% 
+filled_scores5 <- filled_scores5 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
-species_scores = as.data.frame(nmds[["species"]]) %>% 
+species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
 
-nmds_plot5 = ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
+nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
-  #theme(legend.position = "none") +
+  # theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
-  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot5 # 2, 3, 4
 
-#ggsave(nmds_plot5, file = paste0("nmds_plot5.png"), path = here::here("04_figs", "nmds"))
-
+# ggsave(nmds_plot5, file = paste0("nmds_plot5.png"), path = here::here("04_figs", "nmds"))
 ```
 
 
 ##### NMDS Plot 6
 
 ```{r}
+com_data6 <- filled_data %>%
+  dplyr::select( # temp_preferred,
+    fecundity_mean,
+    # longevity_wild,
+    # sp_richness,
+    length,
+    # kfin,
+    r_fin,
+    diet_troph3,
+    species, order, class2
+  ) %>%
+  # filter(temp_preferred > 0) %>%
+  na.omit()
 
-com_data6 <- filled_data %>% 
-   dplyr::select(#temp_preferred, 
-          fecundity_mean,
-          #longevity_wild, 
-          #sp_richness, 
-          length, 
-          #kfin, 
-          r_fin, 
-          diet_troph3, 
-          species, order, class2) %>% 
-   #filter(temp_preferred > 0) %>% 
-   na.omit()
-
-com6 <- com_data6 %>% 
+com6 <- com_data6 %>%
   dplyr::select(-species, -order, -class2)
 
-m_com6 = as.matrix(com6) # make matrix from dataframe
+m_com6 <- as.matrix(com6) # make matrix from dataframe
 
 set.seed(123)
-nmds = metaMDS(m_com6, distance = "euclidean")
+nmds <- metaMDS(m_com6, distance = "euclidean")
 nmds # stress: 0.05406095, weak ties
 
 
-#extract NMDS scores (x and y coordinates)
-filled_scores6 = as.data.frame(scores(nmds)$sites)
+# extract NMDS scores (x and y coordinates)
+filled_scores6 <- as.data.frame(scores(nmds)$sites)
 
-#add columns to data frame 
-filled_scores6$class2 = com_data6$class2
-filled_scores6$species = com_data6$species
-filled_scores6$order = com_data6$order
+# add columns to data frame
+filled_scores6$class2 <- com_data6$class2
+filled_scores6$species <- com_data6$species
+filled_scores6$order <- com_data6$order
 
-filled_scores6 <- filled_scores6 %>% 
+filled_scores6 <- filled_scores6 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
 
-species_scores = as.data.frame(nmds[["species"]]) %>% 
+species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
-nmds_plot6 = ggplot(filled_scores6, aes(x = NMDS1, y = NMDS2)) +
+nmds_plot6 <- ggplot(filled_scores6, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
-  #theme(legend.position = "none") +
+  # theme(legend.position = "none") +
   labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2)  +
-  geom_segment(data = species_scores, aes(x = 0, xend=MDS1, y=0, yend=MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd=0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x=MDS1, y=MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  stat_ellipse(geom = "polygon", aes(fill = class2), alpha = 0.2) +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
 nmds_plot6 # 2, 3, 4
 
-#ggsave(nmds_plot6, file = paste0("nmds_plot6.png"), path = here::here("04_figs", "nmds"))
-
+# ggsave(nmds_plot6, file = paste0("nmds_plot6.png"), path = here::here("04_figs", "nmds"))
 ```
 
 
 
 
-
-
-
-
-
+# Old
 
 ```{r}
-#continuous 
+# continuous
 
-# plot1_data = fishbase_data 
+# plot1_data = fishbase_data
 
 # #option1 sort by variable
-# plot1_data = plot1_data %>% 
-#   dplyr::select(r_fin, species, class2) %>% 
-#   mutate(r_fin = sort(r_fin)) %>% 
-#   mutate(species = as.factor(species)) %>% 
-#   mutate(class2 = as.factor(class2)) %>% 
+# plot1_data = plot1_data %>%
+#   dplyr::select(r_fin, species, class2) %>%
+#   mutate(r_fin = sort(r_fin)) %>%
+#   mutate(species = as.factor(species)) %>%
+#   mutate(class2 = as.factor(class2)) %>%
 #   mutate(species = fct_relevel(plot1_data$species))
-# 
+#
 # ggplot(plot1_data, aes(species, r_fin)) +
 #   geom_point(aes(color = class2))
 
 
 # sort by variable and color by class
 
-plot2_data = filled_data2 %>% 
-  filter(temp_preferred != "NA") 
-
-plot2_data = filled_data2
-
-plot2_data <- plot2_data %>%  
-  #mutate(length = sort(length)) %>% 
-  mutate(species = as.factor(species)) %>% 
-  mutate(class2 = as.factor(class2)) %>%
-  mutate(order = as.factor(order)) %>% 
-  mutate(species = fct_relevel(plot2_data$species))
-
-#more descriptive**** # USE THESE PLOTS for continuous 
-ind3 <- ggplot(plot2_data, aes(r_fin, class2)) +
-  geom_boxplot(aes(color = class2)) +
-  theme_bw(base_size  = 20) +
-  labs(y = "Movement Class",
-       x = "Growth Rate", color = "Class")
-  #theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
-  #theme(legend.position = "none")
-ind3
-
-
-ggsave(ind3, file = paste0("ind3.png"), path = here::here("04_figs", "individual_plots"))
+# plot2_data = filled_data2 %>%
+#   filter(temp_preferred != "NA")
+#
+# plot2_data = filled_data2
+#
+# plot2_data <- plot2_data %>%
+#   #mutate(length = sort(length)) %>%
+#   mutate(species = as.factor(species)) %>%
+#   mutate(class2 = as.factor(class2)) %>%
+#   mutate(order = as.factor(order)) %>%
+#   mutate(species = fct_relevel(plot2_data$species))
+#
+# #more descriptive**** # USE THESE PLOTS for continuous
+# ind3 <- ggplot(plot2_data, aes(r_fin, class2)) +
+#   geom_boxplot(aes(color = class2)) +
+#   theme_bw(base_size  = 20) +
+#   labs(y = "Movement Class",
+#        x = "Growth Rate", color = "Class")
+#   #theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+#   #theme(legend.position = "none")
+# ind3
+#
+#
+# ggsave(ind3, file = paste0("ind3.png"), path = here::here("04_figs", "individual_plots"))
 
 
 # #more to find groupings
@@ -786,126 +811,117 @@ ggsave(ind3, file = paste0("ind3.png"), path = here::here("04_figs", "individual
 
 
 ```{r}
-
-plot2_data = filled_data2
-
-plot2_data <- plot2_data %>%  
-  #mutate(length = sort(length)) %>% 
-  mutate(species = as.factor(species)) %>% 
-  mutate(class2 = as.factor(class2)) %>%
-  mutate(movement_keyword = as.factor(movement_keyword)) %>% 
-  mutate(species = fct_relevel(plot2_data$species))
-
-#more descriptive**** # USE THESE PLOTS for continuous 
-ind2 <- ggplot(plot2_data, aes(movement_keyword, class2)) +
-  geom_jitter(aes(color = class2)) +
-  theme_bw(base_size  = 20) +
-  labs(y = "Movement Class",
-       x = "Movement Keyword", color = "Class") +
-  theme(axis.text.x = element_text(angle = 30, hjust=1, size = 8))
-  #theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
-  #theme(legend.position = "none")
-ind2
-
-
-ggsave(ind2, file = paste0("ind2.png"), path = here::here("04_figs", "individual_plots"))
-
+# plot2_data = filled_data2
+#
+# plot2_data <- plot2_data %>%
+#   #mutate(length = sort(length)) %>%
+#   mutate(species = as.factor(species)) %>%
+#   mutate(class2 = as.factor(class2)) %>%
+#   mutate(movement_keyword = as.factor(movement_keyword)) %>%
+#   mutate(species = fct_relevel(plot2_data$species))
+#
+# #more descriptive**** # USE THESE PLOTS for continuous
+# ind2 <- ggplot(plot2_data, aes(movement_keyword, class2)) +
+#   geom_jitter(aes(color = class2)) +
+#   theme_bw(base_size  = 20) +
+#   labs(y = "Movement Class",
+#        x = "Movement Keyword", color = "Class") +
+#   theme(axis.text.x = element_text(angle = 30, hjust=1, size = 8))
+#   #theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+#   #theme(legend.position = "none")
+# ind2
+#
+#
+# ggsave(ind2, file = paste0("ind2.png"), path = here::here("04_figs", "individual_plots"))
 ```
 
 
-
-
-
-
 ```{r}
-#categorical
-plot2_data = filled_data %>% 
-  dplyr::select(demers_pelag, r_fin, species, class2, family, movement_keyword, 
-         order, class_taxon, longevity_wild, diet_troph3) %>% 
-  mutate(class2 = as.factor(class2), order = as.factor(order))
-
-# #to find groupings
-# ggplot(plot2_data, aes(class2, demers_pelag)) +
-#   geom_point(aes(color = family)) +
-#   theme(legend.position = "none")
-
-#more descriptive*** - USE THIS FOR CATEGORICAL
-ggplot(plot2_data, aes(class2, movement_keyword)) +
-  #geom_point(aes(color = demers_pelag)) +
-  geom_boxplot(aes(color = class2)) +
-  theme_bw() +
-  labs(x = "Movement Keyword",
-       y = "Movement Class") +
-  #theme(legend.position = "none") +
-  scale_color_viridis_d() +
-  theme(axis.text.x = element_text(angle = 30, hjust=1)) 
-  #scale_color_manual(values = c("", ""))
+# categorical
+# plot2_data = filled_data %>%
+#   dplyr::select(demers_pelag, r_fin, species, class2, family, movement_keyword,
+#          order, class_taxon, longevity_wild, diet_troph3) %>%
+#   mutate(class2 = as.factor(class2), order = as.factor(order))
+#
+# # #to find groupings
+# # ggplot(plot2_data, aes(class2, demers_pelag)) +
+# #   geom_point(aes(color = family)) +
+# #   theme(legend.position = "none")
+#
+# #more descriptive*** - USE THIS FOR CATEGORICAL
+# ggplot(plot2_data, aes(class2, movement_keyword)) +
+#   #geom_point(aes(color = demers_pelag)) +
+#   geom_boxplot(aes(color = class2)) +
+#   theme_bw() +
+#   labs(x = "Movement Keyword",
+#        y = "Movement Class") +
+#   #theme(legend.position = "none") +
+#   scale_color_viridis_d() +
+#   theme(axis.text.x = element_text(angle = 30, hjust=1))
+#   #scale_color_manual(values = c("", ""))
 ```
 
 
 ### Metabolic data
 
 ```{r}
-
-plot2_data = fishbase_data
-plot2_data <- plot2_data[!is.na(plot2_data$oxygen_cons),]
-
-ggplot(plot2_data, aes(oxygen_cons, class2)) +
-  geom_point(aes(color = class2))
-
-#option1 sort by oxygen_cons
-plot2_data = plot2_data %>% 
-  dplyr::select(oxygen_cons, species, class2, genus, order, temp_preferred) %>% 
-  mutate(oxygen_cons = sort(oxygen_cons)) %>% 
-  mutate(species = as.factor(species)) %>% 
-  mutate(class2 = as.factor(class2)) %>% 
-  mutate(species = fct_relevel(plot2_data$species))
-
-ggplot(plot2_data, aes(oxygen_cons, class2)) +
-  geom_jitter(aes(color = oxygen_cons)) +
-  theme_bw() +
-  theme(legend.position="none") +
-  theme(axis.text.x=element_blank()) +
-  labs(x = "Species",
-       y = "O2 Consumption Rate") # +
-  #scale_color_viridis_d()
-
-# no noteworthy groupings for class - try coloring by family/order
-
-
-#option 2 sort by class
-plot2_data = plot2_data %>% 
-  dplyr::select(oxygen_cons, species, class2, order, temp_preferred)%>% 
-  mutate(class2 = sort(class2)) %>% 
-  mutate(species = as.factor(species)) %>% 
-  mutate(class2 = as.factor(class2)) %>% 
-  mutate(species = fct_relevel(plot2_data$species))
-
-#more descriptive****
-ggplot(plot2_data, aes(temp_preferred, class2)) +
-  geom_point(aes(color = class2)) +
-  theme_bw() +
-  labs(x = "Optimal Temp",
-       y = "Movement Class") +
-  theme(legend.position = "none")
-
-
-
+# plot2_data = fishbase_data
+# plot2_data <- plot2_data[!is.na(plot2_data$oxygen_cons),]
+#
+# ggplot(plot2_data, aes(oxygen_cons, class2)) +
+#   geom_point(aes(color = class2))
+#
+# #option1 sort by oxygen_cons
+# plot2_data = plot2_data %>%
+#   dplyr::select(oxygen_cons, species, class2, genus, order, temp_preferred) %>%
+#   mutate(oxygen_cons = sort(oxygen_cons)) %>%
+#   mutate(species = as.factor(species)) %>%
+#   mutate(class2 = as.factor(class2)) %>%
+#   mutate(species = fct_relevel(plot2_data$species))
+#
+# ggplot(plot2_data, aes(oxygen_cons, class2)) +
+#   geom_jitter(aes(color = oxygen_cons)) +
+#   theme_bw() +
+#   theme(legend.position="none") +
+#   theme(axis.text.x=element_blank()) +
+#   labs(x = "Species",
+#        y = "O2 Consumption Rate") # +
+#   #scale_color_viridis_d()
+#
+# # no noteworthy groupings for class - try coloring by family/order
+#
+#
+# #option 2 sort by class
+# plot2_data = plot2_data %>%
+#   dplyr::select(oxygen_cons, species, class2, order, temp_preferred)%>%
+#   mutate(class2 = sort(class2)) %>%
+#   mutate(species = as.factor(species)) %>%
+#   mutate(class2 = as.factor(class2)) %>%
+#   mutate(species = fct_relevel(plot2_data$species))
+#
+# #more descriptive****
+# ggplot(plot2_data, aes(temp_preferred, class2)) +
+#   geom_point(aes(color = class2)) +
+#   theme_bw() +
+#   labs(x = "Optimal Temp",
+#        y = "Movement Class") +
+#   theme(legend.position = "none")
+#
 ```
 
 
 
 
 ```{r}
-# 
-# plot3_data = fishbase_data %>% 
-#   dplyr::select(demers_pelag, env_temp, body_shape_i, species, class, class2) %>% 
+#
+# plot3_data = fishbase_data %>%
+#   dplyr::select(demers_pelag, env_temp, body_shape_i, species, class, class2) %>%
 #   mutate(class = as.factor(class), class2 = as.factor(class2))
-# 
+#
 # #to find groupings
 # ggplot(plot3_data, aes(species, env_temp)) +
 #   geom_point(aes(color = class2))
-# 
+#
 # #more descriptive
 # ggplot(plot3_data, aes(body_shape_i, class2)) +
 #   geom_jitter(aes(color = body_shape_i)) +
@@ -914,25 +930,20 @@ ggplot(plot2_data, aes(temp_preferred, class2)) +
 #        y = "Movement Class",
 #        color = "Habitat Type") +
 #   scale_color_viridis_d() +
-#   theme(axis.text.x = element_text(angle = 30, hjust=1)) 
+#   theme(axis.text.x = element_text(angle = 30, hjust=1))
 #   #scale_color_manual(values = c("", ""))
-# 
-# plot4_data = fishbase_data %>% 
-#   dplyr::select(length, species, class2) %>% 
+#
+# plot4_data = fishbase_data %>%
+#   dplyr::select(length, species, class2) %>%
 #   #mutate(class2 = sort(length)) %>% this line is causing problemssssss
-#   mutate(species = as.factor(species)) %>% 
-#   mutate(class2 = as.factor(class2)) %>% 
+#   mutate(species = as.factor(species)) %>%
+#   mutate(class2 = as.factor(class2)) %>%
 #   mutate(species = fct_relevel(plot4_data$species))
-# 
+#
 # ggplot(plot4_data, aes(species, length)) +
 #   geom_jitter(aes(color = class2))
-# 
-
+#
 ```
-
-
-
-### Old
 
 
 ### DO NMDS HERE INSTEAD OF PCA WITH EUCLIDEAN DISTANCE FROM NOW ON 
@@ -943,65 +954,63 @@ Most of this can probably go in old now and then doing overall NMDS and FAMD the
 ### PCA with new variables added
 
 ```{r}
-fishbase_p1 <- fishbase_data %>% 
-  dplyr::select(where(is.numeric)) %>% 
-  dplyr::select(r_fin, longevity_wild, length, fecundity_mean, diet_troph3, class2) %>% 
-  na.omit() # YOU WANT TO REMOVE COLUMNS WITH NAS FOR PCA, AND PROBABLY NMDS TOO
- 
-p1 <- PCA(fishbase_p1[,1:5], graph = FALSE) # runs the PCA on the first 5 columns (not class)
-p1
-
-eigen_p1 <- p1$eig
-eigen_p1 # 69.07% variance explained by first 2 components
-
-p1_fig <- fviz_pca_ind(p1, label = "none", habillage = fishbase_p1$class2, addEllipses = TRUE, 
-                ellipse.level = 0.95) +
-            theme_minimal()
-p1_fig
-
-ggsave(p1_fig, file = paste0("p1_fig.png"), path = here::here("04_figs", "current_pca_famd"))
-
-
-# Vizualize variable contributions to components
-
-fviz_pca_biplot(p1, repel = TRUE, label = "none", habillage = fishbase_p1$class2)
-
-
-# Contributions of variables to PC1
-p1_c1 <- fviz_contrib(p1, choice = "var", axes = 1, top = 10)
-
-# Contributions of variables to PC2
-p1_c2 <- fviz_contrib(p1, choice = "var", axes = 2, top = 10)
-
-components_p1 <- gridExtra::grid.arrange(p1_c1, p1_c2, ncol = 2)
-
-
-#ggsave(components_p1, file = paste0("components_p1.png"), path = here::here("04_figs", "current_pca_famd"))
-
+# fishbase_p1 <- fishbase_data %>%
+#   dplyr::select(where(is.numeric)) %>%
+#   dplyr::select(r_fin, longevity_wild, length, fecundity_mean, diet_troph3, class2) %>%
+#   na.omit() # YOU WANT TO REMOVE COLUMNS WITH NAS FOR PCA, AND PROBABLY NMDS TOO
+#
+# p1 <- PCA(fishbase_p1[,1:5], graph = FALSE) # runs the PCA on the first 5 columns (not class)
+# p1
+#
+# eigen_p1 <- p1$eig
+# eigen_p1 # 69.07% variance explained by first 2 components
+#
+# p1_fig <- fviz_pca_ind(p1, label = "none", habillage = fishbase_p1$class2, addEllipses = TRUE,
+#                 ellipse.level = 0.95) +
+#             theme_minimal()
+# p1_fig
+#
+# ggsave(p1_fig, file = paste0("p1_fig.png"), path = here::here("04_figs", "current_pca_famd"))
+#
+#
+# # Vizualize variable contributions to components
+#
+# fviz_pca_biplot(p1, repel = TRUE, label = "none", habillage = fishbase_p1$class2)
+#
+#
+# # Contributions of variables to PC1
+# p1_c1 <- fviz_contrib(p1, choice = "var", axes = 1, top = 10)
+#
+# # Contributions of variables to PC2
+# p1_c2 <- fviz_contrib(p1, choice = "var", axes = 2, top = 10)
+#
+# components_p1 <- gridExtra::grid.arrange(p1_c1, p1_c2, ncol = 2)
+#
+#
+# #ggsave(components_p1, file = paste0("components_p1.png"), path = here::here("04_figs", "current_pca_famd"))
 ```
 
 
 
 ```{r}
-fishbase_p2 <- fishbase_data %>% 
-  dplyr::select(where(is.numeric)) %>% 
-  dplyr::select(r_fin, length, diet_troph3, class2) %>% 
-  mutate(class2 = as.factor(class2)) %>% 
-  na.omit()
+# fishbase_p2 <- fishbase_data %>%
+#   dplyr::select(where(is.numeric)) %>%
+#   dplyr::select(r_fin, length, diet_troph3, class2) %>%
+#   mutate(class2 = as.factor(class2)) %>%
+#   na.omit()
+#
+# p2 <- PCA(fishbase_p2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+# p2
+#
+# eigen_p2 <- p2$eig
+# eigen_p2 # 74.71% of variance explained by first 2 components
+#
+# p2_fig <- fviz_pca_ind(p2, label = "none", habillage = fishbase_p2$class2, addEllipses = TRUE,
+#                 ellipse.level = 0.95) +
+#             theme_minimal()
+# p2_fig
 
-p2 <- PCA(fishbase_p2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
-p2
-
-eigen_p2 <- p2$eig
-eigen_p2 # 74.71% of variance explained by first 2 components
-
-p2_fig <- fviz_pca_ind(p2, label = "none", habillage = fishbase_p2$class2, addEllipses = TRUE, 
-                ellipse.level = 0.95) +
-            theme_minimal()
-p2_fig
-
-#ggsave(p2_fig, file = paste0("p2_fig.png"), path = here::here("04_figs"))
-
+# ggsave(p2_fig, file = paste0("p2_fig.png"), path = here::here("04_figs"))
 ```
 
 
@@ -1009,405 +1018,398 @@ p2_fig
 ### FAMD with new variables added
 
 ```{r}
-
-fishbase_f1 <- fishbase_data %>% 
-   dplyr::select(weight, env_temp, temp_preferred, fecundity_mean, r_fin, class2) %>% 
-   mutate(class2 = as.factor(class2), 
-          env_temp = as.factor(env_temp)) %>% 
-   na.omit()
- 
-f1 <- FAMD(fishbase_f1[,1:5], graph=FALSE)
-f1
-
-eigen_f1 <- f1$eig
-eigen_f1 # 42.11% of variance explained by first 2 components
-
-
-f1_fig <- fviz_famd_ind(f1, label = "none", habillage = fishbase_f1$class2, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
-
-f1_fig
-
-# ggsave(f1_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
-
-
+# fishbase_f1 <- fishbase_data %>%
+#    dplyr::select(weight, env_temp, temp_preferred, fecundity_mean, r_fin, class2) %>%
+#    mutate(class2 = as.factor(class2),
+#           env_temp = as.factor(env_temp)) %>%
+#    na.omit()
+#
+# f1 <- FAMD(fishbase_f1[,1:5], graph=FALSE)
+# f1
+#
+# eigen_f1 <- f1$eig
+# eigen_f1 # 42.11% of variance explained by first 2 components
+#
+#
+# f1_fig <- fviz_famd_ind(f1, label = "none", habillage = fishbase_f1$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+#   theme_minimal()
+#
+# f1_fig
+#
+# # ggsave(f1_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
 ```
 
 ```{r}
-
-fishbase_f2 <- fishbase_data %>% 
-   dplyr::select(r_fin, env_temp, temp_preferred, demers_pelag, 
-          body_shape_i, fecundity_mean, longevity_wild, movement_keyword, length, class2, kfin, diet_troph3, food_i) %>% 
-   mutate(class2 = as.factor(class2), 
-          env_temp = as.factor(env_temp),
-          demers_pelag = as.factor(demers_pelag),
-          body_shape_i = as.factor(body_shape_i)) %>% 
-   na.omit()
- 
-f2 <- FAMD(fishbase_f2[,1:12], graph=FALSE)
-f2
-
-eigen_f2 <- f2$eig
-eigen_f2 # 42.11% of variance explained by first 2 components
-
-
-f2_fig <- fviz_famd_ind(f2, label = "none", habillage = fishbase_f2$class2, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
-
-f2_fig
-
-fviz_famd_var(f2, geom = "arrow", )
-
-
-#ggsave(f2_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
+#
+# fishbase_f2 <- fishbase_data %>%
+#    dplyr::select(r_fin, env_temp, temp_preferred, demers_pelag,
+#           body_shape_i, fecundity_mean, longevity_wild, movement_keyword, length, class2, kfin, diet_troph3, food_i) %>%
+#    mutate(class2 = as.factor(class2),
+#           env_temp = as.factor(env_temp),
+#           demers_pelag = as.factor(demers_pelag),
+#           body_shape_i = as.factor(body_shape_i)) %>%
+#    na.omit()
+#
+# f2 <- FAMD(fishbase_f2[,1:12], graph=FALSE)
+# f2
+#
+# eigen_f2 <- f2$eig
+# eigen_f2 # 42.11% of variance explained by first 2 components
+#
+#
+# f2_fig <- fviz_famd_ind(f2, label = "none", habillage = fishbase_f2$class2, addEllipses = TRUE, ellipse.level = 0.95) +
+#   theme_minimal()
+#
+# f2_fig
+#
+# fviz_famd_var(f2, geom = "arrow", )
 
 
+# ggsave(f2_fig, file = paste0("f1_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
+# fishbase_f3 <- fishbase_data %>%
+#   dplyr::select(length, diet_troph3, demers_pelag, order) %>%
+#   mutate(order = as.factor(order), demers_pelag = as.factor(demers_pelag)) %>%
+#   na.omit()
+#
+# f3 <- FAMD(fishbase_f3[,1:3], graph=FALSE)
+# f3
+#
+# eigen_f3 <- f3$eig
+# eigen_f3 # 30.38% of variance explained by first 2 components
+#
+#
+# f3_fig <- fviz_famd_ind(f3, label = "none", habillage = fishbase_f3$order, addEllipses = FALSE, ellipse.level = 0.95) +
+#   theme_minimal() +
+#   theme(legend.position = "none")
+# f3_fig
 
-fishbase_f3 <- fishbase_data %>% 
-  dplyr::select(length, diet_troph3, demers_pelag, order) %>% 
-  mutate(order = as.factor(order), demers_pelag = as.factor(demers_pelag)) %>% 
-  na.omit()
 
-f3 <- FAMD(fishbase_f3[,1:3], graph=FALSE)
-f3
-
-eigen_f3 <- f3$eig
-eigen_f3 # 30.38% of variance explained by first 2 components
-
-
-f3_fig <- fviz_famd_ind(f3, label = "none", habillage = fishbase_f3$order, addEllipses = FALSE, ellipse.level = 0.95) +
-  theme_minimal() +
-  theme(legend.position = "none")
-f3_fig 
-
-
-#ggsave(f3_fig, file = paste0("f3_fig.png"), path = here::here("04_figs", "current_pca_famd"))
-
+# ggsave(f3_fig, file = paste0("f3_fig.png"), path = here::here("04_figs", "current_pca_famd"))
 ```
-
-
-
-
 
 
 ### Initial PCA and FAMD
 
 ```{r}
-fishbase_pca1 <- fishbase_data %>% 
-  dplyr::select(where(is.numeric)) %>% 
-  dplyr::select(r_fin, kfin, length, diet_troph3, class) %>% 
-  mutate(class = as.factor(class))
+# fishbase_pca1 <- fishbase_data %>%
+#   dplyr::select(where(is.numeric)) %>%
+#   dplyr::select(r_fin, kfin, length, diet_troph3, class) %>%
+#   mutate(class = as.factor(class))
+#
+# # this will only work if all variables are numeric
+# #cor.mat <- round(cor(fishbase_pca1),2) # nothing is highly correlated - good!
+# #cor.mat
+#
+# pca1 <- PCA(fishbase_pca1[,1:4], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+# pca1
+#
+# eigen_pca1 <- pca1$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
+# eigen_pca1 # 66.4% of variance explained by first 2 components
+#
+# fviz_screeplot(pca1, ncp=10) # scree plot shows eigenvalues/variances associated w components
+#
+#
+# plot(pca1, choix = "var") # this is the same plot as the original PCA code on line 31?
+#
+#
+# pca1_fig <- fviz_pca_ind(pca1, label = "none", habillage = fishbase_pca1$class, addEllipses = TRUE,
+#                 ellipse.level = 0.95) +
+#             theme_minimal()
+# pca1_fig
 
-# this will only work if all variables are numeric
-#cor.mat <- round(cor(fishbase_pca1),2) # nothing is highly correlated - good!
-#cor.mat
-
-pca1 <- PCA(fishbase_pca1[,1:4], graph = FALSE) # runs the PCA on the first 4 columns (not class)
-pca1
-
-eigen_pca1 <- pca1$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
-eigen_pca1 # 66.4% of variance explained by first 2 components
-
-fviz_screeplot(pca1, ncp=10) # scree plot shows eigenvalues/variances associated w components
-
-
-plot(pca1, choix = "var") # this is the same plot as the original PCA code on line 31?
-
-
-pca1_fig <- fviz_pca_ind(pca1, label = "none", habillage = fishbase_pca1$class, addEllipses = TRUE, 
-                ellipse.level = 0.95) +
-            theme_minimal()
-pca1_fig
-
-#ggsave(pca1_fig, file = paste0("pca1_fig.png"), path = here::here("04_figs"))
-
+# ggsave(pca1_fig, file = paste0("pca1_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
+#
+# fishbase_pca2 <- fishbase_data %>%
+#   dplyr::select(where(is.numeric)) %>%
+#   dplyr::select(r_fin, length, diet_troph3, class) %>%
+#   mutate(class = as.factor(class))
+#
+# pca2 <- PCA(fishbase_pca2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+#
+# eigen_pca2 <- pca2$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
+# eigen_pca2 # 81.45% of variance explained by first 2 components
+#
+# plot(pca2, choix = "var")
+#
+#
+# pca2_fig <- fviz_pca_ind(pca2, label = "none", habillage = fishbase_pca2$class, addEllipses = TRUE,
+#                 ellipse.level = 0.95) +
+#             theme_minimal()
+# pca2_fig
 
-fishbase_pca2 <- fishbase_data %>% 
-  dplyr::select(where(is.numeric)) %>% 
-  dplyr::select(r_fin, length, diet_troph3, class) %>% 
-  mutate(class = as.factor(class))
-
-pca2 <- PCA(fishbase_pca2[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
-
-eigen_pca2 <- pca2$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
-eigen_pca2 # 81.45% of variance explained by first 2 components
-
-plot(pca2, choix = "var")
-
-
-pca2_fig <- fviz_pca_ind(pca2, label = "none", habillage = fishbase_pca2$class, addEllipses = TRUE, 
-                ellipse.level = 0.95) +
-            theme_minimal()
-pca2_fig
-
-#ggsave(pca2_fig, file = paste0("pca2_fig.png"), path = here::here("04_figs"))
-
+# ggsave(pca2_fig, file = paste0("pca2_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
-
-fishbase_pca3 <- fishbase_data %>% 
-  dplyr::select(where(is.numeric)) %>% 
-  dplyr::select(kfin, length, diet_troph3, class) %>% 
-  mutate(class = as.factor(class))
-
-pca3 <- PCA(fishbase_pca3[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
-
-eigen_pca3 <- pca3$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
-eigen_pca3 # 81.29% of variance explained by first 2 components
-
-plot(pca3, choix = "var")
-
-
-pca3_fig <- fviz_pca_ind(pca3, label = "none", habillage = fishbase_pca3$class, addEllipses = TRUE, 
-                ellipse.level = 0.95) +
-            theme_minimal()
-pca3_fig
-
-#ggsave(pca3_fig, file = paste0("pca3_fig.png"), path = here::here("04_figs"))
-
+#
+# fishbase_pca3 <- fishbase_data %>%
+#   dplyr::select(where(is.numeric)) %>%
+#   dplyr::select(kfin, length, diet_troph3, class) %>%
+#   mutate(class = as.factor(class))
+#
+# pca3 <- PCA(fishbase_pca3[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+#
+# eigen_pca3 <- pca3$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
+# eigen_pca3 # 81.29% of variance explained by first 2 components
+#
+# plot(pca3, choix = "var")
+#
+#
+# pca3_fig <- fviz_pca_ind(pca3, label = "none", habillage = fishbase_pca3$class, addEllipses = TRUE,
+#                 ellipse.level = 0.95) +
+#             theme_minimal()
+# pca3_fig
+#
+# #ggsave(pca3_fig, file = paste0("pca3_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
-
-fishbase_pca4 <- fishbase_data %>% 
-  dplyr::select(where(is.numeric)) %>% 
-  dplyr::select(length, diet_troph3, class) %>% 
-  mutate(class = as.factor(class))
-
-pca4 <- PCA(fishbase_pca4[,1:2], graph = FALSE) # runs the PCA on the first 4 columns (not class)
-
-eigen_pca4 <- pca4$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
-eigen_pca4 # only 2 components
-
-plot(pca4, choix = "var")
-
-
-pca4_fig <- fviz_pca_ind(pca4, label = "none", habillage = fishbase_pca4$class, addEllipses = TRUE, 
-                ellipse.level = 0.95) +
-            theme_minimal()
-pca4_fig # group 6 pretty clearly defined?
-
-#ggsave(pca4_fig, file = paste0("pca4_fig.png"), path = here::here("04_figs"))
-
+# fishbase_pca4 <- fishbase_data %>%
+#   dplyr::select(where(is.numeric)) %>%
+#   dplyr::select(length, diet_troph3, class) %>%
+#   mutate(class = as.factor(class))
+#
+# pca4 <- PCA(fishbase_pca4[,1:2], graph = FALSE) # runs the PCA on the first 4 columns (not class)
+#
+# eigen_pca4 <- pca4$eig # large eigenvalue (>1) for a component = it accounts for greater amt of variation than og components
+# eigen_pca4 # only 2 components
+#
+# plot(pca4, choix = "var")
+#
+#
+# pca4_fig <- fviz_pca_ind(pca4, label = "none", habillage = fishbase_pca4$class, addEllipses = TRUE,
+#                 ellipse.level = 0.95) +
+#             theme_minimal()
+# pca4_fig # group 6 pretty clearly defined?
+#
+# #ggsave(pca4_fig, file = paste0("pca4_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ### FAMD
 
 ```{r}
-
-fishbase_famd1 <- fishbase_data %>% 
-  dplyr::select(r_fin, kfin, length, diet_troph3, movement_keyword, food_i, class) %>% 
-  mutate(class = as.factor(class), movement_keyword = as.factor(movement_keyword), food_i = as.factor(food_i)) %>% 
-  na.omit(fishbase_famd1)
-
-
-famd1 <- FAMD(fishbase_famd1[,1:6], graph=FALSE)
-famd1
-
-eigen_famd1 <- famd1$eig
-eigen_famd1 # 7.23% of variance explained by first 2 components!?
-
-
-famd1_fig <- fviz_famd_ind(famd1, label = "none", habillage = fishbase_famd1$class, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
-
-famd1_fig
-#ggsave(famd1_fig, file = paste0("famd1_fig.png"), path = here::here("04_figs"))
-
-
+#
+# fishbase_famd1 <- fishbase_data %>%
+#   dplyr::select(r_fin, kfin, length, diet_troph3, movement_keyword, food_i, class) %>%
+#   mutate(class = as.factor(class), movement_keyword = as.factor(movement_keyword), food_i = as.factor(food_i)) %>%
+#   na.omit(fishbase_famd1)
+#
+#
+# famd1 <- FAMD(fishbase_famd1[,1:6], graph=FALSE)
+# famd1
+#
+# eigen_famd1 <- famd1$eig
+# eigen_famd1 # 7.23% of variance explained by first 2 components!?
+#
+#
+# famd1_fig <- fviz_famd_ind(famd1, label = "none", habillage = fishbase_famd1$class, addEllipses = TRUE, ellipse.level = 0.95) +
+#   theme_minimal()
+#
+# famd1_fig
+# #ggsave(famd1_fig, file = paste0("famd1_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
-
-fishbase_famd2 <- fishbase_data %>% 
-  dplyr::select(length, food_i, class) %>% 
-  mutate(class = as.factor(class), food_i = as.factor(food_i)) %>% 
-  na.omit(fishbase_famd2)
-
-famd2 <- FAMD(fishbase_famd2[,1:2], graph=FALSE)
-
-eigen_famd2 <- famd2$eig
-eigen_famd2 # 5.49% 
-
-
-famd2_fig <- fviz_famd_ind(famd2, label = "none", habillage = fishbase_famd2$class, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
-
-famd2_fig
-#ggsave(famd2_fig, file = paste0("famd2_fig.png"), path = here::here("04_figs"))
-
-
+#
+# fishbase_famd2 <- fishbase_data %>%
+#   dplyr::select(length, food_i, class) %>%
+#   mutate(class = as.factor(class), food_i = as.factor(food_i)) %>%
+#   na.omit(fishbase_famd2)
+#
+# famd2 <- FAMD(fishbase_famd2[,1:2], graph=FALSE)
+#
+# eigen_famd2 <- famd2$eig
+# eigen_famd2 # 5.49%
+#
+#
+# famd2_fig <- fviz_famd_ind(famd2, label = "none", habillage = fishbase_famd2$class, addEllipses = TRUE, ellipse.level = 0.95) +
+#   theme_minimal()
+#
+# famd2_fig
+# #ggsave(famd2_fig, file = paste0("famd2_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
-
-fishbase_famd3 <- fishbase_data %>% 
-  dplyr::select(r_fin, kfin, diet_troph3, iucn_category, class) %>% 
-  mutate(class = as.factor(class), iucn_category = as.factor(iucn_category)) %>% 
-  na.omit(fishbase_famd3)
-
-famd3 <- FAMD(fishbase_famd3[,1:4], graph=FALSE)
-famd3
-
-eigen_famd3 <- famd3$eig
-eigen_famd3 # 31.50% of variance explained by first 2 components
-
-
-famd3_fig <- fviz_famd_ind(famd3, label = "none", habillage = fishbase_famd3$class, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
-
-famd3_fig 
-#ggsave(famd3_fig, file = paste0("famd3_fig.png"), path = here::here("04_figs"))
-
-
+#
+# fishbase_famd3 <- fishbase_data %>%
+#   dplyr::select(r_fin, kfin, diet_troph3, iucn_category, class) %>%
+#   mutate(class = as.factor(class), iucn_category = as.factor(iucn_category)) %>%
+#   na.omit(fishbase_famd3)
+#
+# famd3 <- FAMD(fishbase_famd3[,1:4], graph=FALSE)
+# famd3
+#
+# eigen_famd3 <- famd3$eig
+# eigen_famd3 # 31.50% of variance explained by first 2 components
+#
+#
+# famd3_fig <- fviz_famd_ind(famd3, label = "none", habillage = fishbase_famd3$class, addEllipses = TRUE, ellipse.level = 0.95) +
+#   theme_minimal()
+#
+# famd3_fig
+# #ggsave(famd3_fig, file = paste0("famd3_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
-
-fishbase_famd4 <- fishbase_data %>% 
-  dplyr::select(length, iucn_category, class) %>% 
-  mutate(class = as.factor(class), iucn_category = as.factor(iucn_category)) %>% 
-  na.omit(fishbase_famd4)
-
-famd4 <- FAMD(fishbase_famd4[,1:2], graph=FALSE)
-famd4
-
-eigen_famd4 <- famd4$eig
-eigen_famd4 # 38.75% of variance explained by first 2 components
-
-
-famd4_fig <- fviz_famd_ind(famd4, label = "none", habillage = fishbase_famd4$class, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
-
-famd4_fig
-#ggsave(famd4_fig, file = paste0("famd4_fig.png"), path = here::here("04_figs"))
-
-
+#
+# fishbase_famd4 <- fishbase_data %>%
+#   dplyr::select(length, iucn_category, class) %>%
+#   mutate(class = as.factor(class), iucn_category = as.factor(iucn_category)) %>%
+#   na.omit(fishbase_famd4)
+#
+# famd4 <- FAMD(fishbase_famd4[,1:2], graph=FALSE)
+# famd4
+#
+# eigen_famd4 <- famd4$eig
+# eigen_famd4 # 38.75% of variance explained by first 2 components
+#
+#
+# famd4_fig <- fviz_famd_ind(famd4, label = "none", habillage = fishbase_famd4$class, addEllipses = TRUE, ellipse.level = 0.95) +
+#   theme_minimal()
+#
+# famd4_fig
+# #ggsave(famd4_fig, file = paste0("famd4_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
-
-fishbase_famd5 <- fishbase_data %>% 
-  dplyr::select(length, demers_pelag, diet_troph3, class) %>% 
-  mutate(class = as.factor(class), 
-         demers_pelag = as.factor(demers_pelag), 
-         diet_troph3 = as.factor(diet_troph3)) %>% 
-  na.omit(fishbase_famd5)
-
-famd5 <- FAMD(fishbase_famd5[,1:3], graph=FALSE)
-famd5
-
-eigen_famd5 <- famd5$eig
-eigen_famd5 # 1.27% of variance explained by first 2 components!?
-
-
-famd5_fig <- fviz_famd_ind(famd5, label = "none", habillage = fishbase_famd5$class, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
-famd5_fig
-
-ggsave(famd5_fig, file = paste0("famd5_fig.png"), path = here::here("04_figs"))
-
+# fishbase_famd5 <- fishbase_data %>%
+#   dplyr::select(length, demers_pelag, diet_troph3, class) %>%
+#   mutate(class = as.factor(class),
+#          demers_pelag = as.factor(demers_pelag),
+#          diet_troph3 = as.factor(diet_troph3)) %>%
+#   na.omit(fishbase_famd5)
+#
+# famd5 <- FAMD(fishbase_famd5[,1:3], graph=FALSE)
+# famd5
+#
+# eigen_famd5 <- famd5$eig
+# eigen_famd5 # 1.27% of variance explained by first 2 components!?
+#
+#
+# famd5_fig <- fviz_famd_ind(famd5, label = "none", habillage = fishbase_famd5$class, addEllipses = TRUE, ellipse.level = 0.95) +
+#   theme_minimal()
+# famd5_fig
+#
+# ggsave(famd5_fig, file = paste0("famd5_fig.png"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
-
-fishbase_famd6 <- fishbase_data %>% 
-  dplyr::select(length, diet_troph3, demers_pelag, class) %>% 
-  mutate(class = as.factor(class), demers_pelag = as.factor(demers_pelag)) %>% 
-  na.omit()
-
-famd6 <- FAMD(fishbase_famd6[,1:3], graph=FALSE)
-famd6
-
-eigen_famd6 <- famd6$eig
-eigen_famd6 # 30.38% of variance explained by first 2 components
-
-
-famd6_fig <- fviz_famd_ind(famd6, label = "none", habillage = fishbase_famd6$class, addEllipses = TRUE, ellipse.level = 0.95) +
-  theme_minimal()
-famd6_fig # still pretty good groupings here
-
-famd6_1_fig <- fviz_famd_ind(famd6, label = "none", habillage = fishbase_famd6$class) +
-  theme_minimal()
-famd6_1_fig # really interesting.. what does it mean?
-
-
-#ggsave(famd6_fig, file = paste0("famd6_fig.png"), path = here::here("04_figs"))
-#ggsave(famd6_1_fig, file = paste0("famd6_1_fig.png"), path = here::here("04_figs"))
-
+# fishbase_famd6 <- fishbase_data %>%
+#   dplyr::select(length, diet_troph3, demers_pelag, class) %>%
+#   mutate(class = as.factor(class), demers_pelag = as.factor(demers_pelag)) %>%
+#   na.omit()
+#
+# famd6 <- FAMD(fishbase_famd6[,1:3], graph=FALSE)
+# famd6
+#
+# eigen_famd6 <- famd6$eig
+# eigen_famd6 # 30.38% of variance explained by first 2 components
+#
+#
+# famd6_fig <- fviz_famd_ind(famd6, label = "none", habillage = fishbase_famd6$class, addEllipses = TRUE, ellipse.level = 0.95) +
+#   theme_minimal()
+# famd6_fig # still pretty good groupings here
+#
+# famd6_1_fig <- fviz_famd_ind(famd6, label = "none", habillage = fishbase_famd6$class) +
+#   theme_minimal()
+# famd6_1_fig # really interesting.. what does it mean?
+#
+#
+# #ggsave(famd6_fig, file = paste0("famd6_fig.png"), path = here::here("04_figs"))
+# #ggsave(famd6_1_fig, file = paste0("famd6_1_fig.png"), path = here::here("04_figs"))
 ```
 
 
 
 ```{r}
-# 
-# fishbase_famd5 <- fishbase_data %>% 
-#   dplyr::select(r_fin, kfin, length, diet_troph3, movement_keyword, demers_pelag, food_i, class) %>% 
-#   mutate(class = as.factor(class), 
-#          movement_keyword = as.factor(movement_keyword), 
-#          food_i = as.factor(food_i), 
+#
+# fishbase_famd5 <- fishbase_data %>%
+#   dplyr::select(r_fin, kfin, length, diet_troph3, movement_keyword, demers_pelag, food_i, class) %>%
+#   mutate(class = as.factor(class),
+#          movement_keyword = as.factor(movement_keyword),
+#          food_i = as.factor(food_i),
 #          demers_pelag = as.factor(demers_pelag)) %>%  # error here?  <--------------------------------------------
 #   na.omit(fishbase_famd5)
-#   
-# 
+#
+#
 # famd5 <- FAMD(fishbase_famd5[,1:7], graph=FALSE)
 # famd5
-# 
+#
 # eigen_famd5 <- famd5$eig
 # eigen_famd5 # 7.23% of variance explained by first 2 components!?
-# 
-# 
+#
+#
 # famd5_fig <- fviz_famd_ind(famd5, label = "none", habillage = fishbase_famd5$class, addEllipses = TRUE, ellipse.level = 0.95) +
 #   theme_minimal()
-# 
+#
 # famd5_fig
 # #ggsave(famd5_fig, file = paste0("famd5_fig.png"), path = here::here("04_figs"))
-# 
-
+#
 ```
 
 
 ```{r}
-# 
-# fishbase_famd5 <- fishbase_data %>% 
-#   dplyr::select(r_fin, kfin, length, diet_troph3, food_i, movement_keyword, iucn_category, demers_pelag, class) %>% 
-#   mutate(class = as.factor(class), 
-#          demers_pelag = as.factor(demers_pelag), 
-#          iucn_category = as.factor(iucn_category), 
-#          food_i = as.factor(food_i), 
-#          movement_keyword = as.factor(movement_keyword)) %>% 
+#
+# fishbase_famd5 <- fishbase_data %>%
+#   dplyr::select(r_fin, kfin, length, diet_troph3, food_i, movement_keyword, iucn_category, demers_pelag, class) %>%
+#   mutate(class = as.factor(class),
+#          demers_pelag = as.factor(demers_pelag),
+#          iucn_category = as.factor(iucn_category),
+#          food_i = as.factor(food_i),
+#          movement_keyword = as.factor(movement_keyword)) %>%
 #   na.omit(fishbase_famd5) # error why?  <------------------------------------------------------------------
-# 
+#
 # famd5 <- FAMD(fishbase_famd5[,1:8], graph=FALSE)
 # famd5
-# 
+#
 # eigen_famd5 <- famd5$eig
 # eigen_famd5 # 30.38% of variance explained by first 2 components
-# 
-# 
+#
+#
 # famd5_fig <- fviz_famd_ind(famd5, label = "none", habillage = fishbase_famd5$class, addEllipses = TRUE, ellipse.level = 0.95) +
 #   theme_minimal()
-# famd5_fig 
-# 
-# 
+# famd5_fig
+#
+#
 # #ggsave(famd5_fig, file = paste0("famd5_fig.png"), path = here::here("04_figs"))
-# 
+#
+```
 
+
+Sort by variable and color by class
+
+```{r}
+#
+# plot2_data = filled_data %>%
+#   filter(r_fin != "NA")
+#
+# #plot2_data = filled_data
+#
+# plot2_data <- plot2_data %>%
+#   #mutate(r_fin = sort(r_fin)) %>%
+#   mutate(species = as.factor(species)) %>%
+#   mutate(class2 = as.factor(class2)) %>%
+#   mutate(species = fct_relevel(plot2_data$species))
+#
+# ggplot(plot2_data, aes(species, r_fin)) +
+#   geom_point(aes(color = class2)) +
+#   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+#   theme(legend.position = "none")
+#
 ```
