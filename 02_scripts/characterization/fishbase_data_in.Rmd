@@ -21,7 +21,6 @@ library(sp)
 ### Read in data
 
 ```{r}
-
 data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")) %>%
   mutate(home_range = case_when(
     !is.na(observed_homerange) ~ observed_homerange,
@@ -37,14 +36,12 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
 ```
 
 ```{r}
-
 ocean_data <- read_csv(here::here("01_data", "02_processed_data", "ocean_data.csv"))
 ```
 
 ### Rename incorect species
 
 ```{r}
-
 data <- data %>%
   mutate(species = str_replace(species, "Oblada melanuras", "Oblada melanurus")) %>%
   mutate(species = str_replace(species, "Pennahia aneas", "Pennahia aneus"))
@@ -53,7 +50,6 @@ data <- data %>%
 ### Make new clusters
 
 ```{r}
-
 clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv")) %>%
   mutate(class2 = class) %>%
   mutate(class2 = case_when(class2 == 6 ~ 2, class2 != 6 ~ class2)) # combine classes 6 into 2
@@ -71,7 +67,6 @@ clusters <- clusters %>%
 ### Load in taxonomic info
 
 ```{r}
-
 fish <- load_taxa() %>% # load all taxonomic info from fishbase into fish, then
   filter(Species %in% data$species) %>% # dplyr::select only the rows containing species listed in data
   janitor::clean_names()
@@ -80,7 +75,6 @@ fish <- load_taxa() %>% # load all taxonomic info from fishbase into fish, then
 ### Collect diet data
 
 ```{r}
-
 # get diet items and combine rows of the same species in each column
 diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>%
   group_by(Species) %>%
@@ -90,8 +84,10 @@ diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodII
     FoodIII = paste(sort(unique(FoodIII)), collapse = ", ")
   ) %>%
   ungroup() %>%
-  mutate(food_mode = case_when(grepl(",", FoodI) ~ "generalist",
-                               TRUE ~ "specialist")) %>% 
+  mutate(food_mode = case_when(
+    grepl(",", FoodI) ~ "generalist",
+    TRUE ~ "specialist"
+  )) %>%
   janitor::clean_names()
 
 
@@ -102,9 +98,8 @@ data <- left_join(data, diet) %>%
 ### Collect temperature data
 
 ```{r}
-
-temp <- stocks() %>% 
-  filter(SpecCode %in% fish$spec_code) %>% 
+temp <- stocks() %>%
+  filter(SpecCode %in% fish$spec_code) %>%
   dplyr::select(SpecCode, TempMin, TempMax, TempPreferred) %>%
   mutate(temp_range = TempMax - TempMin) %>%
   arrange(SpecCode)
@@ -124,10 +119,10 @@ fish <- left_join(fish, temp) # this was making fish have 607 rows, removed repe
 ### Collect climate data
 
 ```{r}
-climate = ecosystem() %>% 
+climate <- ecosystem() %>%
   filter(SpecCode %in% fish$spec_code) %>%
-  dplyr::select(SpecCode, Climate) %>% 
-  janitor::clean_names() %>% 
+  dplyr::select(SpecCode, Climate) %>%
+  janitor::clean_names() %>%
   mutate(climate = tolower(climate))
 
 climate <- climate[!duplicated(climate$spec_code), ]
@@ -138,25 +133,26 @@ fish <- left_join(fish, climate)
 ### Collect range data
 
 ```{r}
-
-range <- ocean_data %>% 
-  mutate(ocean_basin = case_when(!is.na(basin) ~ paste(basin, ocean),
-                                 is.na(basin) ~ ocean)) %>% 
+range <- ocean_data %>%
+  mutate(ocean_basin = case_when(
+    !is.na(basin) ~ paste(basin, ocean),
+    is.na(basin) ~ ocean
+  )) %>%
   group_by(species) %>%
-  summarise(ocean = paste(sort(unique(ocean)), collapse = ", "),
-            basin = paste(sort(unique(basin)), collapse = ", "),
-            ocean_basin = paste(sort(unique(ocean_basin)), collapse = ", ")) %>%
-  ungroup() %>% 
-  mutate_all(na_if,"")
+  summarise(
+    ocean = paste(sort(unique(ocean)), collapse = ", "),
+    basin = paste(sort(unique(basin)), collapse = ", "),
+    ocean_basin = paste(sort(unique(ocean_basin)), collapse = ", ")
+  ) %>%
+  ungroup() %>%
+  mutate_all(na_if, "")
 
 fish <- left_join(fish, range)
-
 ```
 
 ### Collect fecundity data
 
 ```{r}
-
 fecund <- fecundity() %>%
   filter(SpecCode %in% fish$spec_code) %>%
   dplyr::select(SpecCode, FecundityMax, FecundityMin, FecundityMean) %>%
@@ -187,7 +183,6 @@ fish <- left_join(fish, fecund)
 ### Collect shape/age data
 
 ```{r}
-
 spec <- species() %>%
   filter(SpecCode %in% fish$spec_code) %>%
   dplyr::select(SpecCode, BodyShapeI, LongevityWild) %>%
@@ -201,7 +196,6 @@ fish <- left_join(fish, spec)
 
 Only 68 species with oxygen consumption data:
 ```{r}
-
 oxygen <- oxygen() %>%
   filter(SpecCode %in% fish$spec_code) %>%
   dplyr::select(SpecCode, OxygenCons, Temp) %>%
@@ -222,7 +216,6 @@ fish <- fish %>%
 ### Collect reproduction data
 
 ```{r}
-
 larvae <- larvae() %>%
   filter(SpecCode %in% fish$spec_code) %>%
   dplyr::select(SpecCode, PlaceofDevelopment) %>%
@@ -238,7 +231,6 @@ fish <- left_join(fish, larvae)
 ### Collect species richness by family data
 
 ```{r}
-
 sp_rich <- load_taxa() %>%
   filter(Family %in% data$family) %>%
   dplyr::select(Family, Species) %>%
@@ -251,31 +243,34 @@ fish <- left_join(fish, sp_rich)
 ### Collect circadian data
 
 ```{r}
-
 # filtering for spec_codes in fish gave 86 obs, 45 had pertinent info
 
 circ <- species() %>%
   dplyr::select(SpecCode, Comments) %>%
   filter(SpecCode %in% fish$spec_code) %>%
-  filter(grepl("nocturnal|diurnal|crepuscular|day|night|daytime|nighttime|evening", Comments)) %>% 
-  mutate(circadian = case_when(SpecCode %in% c(646, 419, 420, 1895, 1917, 14129, 301, 401, 
-                                               69, 1494, 1844, 1407, 266, 162, 181, 1080, 
-                                               326, 188, 1747, 1342, 513, 6507, 117, 387, 
-                                               525, 1363, 5382) ~ "nocturnal",
-                               SpecCode %in% c(1893, 5537, 6447, 5604, 18, 216, 227, 785, 
-                                               1265, 4228, 4826, 524, 238, 118, 4493, 458, 
-                                               1288, 372) ~ "diurnal")) %>% 
-  na.omit() %>% 
+  filter(grepl("nocturnal|diurnal|crepuscular|day|night|daytime|nighttime|evening", Comments)) %>%
+  mutate(circadian = case_when(
+    SpecCode %in% c(
+      646, 419, 420, 1895, 1917, 14129, 301, 401,
+      69, 1494, 1844, 1407, 266, 162, 181, 1080,
+      326, 188, 1747, 1342, 513, 6507, 117, 387,
+      525, 1363, 5382
+    ) ~ "nocturnal",
+    SpecCode %in% c(
+      1893, 5537, 6447, 5604, 18, 216, 227, 785,
+      1265, 4228, 4826, 524, 238, 118, 4493, 458,
+      1288, 372
+    ) ~ "diurnal"
+  )) %>%
+  na.omit() %>%
   janitor::clean_names()
 
 fish <- left_join(fish, circ)
-
 ```
 
 ### Join new variables with data and clean names
 
 ```{r}
-
 data <- left_join(fish, data) %>%
   dplyr::select(-spec_code, -class, -temp_max, -temp_min)
 
@@ -289,30 +284,30 @@ data[data == "pelagic"] <- "pelagic oceanic"
 ### Write new csv including added variables
 
 ```{r}
-#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+# write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 ```
 
 ### Look at missing data
 
 ```{r}
-
 missing_og <- miss_var_summary(data)
 
 missing_data <- data %>%
-  dplyr::select(oxygen_cons, temp_range, fecundity_mean, longevity_wild, 
-    temp_preferred, food_i, dev_place, iucn_category, circadian, ocean, basin)
+  dplyr::select(
+    oxygen_cons, temp_range, fecundity_mean, longevity_wild,
+    temp_preferred, food_i, dev_place, iucn_category, circadian, ocean, basin
+  )
 
 missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
   theme_bw()
 missing_fig
 
-#ggsave(missing_fig, file = paste0("initial_missing_fig.png"), path = here::here("04_figs", "missing_data"))
+# ggsave(missing_fig, file = paste0("initial_missing_fig.png"), path = here::here("04_figs", "missing_data"))
 ```
 
 ### Fill in missing data from averages/max counts
 
 ```{r}
-
 # replace numeric NAs with mean of genus, categorical with mode of genus
 
 mode <- function(x) {
@@ -348,9 +343,11 @@ filled_data <- data
 filled_data <- filled_data %>%
   left_join(missing_food, by = "genus") %>%
   mutate(food_i = coalesce(food_i.x, food_i.y)) %>%
-  dplyr::select(-food_i.x, -food_i.y) %>% 
-  mutate(food_mode = case_when(grepl(",", food_i) ~ "generalist",
-                               TRUE ~ "specialist"))
+  dplyr::select(-food_i.x, -food_i.y) %>%
+  mutate(food_mode = case_when(
+    grepl(",", food_i) ~ "generalist",
+    TRUE ~ "specialist"
+  ))
 
 
 # Place of Development
@@ -507,19 +504,18 @@ missing_filled_fig <- gg_miss_var(missing_data_filled) + # figure showing the mi
   theme_bw()
 missing_filled_fig
 
-#ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs", "missing_data"))
+# ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs", "missing_data"))
 ```
 
 ### Write new csv including filled variables
 
 ```{r}
-#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+# write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
 ```
 
 ### Look at correlation
 
 ```{r}
-
 # for original data
 corr <- data %>%
   dplyr::select(where(is.numeric)) %>%
@@ -558,7 +554,6 @@ cor_mat_filled
 ### Plot of new clusters
 
 ```{r}
-
 fishbase_data_gmm <- data %>%
   mutate(class2 = as.factor(class2))
 
@@ -591,35 +586,35 @@ gmm_new_fig
 #   janitor::clean_names() %>%
 #   na.omit() %>%
 #   mutate(climate = tolower(climate))
-# 
+#
 # eco <- eco[!duplicated(eco$spec_code), ]
-# 
+#
 # eco <- within(eco, {
 #   northern_lat <- ifelse(nrange_ns == "N", northern_lat, -northern_lat)
 #   southern_lat <- ifelse(srange_ns == "N", southern_lat, -southern_lat)
 #   western_lat <- ifelse(wrange_ew == "E", western_lat, -western_lat)
 #   eastern_lat <- ifelse(erange_ew == "E", eastern_lat, -eastern_lat)
-# }) %>% 
-#   dplyr::select(-nrange_ns, -srange_ns, -wrange_ew, -erange_ew) 
-# 
+# }) %>%
+#   dplyr::select(-nrange_ns, -srange_ns, -wrange_ew, -erange_ew)
+#
 # eco_sf = data.frame()
-# 
+#
 # for(i in 1:nrow(eco)) {
-#   e = expand.grid(eco$southern_lat[i]:eco$northern_lat[i], 
-#                   eco$western_lat[i]: eco$eastern_lat[i]) %>% 
-#     rename(lon = Var1, lat = Var2) %>% 
+#   e = expand.grid(eco$southern_lat[i]:eco$northern_lat[i],
+#                   eco$western_lat[i]: eco$eastern_lat[i]) %>%
+#     rename(lon = Var1, lat = Var2) %>%
 #     mutate(spec_code = eco$spec_code[i])
-#   
+#
 #   eco_sf = rbind(eco_sf, e)
 # }
-# 
+#
 # coordinates(eco_sf) <- ~lat+lon #assign which rows are coordinates
 # proj4string(eco_sf) <- CRS("+proj=longlat +datum=WGS84") #projection (a spatial thing)
 # eco_sf = st_as_sf(eco_sf, coords = 3:4) #create a spatial object
 
 # st_write(eco_sf, here::here("01_data", "02_processed_data", "distribution_points.shp"))
 
-#read in shapefiles for oceans/points
+# read in shapefiles for oceans/points
 # indian = st_read(here::here("01_data" ,"01_raw_data", "indian.shp"))
 # pacific = st_read(here::here("01_data" ,"01_raw_data", "pacific.shp"))
 # atlantic = st_read(here::here("01_data" ,"01_raw_data", "atlantic.shp"))
@@ -627,59 +622,59 @@ gmm_new_fig
 # antartic = st_read(here::here("01_data" ,"01_raw_data", "antartic.shp"))
 # eco_sf = st_read(here::here("01_data" ,"02_processed_data", "distribution_points.shp"))
 
-#get the intersection of the ocean with the species points
-# indian_points = st_intersection(indian, eco_sf) %>% 
-#   mutate(ocean = "indian") %>% 
-#   mutate(basin = "indian") %>% 
+# get the intersection of the ocean with the species points
+# indian_points = st_intersection(indian, eco_sf) %>%
+#   mutate(ocean = "indian") %>%
+#   mutate(basin = "indian") %>%
 #   select(geometry, ocean, basin)
-# 
+#
 # st_write(indian_points, here::here("01_data", "02_processed_data", "indian_points.shp"))
 
-artic_points = st_intersection(artic, eco_sf) %>% 
-  mutate(ocean = "artic") %>% 
-  mutate(basin = "artic") %>% 
+artic_points <- st_intersection(artic, eco_sf) %>%
+  mutate(ocean = "artic") %>%
+  mutate(basin = "artic") %>%
   select(geometry, ocean, basin)
-antartic_points = st_intersection(antartic, eco_sf) %>% 
-  mutate(ocean = "antartic") %>% 
-  mutate(basin = "antartic") %>% 
+antartic_points <- st_intersection(antartic, eco_sf) %>%
+  mutate(ocean = "antartic") %>%
+  mutate(basin = "antartic") %>%
   select(geometry, ocean, basin)
-pacific_points_east = st_intersection(pacific[4, ], eco_sf) %>% 
-  mutate(ocean = "pacific") %>% 
-  mutate(basin = "east") %>% 
+pacific_points_east <- st_intersection(pacific[4, ], eco_sf) %>%
+  mutate(ocean = "pacific") %>%
+  mutate(basin = "east") %>%
   select(geometry, ocean, basin)
-pacific_points_west = st_intersection(pacific[1:3, ], eco_sf) %>% 
-  mutate(ocean = "pacific") %>% 
-  mutate(basin = "west") %>% 
+pacific_points_west <- st_intersection(pacific[1:3, ], eco_sf) %>%
+  mutate(ocean = "pacific") %>%
+  mutate(basin = "west") %>%
   select(geometry, ocean, basin)
-atlantic_points_east = st_intersection(atlantic[2,], eco_sf) %>%
-  mutate(ocean = "atlantic") %>% 
-  mutate(basin = "east") %>% 
+atlantic_points_east <- st_intersection(atlantic[2, ], eco_sf) %>%
+  mutate(ocean = "atlantic") %>%
+  mutate(basin = "east") %>%
   select(geometry, ocean, basin)
-atlantic_points_west = st_intersection(atlantic[1,], eco_sf) %>%
-  mutate(ocean = "atlantic") %>% 
-  mutate(basin = "west") %>% 
+atlantic_points_west <- st_intersection(atlantic[1, ], eco_sf) %>%
+  mutate(ocean = "atlantic") %>%
+  mutate(basin = "west") %>%
   select(geometry, ocean, basin)
-artic_points = st_intersection(artic, eco_sf) %>% 
-  mutate(ocean = "atlantic") %>% 
-  mutate(basin = "west") %>% 
+artic_points <- st_intersection(artic, eco_sf) %>%
+  mutate(ocean = "atlantic") %>%
+  mutate(basin = "west") %>%
   select(geometry, ocean, basin)
-antartic_points = st_intersection(antartic, eco_sf) %>% 
-  mutate(ocean = "atlantic") %>% 
-  mutate(basin = "west") %>% 
+antartic_points <- st_intersection(antartic, eco_sf) %>%
+  mutate(ocean = "atlantic") %>%
+  mutate(basin = "west") %>%
   select(geometry, ocean, basin)
 
-points = list(indian_points, pacific_points_east, pacific_points_west, atlantic_points_east, atlantic_points_west) %>% 
-  reduce(rbind) #merges the datasets together
+points <- list(indian_points, pacific_points_east, pacific_points_west, atlantic_points_east, atlantic_points_west) %>%
+  reduce(rbind) # merges the datasets together
 
-eco = st_join(eco_sf, points) %>% 
+eco <- st_join(eco_sf, points) %>%
   as.data.frame() %>%
-  dplyr::select(-geometry) %>% 
-  distinct() %>% 
+  dplyr::select(-geometry) %>%
+  distinct() %>%
   group_by(spec_code) %>%
   summarise(
     ocean = paste(sort(unique(ocean)), collapse = ", "),
     basin = paste(sort(unique(basin)), collapse = ", ")
-  ) %>% 
+  ) %>%
   distinct()
 
 write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
@@ -796,7 +791,6 @@ write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 ```
 
 ```{r}
-
 # create a function to find the mode of a column
 
 # calc_mode <- function(x){
@@ -826,7 +820,6 @@ write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 
 
 ```{r}
-
 # # get location data (lat and long)
 # coords <- stocks() %>%  # load stocks info, then
 #   filter(SpecCode %in% fish$SpecCode) %>%  # filter rows by specCodes in fish, then
@@ -851,7 +844,6 @@ write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 ```
 
 ```{r}
-
 # collect maturity variables
 
 # matur <- maturity() %>%
@@ -904,7 +896,7 @@ write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 ```{r}
 # eco2 <- eco %>%
 #   dplyr::select(-nrange_ns, -srange_ns, -wrange_ew, -erange_ew)
-# 
+#
 # eco2 <- eco2 %>%
 #   mutate(
 #     northern_lat = as.numeric(northern_lat),
@@ -915,16 +907,16 @@ write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 #   mutate(pacific = case_when(
 #     condition ~ "pacifc",
 #     TRUE ~ NA
-#   )) %>% 
+#   )) %>%
 #     mutate(atlantic  = case_when(
 #     condition ~ "atlantic",
 #     TRUE ~ NA
-#   )) %>% 
+#   )) %>%
 #     mutate(indian  = case_when(
 #     condition ~ "indian",
 #     TRUE ~ NA
-#   )) %>% 
-#   mutate(ocean = paste0(pacific, atlantic, indian)) %>% 
+#   )) %>%
+#   mutate(ocean = paste0(pacific, atlantic, indian)) %>%
 #   mutate(basin = case_when(
 #     ocean == "Pacific" & condition ~ "East",
 #     ocean == "Pacific" & condition ~ "West",
@@ -933,19 +925,19 @@ write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 #     ocean == "Indian" ~ "Indian",
 #     TRUE ~ "Multiple"
 #   ))
-#   
+#
 # # indian ocean
 # # pacific ocean
 # # atlantic ocean
-# 
+#
 # # eastern Atlantic
 # # western atlantic
 # # eastern pacific
 # # western pacific
-# 
+#
 # eastern_lat %in% c(x:y, a:b) & western_lat %in% c(x:y) | eastern_lat %in% c(x:y, a:b) & western_lat %in% c(x:y)
-# 
-# 
+#
+#
 # #     northern_lat <= 65  & southern_lat >= -60 & western_lat >= -179  & eastern_lat <= -75  ~ "east pacific",
 # #     northern_lat <= 65  & southern_lat >= -60 & western_lat >= 120  & eastern_lat <= 180  ~ "west pacific",
 # #     northern_lat <= 65  & southern_lat >= -60 & western_lat >= -75  & eastern_lat <= -30  ~ "west atlantic",
@@ -965,7 +957,7 @@ write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 # #     northern_lat <= 0 & southern_lat >= -60 & western_lat >= -70 & eastern_lat <= -20 ~ "southwest atlantic",
 # #   )
 # # )
-# 
+#
 # # northeast pacific: -175ºW to -100ºW, 65ºN to 0ºN
 # # northwest pacific: 120ºE to -175ºW, 65ºN to 0ºN
 # # southeast pacific: -175ºW to -70ºW, 0ºN to -60ºS
@@ -980,4 +972,3 @@ write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 # # southeast atlantic: -20ºW to 20ºE, 0ºN to -60ºS
 # # southwest atlantic: -70ºW to -20ºW, 0ºN to -60ºS
 ```
-
