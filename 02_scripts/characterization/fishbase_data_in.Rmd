@@ -35,10 +35,6 @@ data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")
   mutate(month_pld = ceiling(pld / 30))
 ```
 
-```{r}
-ocean_data <- read_csv(here::here("01_data", "02_processed_data", "ocean_data.csv"))
-```
-
 ### Rename incorect species
 
 ```{r}
@@ -77,12 +73,12 @@ fish <- load_taxa() %>% # load all taxonomic info from fishbase into fish, then
 ```{r}
 fao = faoareas(fish$species) %>% 
   janitor::clean_names() %>% 
-  select(species, fao) %>% 
+  select(species, fao, spec_code) %>% 
   filter(!grepl("Inland", fao)) %>% 
   filter(!grepl("artic", fao)) %>% 
   distinct() %>% 
   separate(fao, into= c("ocean", "basin"), sep =",") %>% 
-  group_by(species) %>% 
+  group_by(species, spec_code) %>% 
   summarize(ocean = paste(sort(unique(ocean)), collapse = ", "),
             basin = paste(sort(unique(basin)), collapse = ", ")) %>% 
   mutate(basin = case_when(
@@ -92,7 +88,7 @@ fao = faoareas(fish$species) %>%
     TRUE ~ NA
   )) 
 
-data <- left_join(data, fao)
+fish <- left_join(fish, fao)
 ```
 
 ### Collect diet data
@@ -114,7 +110,7 @@ diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodII
   janitor::clean_names()
 
 
-data <- left_join(data, diet) %>%
+fish <- left_join(fish, diet) %>%
   dplyr::select(-food_ii, -food_iii)
 ```
 
@@ -153,25 +149,6 @@ climate <- climate[!duplicated(climate$spec_code), ]
 fish <- left_join(fish, climate)
 ```
 
-### Collect range data
-
-```{r}
-range <- ocean_data %>%
-  mutate(ocean_basin = case_when(
-    !is.na(basin) ~ paste(basin, ocean),
-    is.na(basin) ~ ocean
-  )) %>%
-  group_by(species) %>%
-  summarise(
-    ocean = paste(sort(unique(ocean)), collapse = ", "),
-    basin = paste(sort(unique(basin)), collapse = ", "),
-    ocean_basin = paste(sort(unique(ocean_basin)), collapse = ", ")
-  ) %>%
-  ungroup() %>%
-  mutate_all(na_if, "")
-
-fish <- left_join(fish, range)
-```
 
 ### Collect fecundity data
 
@@ -288,7 +265,8 @@ circ <- species() %>%
   na.omit() %>%
   janitor::clean_names()
 
-fish <- left_join(fish, circ)
+fish <- left_join(fish, circ) %>% 
+  distinct()
 ```
 
 ### Join new variables with data and clean names
@@ -541,11 +519,7 @@ missing_filled_fig
 ```{r}
 # for original data
 corr <- data %>%
-  dplyr::select(where(is.numeric)) %>%
-  dplyr::select(
-    temp_preferred, temp_range, fecundity_max, fecundity_mean, longevity_wild,
-    oxygen_cons, sp_richness, length, kfin, r_fin, diet_troph3
-  )
+  dplyr::select(where(is.numeric))
 
 cor_mat <- round(cor(corr, use = "complete.obs"), 2)
 cor_mat
@@ -559,11 +533,7 @@ cor_mat
 
 # for filled data
 corr_filled <- filled_data %>%
-  dplyr::select(where(is.numeric)) %>%
-  dplyr::select(
-    temp_preferred, temp_range, fecundity_mean, longevity_wild,
-    oxygen_cons, sp_richness, length, kfin, r_fin, diet_troph3, circadian
-  )
+  dplyr::select(where(is.numeric))
 
 cor_mat_filled <- round(cor(corr_filled, use = "complete.obs"), 2)
 cor_mat_filled
@@ -994,4 +964,24 @@ gmm_new_fig
 # # northwest atlantic: -80ºW to -45ºW, 65ºN to 0ºN
 # # southeast atlantic: -20ºW to 20ºE, 0ºN to -60ºS
 # # southwest atlantic: -70ºW to -20ºW, 0ºN to -60ºS
+```
+
+### Collect range data
+
+```{r}
+# range <- ocean_data %>%
+#   mutate(ocean_basin = case_when(
+#     !is.na(basin) ~ paste(basin, ocean),
+#     is.na(basin) ~ ocean
+#   )) %>%
+#   group_by(species) %>%
+#   summarise(
+#     ocean = paste(sort(unique(ocean)), collapse = ", "),
+#     basin = paste(sort(unique(basin)), collapse = ", "),
+#     ocean_basin = paste(sort(unique(ocean_basin)), collapse = ", ")
+#   ) %>%
+#   ungroup() %>%
+#   mutate_all(na_if, "")
+# 
+# fish <- left_join(fish, range)
 ```
