@@ -91,6 +91,8 @@ fao = faoareas(fish$species) %>%
     (grepl("west", basin) | grepl("West", basin)) ~ "West",
     TRUE ~ NA
   )) 
+
+data <- left_join(data, fao)
 ```
 
 ### Collect diet data
