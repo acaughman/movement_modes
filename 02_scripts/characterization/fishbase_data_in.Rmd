@@ -72,6 +72,27 @@ fish <- load_taxa() %>% # load all taxonomic info from fishbase into fish, then
   janitor::clean_names()
 ```
 
+### Get Ocean Data
+
+```{r}
+fao = faoareas(fish$species) %>% 
+  janitor::clean_names() %>% 
+  select(species, fao) %>% 
+  filter(!grepl("Inland", fao)) %>% 
+  filter(!grepl("artic", fao)) %>% 
+  distinct() %>% 
+  separate(fao, into= c("ocean", "basin"), sep =",") %>% 
+  group_by(species) %>% 
+  summarize(ocean = paste(sort(unique(ocean)), collapse = ", "),
+            basin = paste(sort(unique(basin)), collapse = ", ")) %>% 
+  mutate(basin = case_when(
+    (grepl("east", basin) | grepl("East", basin)) & (grepl("west", basin) | grepl("West", basin)) ~ "Both",
+    (grepl("east", basin) | grepl("East", basin)) ~ "East",
+    (grepl("west", basin) | grepl("West", basin)) ~ "West",
+    TRUE ~ NA
+  )) 
+```
+
 ### Collect diet data
 
 ```{r}
