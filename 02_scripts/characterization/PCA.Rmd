@@ -17,6 +17,7 @@ library(vcd)
 library(purrr)
 library(car)
 library(vegan)
+library(patchwork)
 ```
 
 ### Load data
@@ -245,9 +246,9 @@ abline(v = 5, lwd = 3, lty = 2)
 
 famd_filled <- filled_data %>%
   dplyr::select(
-    temp_preferred, fecundity_mean, # longevity_wild,
+    temp_preferred, fecundity_mean, longevity_wild,
     sp_richness, length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place,
-    movement_keyword, # demers_pelag,
+    movement_keyword, demers_pelag,
     iucn_category,
     food_mode, class2
   ) %>%
@@ -279,9 +280,11 @@ f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_filled$class2, addE
 
 f1_fig
 
-p1 + f1_fig
+plot1 <- p1 + f1_fig
 
-#ggsave(f1_fig, file = paste0("f1.png"), path = here::here("04_figs", "current_pca_famd"))
+plot1
+
+# ggsave(plot1, file = paste0("f1.png"), path = here::here("04_figs", "famd_with_arrows"))
 ```
 
 
@@ -327,9 +330,11 @@ f2_fig <- fviz_famd_ind(f2, label = "none", habillage = famd_filled2$class2, add
 
 f2_fig # 2 and 3 completely separate, 2 and 5 as well
 
-p2 + f2_fig
+plot2 <- p2 + f2_fig
 
-#ggsave(f2_fig, file = paste0("f2.png"), path = here::here("04_figs", "current_pca_famd"))
+plot2
+
+# ggsave(plot2, file = paste0("f2.png"), path = here::here("04_figs", "famd_with_arrows"))
 ```
 
 
@@ -377,9 +382,11 @@ f3_fig <- fviz_famd_ind(f3, label = "none", habillage = famd_filled3$class2, add
 
 f3_fig # 2 and 3 completely separate, 2 and 5 as well
 
-p3 + f3_fig
+plot3 <- p3 + f3_fig
 
-#ggsave(f3_fig, file = paste0("f3.png"), path = here::here("04_figs", "current_pca_famd"))
+plot3
+
+# ggsave(plot3, file = paste0("f3.png"), path = here::here("04_figs", "famd_with_arrows"))
 ```
 
 
@@ -429,9 +436,11 @@ f4_fig <- fviz_famd_ind(f4, label = "none", habillage = famd_filled4$class2, add
 
 f4_fig # 2 and 3 completely separate, 2 and 5 as well
 
-#p4 + f4_fig
+plot4 <- p4 + f4_fig
 
-ggsave(f4_fig, file = paste0("f4.png"), path = here::here("04_figs", "current_pca_famd"))
+plot4
+
+# ggsave(plot4, file = paste0("f4.png"), path = here::here("04_figs", "famd_with_arrows"))
 ```
 
 
@@ -483,7 +492,7 @@ nmds_plot1 <- ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) +
 nmds_plot1 # classes 3 and 4 are distinct!
 # coloring by order gave four plus distinct groups..?
 
-#ggsave(nmds_plot1, file = paste0("nmds_plot1.png"), path = here::here("04_figs", "nmds"))
+# ggsave(nmds_plot1, file = paste0("nmds_plot1.png"), path = here::here("04_figs", "nmds"))
 ```
 
 ##### NMDS Plot 2
