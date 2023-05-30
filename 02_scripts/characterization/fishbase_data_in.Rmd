@@ -71,22 +71,24 @@ fish <- load_taxa() %>% # load all taxonomic info from fishbase into fish, then
 ### Get Ocean Data
 
 ```{r}
-fao = faoareas(fish$species) %>% 
-  janitor::clean_names() %>% 
-  select(species, fao, spec_code) %>% 
-  filter(!grepl("Inland", fao)) %>% 
-  filter(!grepl("artic", fao)) %>% 
-  distinct() %>% 
-  separate(fao, into= c("ocean", "basin"), sep =",") %>% 
-  group_by(species, spec_code) %>% 
-  summarize(ocean = paste(sort(unique(ocean)), collapse = ", "),
-            basin = paste(sort(unique(basin)), collapse = ", ")) %>% 
+fao <- faoareas(fish$species) %>%
+  janitor::clean_names() %>%
+  select(species, fao, spec_code) %>%
+  filter(!grepl("Inland", fao)) %>%
+  filter(!grepl("artic", fao)) %>%
+  distinct() %>%
+  separate(fao, into = c("ocean", "basin"), sep = ",") %>%
+  group_by(species, spec_code) %>%
+  summarize(
+    ocean = paste(sort(unique(ocean)), collapse = ", "),
+    basin = paste(sort(unique(basin)), collapse = ", ")
+  ) %>%
   mutate(basin = case_when(
     (grepl("east", basin) | grepl("East", basin)) & (grepl("west", basin) | grepl("West", basin)) ~ "Both",
     (grepl("east", basin) | grepl("East", basin)) ~ "East",
     (grepl("west", basin) | grepl("West", basin)) ~ "West",
     TRUE ~ NA
-  )) 
+  ))
 
 fish <- left_join(fish, fao)
 ```
@@ -265,7 +267,7 @@ circ <- species() %>%
   na.omit() %>%
   janitor::clean_names()
 
-fish <- left_join(fish, circ) %>% 
+fish <- left_join(fish, circ) %>%
   distinct()
 ```
 
@@ -655,10 +657,10 @@ gmm_new_fig
 #   mutate(ocean = "atlantic") %>%
 #   mutate(basin = "west") %>%
 #   select(geometry, ocean, basin)
-# 
+#
 # points <- list(indian_points, pacific_points_east, pacific_points_west, atlantic_points_east, atlantic_points_west) %>%
 #   reduce(rbind) # merges the datasets together
-# 
+#
 # eco <- st_join(eco_sf, points) %>%
 #   as.data.frame() %>%
 #   dplyr::select(-geometry) %>%
@@ -669,7 +671,7 @@ gmm_new_fig
 #     basin = paste(sort(unique(basin)), collapse = ", ")
 #   ) %>%
 #   distinct()
-# 
+#
 # write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 ```
 
@@ -982,6 +984,6 @@ gmm_new_fig
 #   ) %>%
 #   ungroup() %>%
 #   mutate_all(na_if, "")
-# 
+#
 # fish <- left_join(fish, range)
 ```
