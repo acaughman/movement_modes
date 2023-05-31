@@ -248,7 +248,7 @@ famd_filled <- filled_data %>%
   dplyr::select(
     temp_preferred, fecundity_mean, longevity_wild,
     sp_richness, length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place,
-    movement_keyword, demers_pelag,
+    demers_pelag,
     iucn_category,
     food_mode, class2
   ) %>%
@@ -295,8 +295,7 @@ famd_filled2 <- filled_data %>%
     # climate,
     body_shape_i,
     dev_place,
-    movement_keyword,
-    # demers_pelag,
+    demers_pelag,
     # iucn_category,
     # food_i,
     class2
@@ -347,8 +346,7 @@ famd_filled3 <- filled_data %>%
     climate,
     # body_shape_i,
     # dev_place,
-    movement_keyword,
-    # demers_pelag,
+    demers_pelag,
     # iucn_category,
     # food_i,
     class2
@@ -402,8 +400,7 @@ famd_filled4 <- filled_data %>%
     # climate,
     # body_shape_i,
     # dev_place,
-    movement_keyword,
-    # demers_pelag,
+    demers_pelag,
     # iucn_category,
     # food_i,
     class2
@@ -450,9 +447,8 @@ plot4
 ```{r}
 com_data <- filled_data %>%
   dplyr::select(
-    temp_preferred, fecundity_mean, # longevity_wild,
-    sp_richness, length, kfin, r_fin, diet_troph3,
-    species, order, class2
+    temp_preferred, fecundity_mean, longevity_wild,
+    sp_richness, length, kfin, r_fin, diet_troph3, species, order, class2
   ) %>%
   filter(temp_preferred > 0) %>%
   na.omit()
