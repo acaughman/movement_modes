@@ -97,12 +97,10 @@ fish <- left_join(fish, fao)
 
 ```{r}
 # get diet items and combine rows of the same species in each column
-diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodIII")) %>%
+diet <- fooditems(fish$species, fields = c("Species", "FoodI")) %>%
   group_by(Species) %>%
   summarise(
-    FoodI = paste(sort(unique(FoodI)), collapse = ", "),
-    FoodII = paste(sort(unique(FoodII)), collapse = ", "),
-    FoodIII = paste(sort(unique(FoodIII)), collapse = ", ")
+    FoodI = paste(sort(unique(FoodI)), collapse = ", ")
   ) %>%
   ungroup() %>%
   mutate(food_mode = case_when(
@@ -112,8 +110,7 @@ diet <- fooditems(fish$species, fields = c("Species", "FoodI", "FoodII", "FoodII
   janitor::clean_names()
 
 
-fish <- left_join(fish, diet) %>%
-  dplyr::select(-food_ii, -food_iii)
+fish <- left_join(fish, diet)
 ```
 
 ### Collect temperature data
