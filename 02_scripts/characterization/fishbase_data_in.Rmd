@@ -71,7 +71,6 @@ clusters <- clusters %>%
                             class2 == 7 ~ "low/mid",
                             class2 == 8 ~ "mid-low/mid",
                             ))
-
 ```
 
 ### Load in taxonomic info
@@ -304,7 +303,7 @@ data[data == "pelagic"] <- "pelagic oceanic"
 ### Look at missing data
 
 ```{r}
-missing_og <- miss_var_summary(data)
+missing <- miss_var_summary(data)
 
 missing_data <- data %>%
   dplyr::select(
@@ -319,7 +318,7 @@ missing_fig
 # ggsave(missing_fig, file = paste0("initial_missing_fig.png"), path = here::here("04_figs", "missing_data"))
 ```
 
-### Fill in missing data from averages/max counts
+### Fill in missing data from genus averages
 
 ```{r}
 # replace numeric NAs with mean of genus, categorical with mode of genus
@@ -328,23 +327,22 @@ mode <- function(x) {
   names(which.max(table(x)))
 }
 
-fish2 <- load_taxa() %>%
+fish_genera <- load_taxa() %>%
   filter(Genus %in% data$genus) %>%
   dplyr::select(SpecCode, Genus) %>%
   janitor::clean_names()
 
 
 # Food I and Food Mode
-
 missing_food <- fooditems() %>%
-  filter(SpecCode %in% fish2$spec_code) %>%
+  filter(SpecCode %in% fish_genera$spec_code) %>%
   dplyr::select(SpecCode, FoodI) %>%
   janitor::clean_names() %>%
   group_by(spec_code) %>%
   summarise(food_i = paste(sort(unique(food_i)), collapse = ", ")) %>%
   ungroup()
 
-missing_food <- left_join(fish2, missing_food)
+missing_food <- left_join(fish_genera, missing_food)
 
 missing_food <- missing_food %>%
   mutate(food_i = as.factor(food_i)) %>%
@@ -365,14 +363,13 @@ filled_data <- filled_data %>%
 
 
 # Place of Development
-
 missing_dev <- larvae() %>%
-  filter(SpecCode %in% fish2$spec_code) %>%
+  filter(SpecCode %in% fish_genera$spec_code) %>%
   dplyr::select(SpecCode, PlaceofDevelopment) %>%
   janitor::clean_names() %>%
   rename(dev_place = placeof_development)
 
-missing_dev <- left_join(fish2, missing_dev)
+missing_dev <- left_join(fish_genera, missing_dev)
 
 missing_dev <- missing_dev %>%
   mutate(dev_place = as.factor(dev_place)) %>%
@@ -387,13 +384,12 @@ filled_data <- filled_data %>%
 
 
 # Longevity Wild
-
 missing_long <- species() %>%
-  filter(SpecCode %in% fish2$spec_code) %>%
+  filter(SpecCode %in% fish_genera$spec_code) %>%
   dplyr::select(SpecCode, LongevityWild) %>%
   janitor::clean_names()
 
-missing_long <- left_join(fish2, missing_long)
+missing_long <- left_join(fish_genera, missing_long)
 
 missing_long <- missing_long %>%
   mutate(longevity_wild = as.numeric(longevity_wild)) %>%
@@ -409,13 +405,12 @@ filled_data <- filled_data %>%
 
 
 # Preferred Temp
-
 missing_temp <- stocks() %>%
-  filter(SpecCode %in% fish2$spec_code) %>%
+  filter(SpecCode %in% fish_genera$spec_code) %>%
   dplyr::select(SpecCode, TempPreferred) %>%
   janitor::clean_names()
 
-missing_temp <- left_join(fish2, missing_temp)
+missing_temp <- left_join(fish_genera, missing_temp)
 
 missing_temp <- missing_temp %>%
   mutate(temp_preferred = as.numeric(temp_preferred)) %>%
@@ -431,13 +426,12 @@ filled_data <- filled_data %>%
 
 
 # Fecundity Mean
-
 missing_fmean <- fecundity() %>%
-  filter(SpecCode %in% fish2$spec_code) %>%
+  filter(SpecCode %in% fish_genera$spec_code) %>%
   dplyr::select(SpecCode, FecundityMean) %>%
   janitor::clean_names()
 
-missing_fmean <- left_join(fish2, missing_fmean)
+missing_fmean <- left_join(fish_genera, missing_fmean)
 
 missing_fmean <- missing_fmean %>%
   mutate(fecundity_mean = as.numeric(fecundity_mean)) %>%
@@ -451,17 +445,14 @@ filled_data <- filled_data %>%
   mutate(fecundity_mean = coalesce(fecundity_mean.x, fecundity_mean.y)) %>%
   dplyr::select(-fecundity_mean.x, -fecundity_mean.y)
 
-# 571 missing to now 323 missing
-
 
 # Oxygen Consumption
-
 missing_ox <- oxygen() %>%
-  filter(SpecCode %in% fish2$spec_code) %>%
+  filter(SpecCode %in% fish_genera$spec_code) %>%
   dplyr::select(SpecCode, OxygenCons) %>%
   janitor::clean_names()
 
-missing_ox <- left_join(fish2, missing_ox)
+missing_ox <- left_join(fish_genera, missing_ox)
 
 missing_ox <- missing_ox %>%
   mutate(oxygen_cons = as.numeric(oxygen_cons)) %>%
@@ -475,18 +466,15 @@ filled_data <- filled_data %>%
   mutate(oxygen_cons = coalesce(oxygen_cons.x, oxygen_cons.y)) %>%
   dplyr::select(-oxygen_cons.x, -oxygen_cons.y)
 
-# 538 missing to now 430 missing
-
 
 # Temp Range
-
 missing_range <- stocks() %>%
-  filter(SpecCode %in% fish2$spec_code) %>%
+  filter(SpecCode %in% fish_genera$spec_code) %>%
   dplyr::select(SpecCode, TempMin, TempMax) %>%
   mutate(temp_range = TempMax - TempMin) %>%
   janitor::clean_names()
 
-missing_range <- left_join(fish2, missing_range)
+missing_range <- left_join(fish_genera, missing_range)
 
 missing_range <- missing_range %>%
   mutate(temp_range = as.numeric(temp_range)) %>%
@@ -499,33 +487,184 @@ filled_data <- filled_data %>%
   left_join(missing_range, by = "genus") %>%
   mutate(temp_range = coalesce(temp_range.x, temp_range.y)) %>%
   dplyr::select(-temp_range.x, -temp_range.y)
+```
 
-# 526 missing to now 391 missing
+### Write new csv including genus filled variables
 
+```{r}
+# write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+```
 
-missing <- miss_var_summary(filled_data)
+#Asses missing data after genus fills
 
+```{r}
+missing_filled <- miss_var_summary(filled_data)
 
 # New missing plot
-
-missing_data_filled <- filled_data %>%
+missing_filled_data <- filled_data %>%
   dplyr::select(
     oxygen_cons, temp_range, fecundity_mean,
     longevity_wild, temp_preferred, iucn_category, circadian
   )
 
-missing_filled_fig <- gg_miss_var(missing_data_filled) + # figure showing the missing data
+missing_filled_fig <- gg_miss_var(missing_filled_data) + # figure showing the missing data
   theme_bw()
 missing_filled_fig
 
 # ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs", "missing_data"))
 ```
 
-### Write new csv including filled variables
+### Fill in missing data from family averages
 
 ```{r}
-# write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+# replace numeric NAs with mean of family, categorical with mode of family
+
+fish_fam <- load_taxa() %>%
+  filter(Family %in% data$family) %>%
+  dplyr::select(SpecCode, Family) %>%
+  janitor::clean_names()
+
+# Longevity Wild
+missing_long2 <- species() %>%
+  filter(SpecCode %in% fish_fam$spec_code) %>%
+  dplyr::select(SpecCode, LongevityWild) %>%
+  janitor::clean_names()
+
+missing_long2 <- left_join(fish_fam, missing_long2)
+
+missing_long2 <- missing_long2 %>%
+  mutate(longevity_wild = as.numeric(longevity_wild)) %>%
+  na.omit() %>%
+  group_by(family) %>%
+  summarise(longevity_wild = mean(longevity_wild)) %>%
+  ungroup()
+
+filled_data2 = filled_data
+
+filled_data2 <- filled_data2 %>%
+  left_join(missing_long2, by = "family") %>%
+  mutate(longevity_wild = coalesce(longevity_wild.x, longevity_wild.y)) %>%
+  dplyr::select(-longevity_wild.x, -longevity_wild.y)
+
+
+# Preferred Temp
+missing_temp2 <- stocks() %>%
+  filter(SpecCode %in% fish_fam$spec_code) %>%
+  dplyr::select(SpecCode, TempPreferred) %>%
+  janitor::clean_names()
+
+missing_temp2 <- left_join(fish_fam, missing_temp2)
+
+missing_temp2 <- missing_temp2 %>%
+  mutate(temp_preferred = as.numeric(temp_preferred)) %>%
+  na.omit() %>%
+  group_by(family) %>%
+  summarise(temp_preferred = mean(temp_preferred)) %>%
+  ungroup()
+
+filled_data2 <- filled_data2 %>%
+  left_join(missing_temp2, by = "family") %>%
+  mutate(temp_preferred = coalesce(temp_preferred.x, temp_preferred.y)) %>%
+  dplyr::select(-temp_preferred.x, -temp_preferred.y)
+
+
+# Fecundity Mean
+missing_fmean2 <- fecundity() %>%
+  filter(SpecCode %in% fish_fam$spec_code) %>%
+  dplyr::select(SpecCode, FecundityMean) %>%
+  janitor::clean_names()
+
+missing_fmean2 <- left_join(fish_fam, missing_fmean2)
+
+missing_fmean2 <- missing_fmean2 %>%
+  mutate(fecundity_mean = as.numeric(fecundity_mean)) %>%
+  na.omit() %>%
+  group_by(family) %>%
+  summarise(fecundity_mean = mean(fecundity_mean)) %>%
+  ungroup()
+
+filled_data2 <- filled_data2 %>%
+  left_join(missing_fmean2, by = "family") %>%
+  mutate(fecundity_mean = coalesce(fecundity_mean.x, fecundity_mean.y)) %>%
+  dplyr::select(-fecundity_mean.x, -fecundity_mean.y)
+
+
+# Oxygen Consumption
+missing_ox2 <- oxygen() %>%
+  filter(SpecCode %in% fish_fam$spec_code) %>%
+  dplyr::select(SpecCode, OxygenCons) %>%
+  janitor::clean_names()
+
+missing_ox2 <- left_join(fish_fam, missing_ox2)
+
+missing_ox2 <- missing_ox2 %>%
+  mutate(oxygen_cons = as.numeric(oxygen_cons)) %>%
+  na.omit() %>%
+  group_by(family) %>%
+  summarise(oxygen_cons = mean(oxygen_cons)) %>%
+  ungroup()
+
+filled_data2 <- filled_data2 %>%
+  left_join(missing_ox2, by = "family") %>%
+  mutate(oxygen_cons = coalesce(oxygen_cons.x, oxygen_cons.y)) %>%
+  dplyr::select(-oxygen_cons.x, -oxygen_cons.y)
+
+
+# Temp Range
+missing_range2 <- stocks() %>%
+  filter(SpecCode %in% fish_fam$spec_code) %>%
+  dplyr::select(SpecCode, TempMin, TempMax) %>%
+  mutate(temp_range = TempMax - TempMin) %>%
+  janitor::clean_names()
+
+missing_range2 <- left_join(fish_fam, missing_range2)
+
+missing_range2 <- missing_range2 %>%
+  mutate(temp_range = as.numeric(temp_range)) %>%
+  na.omit() %>%
+  group_by(family) %>%
+  summarise(temp_range = mean(temp_range)) %>%
+  ungroup()
+
+filled_data2 <- filled_data2 %>%
+  left_join(missing_range2, by = "family") %>%
+  mutate(temp_range = coalesce(temp_range.x, temp_range.y)) %>%
+  dplyr::select(-temp_range.x, -temp_range.y)
+
 ```
+
+### Write new csv including family filled variables
+
+```{r}
+write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+```
+
+#Asses missing data after family fills
+
+```{r}
+missing_filled2 <- miss_var_summary(filled_data2)
+
+# New missing plot
+missing_filled_data2 <- filled_data2 %>%
+  dplyr::select(
+    oxygen_cons, temp_range, fecundity_mean,
+    longevity_wild, temp_preferred, iucn_category, circadian
+  )
+
+missing_filled_fig2 <- gg_miss_var(missing_filled_data2) + # figure showing the missing data
+  theme_bw()
+missing_filled_fig2
+
+#ggsave(missing_filled_fig2, file = paste0("missing_filled_fig2.png"), path = here::here("04_figs", "missing_data"))
+```
+
+
+
+
+
+
+
+
 
 ### Look at correlation
 
@@ -686,6 +825,9 @@ gmm_new_fig
 # write_csv(eco, here::here("01_data", "02_processed_data", "ocean_basin.csv"))
 ```
 
+
+
+
 ### Old
 
 ```{r}
@@ -712,7 +854,7 @@ gmm_new_fig
 # IUCN Category - DO NOT IMPUTE THIS
 
 # missing_iucn <- stocks() %>%
-#   filter(SpecCode %in% fish2$spec_code) %>%
+#   filter(SpecCode %in% fish_genera$spec_code) %>%
 #   dplyr::select(SpecCode, IUCN_Code) %>%
 #   janitor::clean_names() %>%
 #   mutate_at("iucn_code", str_replace, ".", "")
@@ -720,7 +862,7 @@ gmm_new_fig
 # missing_iucn$iucn_code <- gsub("[.]","", missing_iucn$iucn_code)
 #
 #
-# missing_iucn <- left_join(fish2, missing_iucn)
+# missing_iucn <- left_join(fish_genera, missing_iucn)
 #
 # missing_iucn <- missing_iucn %>%
 #   mutate(iucn_code = as.factor(iucn_code)) %>%
@@ -737,11 +879,11 @@ gmm_new_fig
 # # Reproduction Guild and Spawning - DO NOT NEED
 #
 # missing_rep <- reproduction() %>%
-#   filter(SpecCode %in% fish2$spec_code) %>%
+#   filter(SpecCode %in% fish_genera$spec_code) %>%
 #   dplyr::select(SpecCode, RepGuild2, Spawning) %>%
 #   janitor::clean_names()
 #
-# missing_rep <- left_join(fish2, missing_rep)
+# missing_rep <- left_join(fish_genera, missing_rep)
 #
 #
 # missing_rep <- missing_rep %>%
@@ -760,11 +902,11 @@ gmm_new_fig
 # # Spawning Ground - DO NOT NEED
 #
 # missing_spawn <- spawning() %>%
-#   filter(SpecCode %in% fish2$spec_code) %>%
+#   filter(SpecCode %in% fish_genera$spec_code) %>%
 #   dplyr::select(SpecCode, SpawningGround) %>%
 #   janitor::clean_names()
 #
-# missing_spawn <- left_join(fish2, missing_spawn)
+# missing_spawn <- left_join(fish_genera, missing_spawn)
 #
 # missing_spawn <- missing_spawn %>%
 #   mutate(spawning_ground = as.factor(spawning_ground)) %>%
@@ -978,8 +1120,6 @@ gmm_new_fig
 # # southeast atlantic: -20ºW to 20ºE, 0ºN to -60ºS
 # # southwest atlantic: -70ºW to -20ºW, 0ºN to -60ºS
 ```
-
-### Collect range data
 
 ```{r}
 # range <- ocean_data %>%
