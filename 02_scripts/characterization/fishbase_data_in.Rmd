@@ -308,14 +308,14 @@ missing <- miss_var_summary(data)
 missing_data <- data %>%
   dplyr::select(
     oxygen_cons, temp_range, fecundity_mean, longevity_wild,
-    temp_preferred, food_i, dev_place, iucn_category, circadian, ocean, basin
+    temp_preferred, food_i, dev_place, iucn_category, circadian, basin
   )
 
 missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
   theme_bw()
 missing_fig
 
-# ggsave(missing_fig, file = paste0("initial_missing_fig.png"), path = here::here("04_figs", "missing_data"))
+#ggsave(missing_fig, file = paste0("initial_missing_fig.png"), path = here::here("04_figs", "missing_data"))
 ```
 
 ### Fill in missing data from genus averages
@@ -503,7 +503,7 @@ missing_filled <- miss_var_summary(filled_data)
 # New missing plot
 missing_filled_data <- filled_data %>%
   dplyr::select(
-    oxygen_cons, temp_range, fecundity_mean,
+    oxygen_cons, temp_range, fecundity_mean, basin,
     longevity_wild, temp_preferred, iucn_category, circadian
   )
 
@@ -511,7 +511,7 @@ missing_filled_fig <- gg_miss_var(missing_filled_data) + # figure showing the mi
   theme_bw()
 missing_filled_fig
 
-# ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs", "missing_data"))
+#ggsave(missing_filled_fig, file = paste0("missing_filled_fig.png"), path = here::here("04_figs", "missing_data"))
 ```
 
 ### Fill in missing data from family averages
@@ -636,7 +636,7 @@ filled_data2 <- filled_data2 %>%
 ### Write new csv including family filled variables
 
 ```{r}
-write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+#write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
 ```
 
 #Asses missing data after family fills
@@ -647,7 +647,7 @@ missing_filled2 <- miss_var_summary(filled_data2)
 # New missing plot
 missing_filled_data2 <- filled_data2 %>%
   dplyr::select(
-    oxygen_cons, temp_range, fecundity_mean,
+    oxygen_cons, temp_range, fecundity_mean, basin,
     longevity_wild, temp_preferred, iucn_category, circadian
   )
 
