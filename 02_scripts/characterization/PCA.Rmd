@@ -91,7 +91,7 @@ ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here(
 expl_cat <- c(
   "climate", "body_shape_i", "dev_place",
   "demers_pelag", "iucn_category", "food_i",
-  "circadian", "food_mode", "basin"
+  "circadian", "food_mode", "ocean", "basin"
 )
 
 scatter_data <- function(x, y) {
@@ -118,6 +118,7 @@ demers_plot <- scatter_data(x = "demers_pelag", y = "class2")
 iucn_plot <- scatter_data(x = "iucn_category", y = "class2")
 food_plot <- scatter_data(x = "food_mode", y = "class2")
 circ_plot <- scatter_data(x = "circadian", y = "class2")
+ocean_plot <- scatter_data(x = "ocean", y = "class2")
 basin_plot <- scatter_data(x = "basin", y = "class2")
 
 
@@ -128,6 +129,7 @@ ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs
 ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
 ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
 ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(ocean_plot, file = paste0("ocean_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
 ggsave(basin_plot, file = paste0("basin_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
 ```
 
