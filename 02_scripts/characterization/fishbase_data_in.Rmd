@@ -48,7 +48,9 @@ data <- data %>%
 ```{r}
 clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv")) %>%
   mutate(class2 = class) %>%
-  mutate(class2 = case_when(class2 == 6 ~ 2, class2 != 6 ~ class2)) # combine classes 6 into 2
+  mutate(class2 = case_when(class2 == 6 ~ 2,
+                            class2 != 6 ~ class2
+                            )) # combine classes 6 into 2
 
 # split part of class 1 into 8
 clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -2] <- 8)
@@ -58,6 +60,18 @@ clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -3] <- 
 clusters <- clusters %>%
   mutate(species = str_replace(species, "Oblada melanuras", "Oblada melanurus")) %>%
   mutate(species = str_replace(species, "Pennahia aneas", "Pennahia aneus"))
+
+# rename classes with descriptions: homerange/PLD
+clusters <- clusters %>% 
+  mutate(class2 = case_when(class2 == 1 ~ "mid-high/mid",
+                            class2 == 2 ~ "high/mid",
+                            class2 == 3 ~ "mid/mid-high",
+                            class2 == 4 ~ "mid/low",
+                            class2 == 5 ~ "mid/high",
+                            class2 == 7 ~ "low/mid",
+                            class2 == 8 ~ "mid-low/mid",
+                            ))
+
 ```
 
 ### Load in taxonomic info
