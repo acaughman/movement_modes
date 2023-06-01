@@ -90,7 +90,7 @@ gmm_data <- data %>%
 gmm_data2 <- data %>%
   dplyr::select(magnitude_homerange, month_pld, species)
 
-gmm_mclust2 <- Mclust(gmm_data)
+gmm_mclust2 <- Mclust(gmm_data, G = 10)
 
 summary(gmm_mclust2)
 

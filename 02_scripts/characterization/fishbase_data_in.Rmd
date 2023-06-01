@@ -52,13 +52,24 @@ data <- data %>%
 ```{r}
 clusters <- read_csv(here::here("01_data", "02_processed_data", "clusters.csv")) %>%
   mutate(class2 = class) %>%
-  mutate(class2 = case_when(class2 == 6 ~ 2,
-                            class2 != 6 ~ class2
-                            )) # combine classes 6 into 2
+  mutate(class2 = case_when(class2 == 1 ~ 3,
+                            TRUE ~ class2
+                            )) %>% 
+  mutate(class3 = case_when(
+    class2 == 8 ~ 1,
+    class2 == 9 ~ 6,
+    class2 == 10 ~ 7,
+    class2 == 2 ~ 2,
+    class2 == 3 ~ 3,
+    class2 == 4 ~ 4,
+    class2 == 5 ~ 5
+  ))# combine classes 1 into 3
 
 # split part of class 1 into 8
-clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -2] <- 8)
-clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -3] <- 8)
+# clusters <- within(clusters, class2[class2 == 2 & magnitude_homerange == -4] <- 8)
+# clusters <- within(clusters, class2[class2 == 1 & magnitude_homerange == -3] <- 8)
+
+clusters$class3 = ifelse(clusters$class3 == 2 & clusters$magnitude_homerange == -4, 1, clusters$class3)
 
 # rename incorrect species
 clusters <- clusters %>%
@@ -67,15 +78,36 @@ clusters <- clusters %>%
 
 # rename classes with descriptions: homerange/PLD
 clusters <- clusters %>% 
-  mutate(class3 = class2,
-         class2 = case_when(class2 == 1 ~ "1: mid-high/mid-low",
-                            class2 == 2 ~ "2: high/mid-low",
-                            class2 == 3 ~ "3: mid/mid-high",
-                            class2 == 4 ~ "4: mid/low",
-                            class2 == 5 ~ "5: mid/high",
-                            class2 == 7 ~ "7: low/mid-low",
-                            class2 == 8 ~ "8: mid-low/mid-low"
-                            ))
+  mutate(class2 = case_when(class2 == 1 ~ "1: low/mid-low",
+                            class2 == 2 ~ "2: mid-low/mid-low",
+                            class2 == 3 ~ "3: high/mid-low",
+                            class2 == 4 ~ "4: mid-high/mid-low",
+                            class2 == 5 ~ "5: mid/low",
+                            class2 == 6 ~ "6: mid/mid-high",
+                            class2 == 7 ~ "7: mid/high"
+                            )) 
+```
+
+### Plot of new clusters
+
+```{r}
+data = full_join(data, clusters)
+
+fishbase_data_gmm <- data %>%
+  mutate(class3 = as.factor(class3))
+
+gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
+  geom_jitter(aes(color = class3)) +
+  theme_bw(base_size = 20) +
+  labs(
+    x = "Order of Magnitude of Predicted Home Range",
+    y = "Predicted Pelagic Larval Duration (Month)",
+    color = "Class"
+  )
+
+gmm_new_fig
+
+ggsave(gmm_new_fig, file = paste0("gmm_fig.pdf"), path = here::here("04_figs"), height = 8, width = 15)
 ```
 
 ### Load in taxonomic info
@@ -91,7 +123,7 @@ fish <- load_taxa() %>% # load all taxonomic info from fishbase into fish, then
 ```{r}
 fao <- faoareas(fish$species) %>%
   janitor::clean_names() %>%
-  select(species, fao, spec_code) %>%
+  dplyr::select(species, fao, spec_code)%>%
   filter(!grepl("Inland", fao)) %>%
   filter(!grepl("artic", fao)) %>%
   distinct() %>%
@@ -733,28 +765,6 @@ cor_mat_filled
 # fecundity, longevity, r_fin
 # sp_richness, temp_preferred, length!, diet_troph3!
 ```
-
-### Plot of new clusters
-
-```{r}
-fishbase_data_gmm <- data %>%
-  mutate(class2 = as.factor(class2))
-
-gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
-  geom_jitter(aes(color = class2)) +
-  theme_bw(base_size = 20) +
-  labs(
-    x = "Order of Magnitude of Predicted Home Range",
-    y = "Predicted Pelagic Larval Duration (Month)",
-    color = "Class"
-  )
-
-gmm_new_fig
-
-# ggsave(gmm_new_fig, file = paste0("gmm_new_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
-```
-
-
 
 
 ### Process Geographic Info DO NOT RUN 
