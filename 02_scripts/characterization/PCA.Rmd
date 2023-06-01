@@ -86,7 +86,6 @@ ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here(
 
 ```
 
-
 ```{r}
 # categorical
 
@@ -136,12 +135,6 @@ ggsave(basin_plot, file = paste0("basin_plot.png"), path = here::here("04_figs",
 
 ```
 
-
-
-
-
-
-
 ### Check Variable Inflation Factors (VIF)
 
 none are above 5
@@ -169,6 +162,32 @@ abline(v = 5, lwd = 3, lty = 2)
 
 # model2 <- lm(class2 ~ temp_preferred + length + r_fin, data = filled_data)
 # summary(model)
+```
+
+
+```{r}
+com_data <- filled_data2 %>%
+  dplyr::select(
+    temp_preferred, fecundity_mean, longevity_wild,
+    sp_richness, length, kfin, r_fin, diet_troph3, species, family, class2
+  ) %>%
+  mutate(class2 = as.factor(class2)) %>% 
+  filter(temp_preferred > 0) %>%
+  mutate(across(where(is.numeric),  ~ scale(.)[,1])) %>% 
+  na.omit()
+
+com <- com_data %>%
+  dplyr::select(-species, -family, -class2)
+
+simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
+
+summary(simper_out)
+
+ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
+
+summary(ano)
+
+plot(ano)
 ```
 
 
