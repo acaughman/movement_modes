@@ -300,7 +300,7 @@ data[data == "pelagic"] <- "pelagic oceanic"
 ### Write new csv including added variables
 
 ```{r}
-write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 ```
 
 ### Look at missing data
@@ -495,7 +495,7 @@ filled_data <- filled_data %>%
 ### Write new csv including genus filled variables
 
 ```{r}
-write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
 ```
 
 #Asses missing data after genus fills
@@ -554,6 +554,7 @@ filled_data2 <- filled_data2 %>%
 missing_temp2 <- stocks() %>%
   filter(SpecCode %in% fish_fam$spec_code) %>%
   dplyr::select(SpecCode, TempPreferred) %>%
+  filter(SpecCode != 67902) %>% 
   janitor::clean_names()
 
 missing_temp2 <- left_join(fish_fam, missing_temp2)
@@ -639,7 +640,7 @@ filled_data2 <- filled_data2 %>%
 ### Write new csv including family filled variables
 
 ```{r}
-write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+#write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
 ```
 
 #Assess missing data after family fills
