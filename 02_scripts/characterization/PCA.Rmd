@@ -220,9 +220,8 @@ f1 <- FAMD(famd_filled[, 1:13], graph = FALSE)
 f1
 
 # Contribution to the first dimension
-fviz_contrib(f1, "var", axes = 1)
+fviz_contrib(f1, "var", axes = 1) + fviz_contrib(f1, "var", axes = 2)
 # Contribution to the second dimension
-fviz_contrib(f1, "var", axes = 2)
 
 
 # PLOTS ARROWS
@@ -271,9 +270,9 @@ eigen_f2 <- f2$eig
 eigen_f2
 
 # Contribution to the first dimension
-fviz_contrib(f2, "var", axes = 1)
+fviz_contrib(f2, "var", axes = 1) + fviz_contrib(f2, "var", axes = 2)
 # Contribution to the second dimension
-fviz_contrib(f2, "var", axes = 2)
+
 
 
 # PLOTS ARROWS
@@ -322,9 +321,9 @@ eigen_f3 <- f3$eig
 eigen_f3
 
 # Contribution to the first dimension
-fviz_contrib(f3, "var", axes = 1)
+fviz_contrib(f3, "var", axes = 1) + fviz_contrib(f3, "var", axes = 2)
 # Contribution to the second dimension
-fviz_contrib(f3, "var", axes = 2)
+
 
 
 # PLOTS ARROWS
@@ -376,9 +375,9 @@ eigen_f4 <- f4$eig
 eigen_f4
 
 # Contribution to the first dimension
-fviz_contrib(f4, "var", axes = 1)
+fviz_contrib(f4, "var", axes = 1) + fviz_contrib(f4, "var", axes = 2)
 # Contribution to the second dimension
-fviz_contrib(f4, "var", axes = 2)
+
 
 
 # PLOTS ARROWS
