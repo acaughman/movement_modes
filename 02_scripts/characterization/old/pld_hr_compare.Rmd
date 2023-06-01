@@ -26,15 +26,27 @@ library(tidyverse)
 ### Read in Data
 
 ```{r}
-data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv"))
+hr_data <- read_csv(here::here("01_data", "01_raw_data", "homerange_rf_predictions.csv"))
+pld_data <- read_csv(here::here("01_data", "01_raw_data", "pld_rf_predictions.csv"))
+
+pld_hr = full_join(hr_data, pld_data) %>% 
+  filter(!is.na(predicted_PLD)) %>% 
+  filter(!is.na(predicted_homerange))
+
+write_csv(pld_hr, here::here("01_data", "01_raw_data", "homerange_pld.csv"))
 ```
 
 ### Explore data
 
 ```{r}
-ggplot(data, aes(log(predicted_homerange), predicted_pld)) +
+p1 = ggplot(data, aes(log(predicted_homerange), predicted_pld)) +
   geom_point() +
-  theme_bw()
+  theme_bw() +
+  labs(x = "ln(Predicted Homerange)",
+       y = "Predicted PLD")
+p1
+
+ggsave(p1, file = paste0("data_fig.pdf"), path = here::here("04_figs"))
 ```
 
 
