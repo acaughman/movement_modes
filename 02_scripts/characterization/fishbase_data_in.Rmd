@@ -18,6 +18,8 @@ library(sf)
 library(sp)
 library(ggpubr)
 library(rstatix)
+library(FSA)
+library(chisq.posthoc.test)
 ```
 
 ### Read in data
@@ -66,13 +68,13 @@ clusters <- clusters %>%
 # rename classes with descriptions: homerange/PLD
 clusters <- clusters %>% 
   mutate(class3 = class2,
-         class2 = case_when(class2 == 1 ~ "mid-high/mid-low",
-                            class2 == 2 ~ "high/mid-low",
-                            class2 == 3 ~ "mid/mid-high",
-                            class2 == 4 ~ "mid/low",
-                            class2 == 5 ~ "mid/high",
-                            class2 == 7 ~ "low/mid-low",
-                            class2 == 8 ~ "mid-low/mid-low"
+         class2 = case_when(class2 == 1 ~ "1: mid-high/mid-low",
+                            class2 == 2 ~ "2: high/mid-low",
+                            class2 == 3 ~ "3: mid/mid-high",
+                            class2 == 4 ~ "4: mid/low",
+                            class2 == 5 ~ "5: mid/high",
+                            class2 == 7 ~ "7: low/mid-low",
+                            class2 == 8 ~ "8: mid-low/mid-low"
                             ))
 ```
 
@@ -663,11 +665,10 @@ missing_filled_fig2
 ```
 
 
-
-
 ### ANOVA/Kruskal-Wallis
 
 ```{r}
+# FOR CONTINOUS
 
 #check for outliers
 filled_data2 %>% 
@@ -677,28 +678,29 @@ filled_data2 %>%
   ungroup()
 
 # Build the linear model
-model  <- lm(class3 ~ demers_pelag, data = filled_data2)
+model  <- aov(length ~ class2, data = filled_data2)
 # Create a QQ plot of residuals
-ggqqplot(residuals(model))
+plot(model)
 # not normal
 
 # run Kruskal-wallis test
-kruskal.test(class3 ~ demers_pelag, data = filled_data2)
+kruskal.test(length ~ class2, data = filled_data2)
 # chi-squared = 20.152, df = 6, p-value = 0.002602
 
-
+dunnTest(length ~ class2, data = filled_data2, method="bh")
 
 ```
 
+```{r}
+# FOR CATEGORICAL 
 
+chisq.test(filled_data2$class2, filled_data2$demers_pelag)
 
+contingency_table <- table(filled_data2$class2, filled_data2$demers_pelag)
+contingency_table
 
-
-
-
-
-
-
+chisq.posthoc.test(contingency_table, method = "bonferroni") 
+```
 
 
 
