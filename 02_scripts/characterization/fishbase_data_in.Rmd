@@ -297,7 +297,7 @@ data[data == "pelagic"] <- "pelagic oceanic"
 ### Write new csv including added variables
 
 ```{r}
-# write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 ```
 
 ### Look at missing data
@@ -492,7 +492,7 @@ filled_data <- filled_data %>%
 ### Write new csv including genus filled variables
 
 ```{r}
-# write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
 ```
 
 #Asses missing data after genus fills
