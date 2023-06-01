@@ -63,13 +63,13 @@ clusters <- clusters %>%
 
 # rename classes with descriptions: homerange/PLD
 clusters <- clusters %>% 
-  mutate(class2 = case_when(class2 == 1 ~ "mid-high/mid",
-                            class2 == 2 ~ "high/mid",
+  mutate(class2 = case_when(class2 == 1 ~ "mid-high/mid-low",
+                            class2 == 2 ~ "high/mid-low",
                             class2 == 3 ~ "mid/mid-high",
                             class2 == 4 ~ "mid/low",
                             class2 == 5 ~ "mid/high",
-                            class2 == 7 ~ "low/mid",
-                            class2 == 8 ~ "mid-low/mid",
+                            class2 == 7 ~ "low/mid-low",
+                            class2 == 8 ~ "mid-low/mid-low"
                             ))
 ```
 
