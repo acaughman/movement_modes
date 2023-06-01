@@ -179,10 +179,12 @@ com_data <- filled_data2 %>%
 com <- com_data %>%
   dplyr::select(-species, -family, -class2)
 
+set.seed(123)
 simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
 
 summary(simper_out)
 
+set.seed(123)
 ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
 
 summary(ano)
