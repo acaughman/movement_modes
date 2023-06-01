@@ -736,7 +736,6 @@ chisq.posthoc.test(contingency_table, method = "bonferroni")
 ```
 
 
-
 ### Look at correlation
 
 ```{r}
@@ -755,7 +754,7 @@ cor_mat
 
 
 # for filled data
-corr_filled <- filled_data %>%
+corr_filled <- filled_data2 %>%
   dplyr::select(where(is.numeric))
 
 cor_mat_filled <- round(cor(corr_filled, use = "complete.obs"), 2)

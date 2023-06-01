@@ -141,9 +141,9 @@ none are above 5
 
 ```{r}
 model <- lm(
-  class2 ~ temp_preferred + fecundity_mean +
+  class3 ~ temp_preferred + fecundity_mean +
     longevity_wild + sp_richness + length + kfin + r_fin + diet_troph3,
-  data = filled_data
+  data = filled_data2
 )
 
 summary(model)
@@ -204,7 +204,7 @@ plot(ano)
 # "Error in `.rowNamesDF<-`(x, value = value) : duplicate 'row.names' are not allowed"
 
 
-famd_filled <- filled_data %>%
+famd_filled <- filled_data2 %>%
   dplyr::select(
     temp_preferred, fecundity_mean, longevity_wild,
     sp_richness, length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place,
@@ -248,7 +248,7 @@ plot1
 
 
 ```{r}
-famd_filled2 <- filled_data %>%
+famd_filled2 <- filled_data2 %>%
   dplyr::select(
     fecundity_mean, length, r_fin, diet_troph3,
     # climate,
@@ -297,7 +297,7 @@ plot2
 
 
 ```{r}
-famd_filled3 <- filled_data %>%
+famd_filled3 <- filled_data2 %>%
   dplyr::select(
     fecundity_mean, length, r_fin, diet_troph3,
     oxygen_cons,
@@ -348,7 +348,7 @@ plot3
 
 
 ```{r}
-famd_filled4 <- filled_data %>%
+famd_filled4 <- filled_data2 %>%
   dplyr::select(
     fecundity_mean,
     length,
@@ -387,7 +387,7 @@ p4 <- fviz_famd_var(f4, "quanti.var",
 )
 
 
-f4_fig <- fviz_famd_ind(f4, label = "none", habillage = famd_filled4$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
+f4_fig <- fviz_famd_ind(f4, label = "none", habillage = famd_filled4$class2, addEllipses = TRUE, ellipse.level = 0.55, invisible = "quali.var") +
   theme_bw()
 
 f4_fig # 2 and 3 completely separate, 2 and 5 as well
@@ -404,7 +404,7 @@ plot4
 #### NMDS Plot 1
 
 ```{r}
-com_data <- filled_data %>%
+com_data <- filled_data2 %>%
   dplyr::select(
     temp_preferred, fecundity_mean, longevity_wild,
     sp_richness, length, kfin, r_fin, diet_troph3, species, order, class2
