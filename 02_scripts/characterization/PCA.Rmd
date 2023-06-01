@@ -23,9 +23,7 @@ library(patchwork)
 ### Load data
 
 ```{r}
-fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv")) %>%
-  mutate_if(is.character, as.factor)
-filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>%
+filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
   mutate_if(is.character, as.factor)
 ```
 
@@ -34,14 +32,17 @@ filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.
 ```{r}
 # continuous
 
-plot_data <- fishbase_data %>%
-  mutate(class2 = as.factor(class2), order = as.factor(order))
+plot_data <- filled_data2 %>%
+  mutate(class2 = as.factor(class2), 
+         class3 = as.factor(class3), 
+         order = as.factor(order)
+         )
 
-response <- "class2"
+response <- "class3"
 expl_cont <- c(
   "temp_preferred", "fecundity_mean",
   "longevity_wild", "sp_richness", "length", "kfin",
-  "r_fin", "diet_troph3"
+  "r_fin", "diet_troph3", "oxygen_cons", "temp_range"
 )
 
 box_data <- function(x, y) {
@@ -55,29 +56,34 @@ box_data <- function(x, y) {
     scale_color_viridis_d()
 }
 
-plots_cont <- map(expl_cont, ~ box_data(.x, "class2"))
+plots_cont <- map(expl_cont, ~ box_data(.x, "class3"))
 plots_cont
 ```
 
 ```{r}
-temp_plot <- box_data(x = "temp_preferred", y = "class2")
-fecund_plot <- box_data(x = "fecundity_mean", y = "class2")
-long_plot <- box_data(x = "longevity_wild", y = "class2")
-sp_rich_plot <- box_data(x = "sp_richness", y = "class2")
-length_plot <- box_data(x = "length", y = "class2")
-kfin_plot <- box_data(x = "kfin", y = "class2")
-r_fin_plot <- box_data(x = "r_fin", y = "class2")
-diet_plot <- box_data(x = "diet_troph3", y = "class2")
+temp_plot <- box_data(x = "temp_preferred", y = "class3")
+fecund_plot <- box_data(x = "fecundity_mean", y = "class3")
+long_plot <- box_data(x = "longevity_wild", y = "class3")
+sp_rich_plot <- box_data(x = "sp_richness", y = "class3")
+length_plot <- box_data(x = "length", y = "class3")
+kfin_plot <- box_data(x = "kfin", y = "class3")
+r_fin_plot <- box_data(x = "r_fin", y = "class3")
+diet_plot <- box_data(x = "diet_troph3", y = "class3")
+oxygen_plot <- box_data(x = "oxygen_cons", y = "class3")
+temp_range_plot <- box_data(x = "temp_range", y = "class3")
 
 
-ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
-ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
-ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
-ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
-ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
-ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
-ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
-ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "numeric"))
+ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+
 ```
 
 
@@ -87,7 +93,7 @@ ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "
 expl_cat <- c(
   "climate", "body_shape_i", "dev_place", "movement_keyword",
   "demers_pelag", "iucn_category", "food_i",
-  "circadian", "food_mode"
+  "circadian", "food_mode", "ocean", "basin"
 )
 
 scatter_data <- function(x, y) {
@@ -102,105 +108,38 @@ scatter_data <- function(x, y) {
     theme(axis.text.x = element_text(angle = 40, hjust = 1))
 }
 
-plots_cat <- map(expl_cat, ~ scatter_data(.x, "class2"))
+plots_cat <- map(expl_cat, ~ scatter_data(.x, "class3"))
 plots_cat
 ```
 
 ```{r}
-climate_plot <- scatter_data(x = "climate", y = "class2")
-body_plot <- scatter_data(x = "body_shape_i", y = "class2")
-dev_plot <- scatter_data(x = "dev_place", y = "class2")
-move_keyword_plot <- scatter_data(x = "movement_keyword", y = "class2")
-demers_plot <- scatter_data(x = "demers_pelag", y = "class2")
-iucn_plot <- scatter_data(x = "iucn_category", y = "class2")
-food_plot <- scatter_data(x = "food_mode", y = "class2")
-circ_plot <- scatter_data(x = "circadian", y = "class2")
+climate_plot <- scatter_data(x = "climate", y = "class3")
+body_plot <- scatter_data(x = "body_shape_i", y = "class3")
+dev_plot <- scatter_data(x = "dev_place", y = "class3")
+demers_plot <- scatter_data(x = "demers_pelag", y = "class3")
+iucn_plot <- scatter_data(x = "iucn_category", y = "class3")
+food_plot <- scatter_data(x = "food_mode", y = "class3")
+circ_plot <- scatter_data(x = "circadian", y = "class3")
+ocean_plot <- scatter_data(x = "ocean", y = "class3")
+basin_plot <- scatter_data(x = "basin", y = "class3")
 
 
-ggsave(climate_plot, file = paste0("climate_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
-ggsave(body_plot, file = paste0("body_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
-ggsave(dev_plot, file = paste0("dev_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
-ggsave(move_keyword_plot, file = paste0("move_keyword_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
-ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
-ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
-ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
-ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "individual_plots", "unfilled_data", "categorical"))
+ggsave(climate_plot, file = paste0("climate_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(body_plot, file = paste0("body_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(dev_plot, file = paste0("dev_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(ocean_plot, file = paste0("ocean_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(basin_plot, file = paste0("basin_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+
 ```
 
 
-### Plot filled data
-
-```{r}
-# continuous
-
-plot_filled <- filled_data %>%
-  mutate(class2 = as.factor(class2), order = as.factor(order))
-
-expl_cont_filled <- c(
-  "temp_preferred", "fecundity_mean",
-  "longevity_wild", "oxygen_cons", "temp_range"
-)
-
-box_filled <- function(x, y) {
-  ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]])) +
-    geom_boxplot(aes(color = class2)) +
-    theme_bw() +
-    labs(
-      y = "Movement Class",
-      color = "Class"
-    ) +
-    scale_color_viridis_d()
-}
-
-plots_cont_filled <- map(expl_cont_filled, ~ box_filled(.x, "class2"))
-plots_cont_filled
-```
-
-```{r}
-temp_fill_plot <- box_filled(x = "temp_preferred", y = "class2")
-fecund_fill_plot <- box_filled(x = "fecundity_mean", y = "class2")
-long_fill_plot <- box_filled(x = "longevity_wild", y = "class2")
-oxygen_plot <- box_filled(x = "oxygen_cons", y = "class2")
-temp_range_plot <- box_filled(x = "temp_range", y = "class2")
 
 
-ggsave(temp_fill_plot, file = paste0("temp_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
-ggsave(fecund_fill_plot, file = paste0("fecund_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
-ggsave(long_fill_plot, file = paste0("long_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
-ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
-ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "numeric"))
-```
 
-
-```{r}
-# categorical
-
-expl_cat_filled <- c("dev_place", "food_i", "food_mode")
-
-scatter_filled <- function(x, y) {
-  ggplot(plot_filled, aes(x = .data[[x]], y = .data[[y]])) +
-    geom_jitter(aes(color = class2)) +
-    theme_bw() +
-    labs(
-      y = "Movement Class",
-      color = "Class"
-    ) +
-    scale_color_viridis_d() +
-    theme(axis.text.x = element_text(angle = 40, hjust = 1))
-}
-
-plots_cat_filled <- map(expl_cat_filled, ~ scatter_filled(.x, "class2"))
-plots_cat_filled
-```
-
-```{r}
-dev_fill_plot <- scatter_filled(x = "dev_place", y = "class2")
-food_fill_plot <- scatter_filled(x = "food_mode", y = "class2")
-
-
-ggsave(dev_fill_plot, file = paste0("dev_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "categorical"))
-ggsave(food_fill_plot, file = paste0("food_fill_plot.png"), path = here::here("04_figs", "individual_plots", "filled_data", "categorical"))
-```
 
 
 ### Check Variable Inflation Factors (VIF)
