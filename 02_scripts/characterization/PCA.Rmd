@@ -18,6 +18,7 @@ library(purrr)
 library(car)
 library(vegan)
 library(patchwork)
+library(chisq.posthoc.test)
 ```
 
 ### Load data
