@@ -8,6 +8,8 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 library(tidyverse)
 library(mclust)
+
+set.seed(5)
 ```
 
 # Overview
@@ -89,9 +91,12 @@ gmm_data <- data %>%
   dplyr::select(magnitude_homerange, month_pld)
 gmm_data2 <- data %>%
   dplyr::select(magnitude_homerange, month_pld, species)
+gmm_data3 <- data %>%
+  dplyr::select(homerange, pld)
+gmm_data4 <- data %>%
+  dplyr::select(magnitude_homerange, month_pld, species)
 
-gmm_mclust2 <- Mclust(gmm_data, G = 10)
-
+gmm_mclust2 <- Mclust(gmm_data, G = 9)
 summary(gmm_mclust2)
 
 gmm_data2$class <- as.factor(gmm_mclust2[["classification"]])
