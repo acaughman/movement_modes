@@ -64,38 +64,6 @@ chisq.posthoc.test(contingency_table, method = "bonferroni")
 ```
 
 
-### Look at correlation
-
-```{r}
-# for original data
-corr <- data %>%
-  dplyr::select(where(is.numeric))
-
-cor_mat <- round(cor(corr, use = "complete.obs"), 2)
-cor_mat
-
-# oxygen_cons, temp_preferred, temp_range, and sp_richness all VERY highly correlated with lots of others?
-# length and kfin 100% inverse relationship?
-# temp_range and r_fin 100% inverse relationship?
-# fecundity, longevity, r_fin
-# diet_troph3 and fecundity
-
-
-# for filled data
-corr_filled <- filled_data2 %>%
-  dplyr::select(where(is.numeric))
-
-cor_mat_filled <- round(cor(corr_filled, use = "complete.obs"), 2)
-cor_mat_filled
-
-# temp_preferred, kfin, diet_troph3
-# temp_range and oxygen_cons
-# fecundity, longevity, r_fin
-# sp_richness, temp_preferred, length!, diet_troph3!
-```
-
-
-
 ### Plot data
 
 ```{r}
@@ -107,7 +75,7 @@ plot_data <- filled_data2 %>%
          order = as.factor(order)
          )
 
-response <- "class3"
+response <- "class2"
 expl_cont <- c(
   "temp_preferred", "fecundity_mean",
   "longevity_wild", "sp_richness", "length", "kfin",
@@ -120,26 +88,26 @@ box_data <- function(x, y) {
     theme_bw() +
     labs(
       y = "Movement Class",
-      color = "Class"
+      color = "Class (homerange/PLD)"
     ) +
     scale_color_viridis_d()
 }
 
-plots_cont <- map(expl_cont, ~ box_data(.x, "class3"))
+plots_cont <- map(expl_cont, ~ box_data(.x, "class2"))
 plots_cont
 ```
 
 ```{r}
-temp_plot <- box_data(x = "temp_preferred", y = "class3")
-fecund_plot <- box_data(x = "fecundity_mean", y = "class3")
-long_plot <- box_data(x = "longevity_wild", y = "class3")
-sp_rich_plot <- box_data(x = "sp_richness", y = "class3")
-length_plot <- box_data(x = "length", y = "class3")
-kfin_plot <- box_data(x = "kfin", y = "class3")
-r_fin_plot <- box_data(x = "r_fin", y = "class3")
-diet_plot <- box_data(x = "diet_troph3", y = "class3")
-oxygen_plot <- box_data(x = "oxygen_cons", y = "class3")
-temp_range_plot <- box_data(x = "temp_range", y = "class3")
+temp_plot <- box_data(x = "temp_preferred", y = "class2")
+fecund_plot <- box_data(x = "fecundity_mean", y = "class2")
+long_plot <- box_data(x = "longevity_wild", y = "class2")
+sp_rich_plot <- box_data(x = "sp_richness", y = "class2")
+length_plot <- box_data(x = "length", y = "class2")
+kfin_plot <- box_data(x = "kfin", y = "class2")
+r_fin_plot <- box_data(x = "r_fin", y = "class2")
+diet_plot <- box_data(x = "diet_troph3", y = "class2")
+oxygen_plot <- box_data(x = "oxygen_cons", y = "class2")
+temp_range_plot <- box_data(x = "temp_range", y = "class2")
 
 
 ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
@@ -170,26 +138,26 @@ scatter_data <- function(x, y) {
     theme_bw() +
     labs(
       y = "Movement Class",
-      color = "Class"
+      color = "Class (homerange/PLD)"
     ) +
     scale_color_viridis_d() +
     theme(axis.text.x = element_text(angle = 40, hjust = 1))
 }
 
-plots_cat <- map(expl_cat, ~ scatter_data(.x, "class3"))
+plots_cat <- map(expl_cat, ~ scatter_data(.x, "class2"))
 plots_cat
 ```
 
 ```{r}
-climate_plot <- scatter_data(x = "climate", y = "class3")
-body_plot <- scatter_data(x = "body_shape_i", y = "class3")
-dev_plot <- scatter_data(x = "dev_place", y = "class3")
-demers_plot <- scatter_data(x = "demers_pelag", y = "class3")
-iucn_plot <- scatter_data(x = "iucn_category", y = "class3")
-food_plot <- scatter_data(x = "food_mode", y = "class3")
-circ_plot <- scatter_data(x = "circadian", y = "class3")
-ocean_plot <- scatter_data(x = "ocean", y = "class3")
-basin_plot <- scatter_data(x = "basin", y = "class3")
+climate_plot <- scatter_data(x = "climate", y = "class2")
+body_plot <- scatter_data(x = "body_shape_i", y = "class2")
+dev_plot <- scatter_data(x = "dev_place", y = "class2")
+demers_plot <- scatter_data(x = "demers_pelag", y = "class2")
+iucn_plot <- scatter_data(x = "iucn_category", y = "class2")
+food_plot <- scatter_data(x = "food_mode", y = "class2")
+circ_plot <- scatter_data(x = "circadian", y = "class2")
+ocean_plot <- scatter_data(x = "ocean", y = "class2")
+basin_plot <- scatter_data(x = "basin", y = "class2")
 
 
 ggsave(climate_plot, file = paste0("climate_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
@@ -210,8 +178,8 @@ none are above 5
 
 ```{r}
 model <- lm(
-  class3 ~ temp_preferred + fecundity_mean +
-    longevity_wild + sp_richness + length + kfin + r_fin + diet_troph3,
+  class3 ~ temp_preferred+ fecundity_mean+ longevity_wild+
+    sp_richness+ length+ kfin+ r_fin+ diet_troph3,
   data = filled_data2
 )
 
@@ -828,7 +796,7 @@ nmds_plot6 # 2, 3, 4
 #   geom_boxplot(aes(color = class2)) +
 #   theme_bw(base_size  = 20) +
 #   labs(y = "Movement Class",
-#        x = "Growth Rate", color = "Class")
+#        x = "Growth Rate", color = "Class (homerange/PLD)")
 #   #theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 #   #theme(legend.position = "none")
 # ind3
@@ -858,7 +826,7 @@ nmds_plot6 # 2, 3, 4
 #   geom_jitter(aes(color = class2)) +
 #   theme_bw(base_size  = 20) +
 #   labs(y = "Movement Class",
-#        x = "Movement Keyword", color = "Class") +
+#        x = "Movement Keyword", color = "Class (homerange/PLD)") +
 #   theme(axis.text.x = element_text(angle = 30, hjust=1, size = 8))
 #   #theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 #   #theme(legend.position = "none")
