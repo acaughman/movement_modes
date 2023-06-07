@@ -8,6 +8,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 library(tidyverse)
 library(mclust)
+library(AdaptGauss)
 
 set.seed(5)
 ```
@@ -91,15 +92,17 @@ gmm_data <- data %>%
   dplyr::select(magnitude_homerange, month_pld)
 gmm_data2 <- data %>%
   dplyr::select(magnitude_homerange, month_pld, species)
-gmm_data3 <- data %>%
-  dplyr::select(homerange, pld)
-gmm_data4 <- data %>%
-  dplyr::select(magnitude_homerange, month_pld, species)
 
-gmm_mclust2 <- Mclust(gmm_data, G = 9)
+gmm_mclust2 <- Mclust(gmm_data)
 summary(gmm_mclust2)
 
-gmm_data2$class <- as.factor(gmm_mclust2[["classification"]])
+gmm_mclust3 <- Mclust(gmm_data, G = 9)
+summary(gmm_mclust3)
+
+gmm_boot = mclustBootstrapLRT(gmm_data, modelName = "EEV", nboot = 9999, level = 0.05)
+print(gmm_boot)
+
+gmm_data2$class <- as.factor(gmm_mclust3[["classification"]])
 
 p2 <- ggplot(gmm_data2, aes(magnitude_homerange, month_pld)) +
   geom_jitter(aes(color = class)) +
@@ -110,11 +113,12 @@ p2 <- ggplot(gmm_data2, aes(magnitude_homerange, month_pld)) +
   )
 
 p2
-
 # ggsave(p2, file = paste0("gmm_fig.pdf"), path = here::here("04_figs"), height = 8, width = 15)
 
 # write_csv(gmm_data2, here::here("01_data", "02_processed_data", "clusters.csv"))
 ```
+
+
 
 My idea is for you to start with these clusters. You can get the cluster ID for each individual species from clusters.csv and then start pulling in variables to describe and, ideally, differentiate these clusters. Some of them are small so feel free to try combining some if that makes sense (I'm thinking maybe 2 and 6 especially). Also can consider breaking up bigger ones (like 1).
 
