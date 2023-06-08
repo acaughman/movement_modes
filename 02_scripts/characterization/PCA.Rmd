@@ -255,7 +255,7 @@ plot1
 famd_filled2 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, longevity_wild, sp_richness, length,
-    r_fin, diet_troph3, temp_range, climate, body_shape_i, 
+    r_fin, diet_troph3, temp_range, climate, 
     dev_place, iucn_category, class2
     # fecundity_mean, length, r_fin, diet_troph3,
     # # climate,
@@ -270,7 +270,7 @@ famd_filled2 <- filled_data2 %>%
   na.omit()
 
 
-f2 <- FAMD(famd_filled2[, 1:11], graph = FALSE)
+f2 <- FAMD(famd_filled2[, 1:10], graph = FALSE)
 f2
 
 eigen_f2 <- f2$eig
@@ -307,7 +307,7 @@ plot2
 famd_filled3 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, longevity_wild, length,
-    r_fin, diet_troph3, temp_range, climate, body_shape_i, 
+    r_fin, temp_range, climate, 
     dev_place, iucn_category, class2
     # fecundity_mean, length, r_fin, diet_troph3,
     # oxygen_cons,
@@ -324,7 +324,7 @@ famd_filled3 <- filled_data2 %>%
   na.omit()
 
 
-f3 <- FAMD(famd_filled3[, 1:10], graph = FALSE)
+f3 <- FAMD(famd_filled3[, 1:8], graph = FALSE)
 f3
 
 eigen_f3 <- f3$eig
@@ -353,7 +353,7 @@ plot3 <- p3 + f3_fig
 
 plot3
 
-#ggsave(plot3, file = paste0("f3.png"), path = here::here("04_figs", "famd_with_arrows"))
+ggsave(plot3, file = paste0("f3.png"), path = here::here("04_figs", "famd_with_arrows"))
 ```
 
 
