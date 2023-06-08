@@ -18,7 +18,6 @@ library(purrr)
 library(car)
 library(vegan)
 library(patchwork)
-library(chisq.posthoc.test)
 ```
 
 ### Load data
@@ -167,7 +166,10 @@ abline(v = 5, lwd = 3, lty = 2)
 ```
 
 
+### LOOK INTO THIS <---------------------------------------
+
 ```{r}
+
 com_data <- filled_data2 %>%
   dplyr::select(
     temp_preferred, fecundity_mean, longevity_wild,
@@ -183,6 +185,7 @@ com <- com_data %>%
 
 set.seed(123)
 simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
+# This just ran endlessly for me and never gave any output? <---------------------------------
 
 summary(simper_out)
 
@@ -208,17 +211,16 @@ plot(ano)
 
 famd_filled <- filled_data2 %>%
   dplyr::select(
-    temp_preferred, fecundity_mean, longevity_wild,
-    sp_richness, length, kfin, r_fin, diet_troph3, climate, body_shape_i, dev_place,
-    demers_pelag,
-    iucn_category,
-    food_mode, class2
+    temp_preferred, fecundity_mean, longevity_wild, sp_richness, length, 
+    kfin, r_fin, diet_troph3, oxygen_cons, temp_range, climate, body_shape_i, 
+    dev_place, iucn_category, food_mode, class2
+    #demers_pelag
   ) %>%
   mutate(class2 = as.factor(class2)) %>%
   na.omit()
 
 
-f1 <- FAMD(famd_filled[, 1:13], graph = FALSE)
+f1 <- FAMD(famd_filled[, 1:15], graph = FALSE)
 f1
 
 # Contribution to the first dimension
@@ -245,27 +247,30 @@ plot1 <- p1 + f1_fig
 
 plot1
 
-# ggsave(plot1, file = paste0("f1.png"), path = here::here("04_figs", "famd_with_arrows"))
+#ggsave(plot1, file = paste0("f1.png"), path = here::here("04_figs", "famd_with_arrows"))
 ```
 
 
 ```{r}
 famd_filled2 <- filled_data2 %>%
   dplyr::select(
-    fecundity_mean, length, r_fin, diet_troph3,
-    # climate,
-    body_shape_i,
-    dev_place,
-    demers_pelag,
-    # iucn_category,
-    # food_i,
-    class2
+    temp_preferred, longevity_wild, sp_richness, length,
+    r_fin, diet_troph3, temp_range, climate, body_shape_i, 
+    dev_place, iucn_category, class2
+    # fecundity_mean, length, r_fin, diet_troph3,
+    # # climate,
+    # body_shape_i,
+    # dev_place,
+    # demers_pelag,
+    # # iucn_category,
+    # # food_i,
+    # class2
   ) %>%
   mutate(class2 = as.factor(class2)) %>%
   na.omit()
 
 
-f2 <- FAMD(famd_filled2[, 1:8], graph = FALSE)
+f2 <- FAMD(famd_filled2[, 1:11], graph = FALSE)
 f2
 
 eigen_f2 <- f2$eig
@@ -288,35 +293,38 @@ p2 <- fviz_famd_var(f2, "quanti.var",
 f2_fig <- fviz_famd_ind(f2, label = "none", habillage = famd_filled2$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
   theme_bw()
 
-f2_fig # 2 and 3 completely separate, 2 and 5 as well
+f2_fig
 
 plot2 <- p2 + f2_fig
 
 plot2
 
-# ggsave(plot2, file = paste0("f2.png"), path = here::here("04_figs", "famd_with_arrows"))
+#ggsave(plot2, file = paste0("f2.png"), path = here::here("04_figs", "famd_with_arrows"))
 ```
 
 
 ```{r}
 famd_filled3 <- filled_data2 %>%
   dplyr::select(
-    fecundity_mean, length, r_fin, diet_troph3,
-    oxygen_cons,
-    # temp_range,
-    climate,
-    # body_shape_i,
-    # dev_place,
-    demers_pelag,
-    # iucn_category,
-    # food_i,
-    class2
+    temp_preferred, longevity_wild, length,
+    r_fin, diet_troph3, temp_range, climate, body_shape_i, 
+    dev_place, iucn_category, class2
+    # fecundity_mean, length, r_fin, diet_troph3,
+    # oxygen_cons,
+    # # temp_range,
+    # climate,
+    # # body_shape_i,
+    # # dev_place,
+    # demers_pelag,
+    # # iucn_category,
+    # # food_i,
+    # class2
   ) %>%
   mutate(class2 = as.factor(class2)) %>%
   na.omit()
 
 
-f3 <- FAMD(famd_filled3[, 1:7], graph = FALSE)
+f3 <- FAMD(famd_filled3[, 1:10], graph = FALSE)
 f3
 
 eigen_f3 <- f3$eig
@@ -339,13 +347,13 @@ p3 <- fviz_famd_var(f3, "quanti.var",
 f3_fig <- fviz_famd_ind(f3, label = "none", habillage = famd_filled3$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
   theme_bw()
 
-f3_fig # 2 and 3 completely separate, 2 and 5 as well
+f3_fig 
 
 plot3 <- p3 + f3_fig
 
 plot3
 
-# ggsave(plot3, file = paste0("f3.png"), path = here::here("04_figs", "famd_with_arrows"))
+#ggsave(plot3, file = paste0("f3.png"), path = here::here("04_figs", "famd_with_arrows"))
 ```
 
 
