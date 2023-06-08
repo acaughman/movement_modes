@@ -250,7 +250,7 @@ plot1 <- p1 + f1_fig
 
 plot1
 
-#ggsave(plot1, file = paste0("f1.png"), path = here::here("04_figs", "famd_with_arrows"))
+ggsave(plot1, file = paste0("f1.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
 ```
 
 
