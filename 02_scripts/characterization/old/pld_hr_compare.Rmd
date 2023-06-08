@@ -26,38 +26,26 @@ library(tidyverse)
 ### Read in Data
 
 ```{r}
-hr_data <- read_csv(here::here("01_data", "01_raw_data", "homerange_rf_predictions.csv"))
-pld_data <- read_csv(here::here("01_data", "01_raw_data", "pld_rf_predictions.csv")) %>% 
-  filter(species %in% c(hr_data$species)) %>% 
-  arrange(species)
-
-hr_data = hr_data %>% 
-  filter(species %in% pld_data$species) %>% 
-  arrange(species)
-
-pld_hr = hr_data
-pld_hr$predicted_pld = pld_data$predicted_PLD
-pld_hr$observed_pld = pld_data$observed_PLD
-
-write_csv(pld_hr, here::here("01_data", "02_processed_data", "homerange_pld.csv"))
+pld_hr = read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
+  mutate_if(is.character, as.factor)
 ```
 
 ### Explore data
 
 ```{r}
-p1 = ggplot(pld_hr, aes(log(predicted_homerange), predicted_pld)) +
+p1 = ggplot(pld_hr, aes(log(home_range), pld)) +
   geom_point() +
   theme_bw() +
   labs(x = "ln(Predicted Homerange)",
        y = "Predicted PLD")
 p1
 
-ggsave(p1, file = paste0("data_fig.pdf"), path = here::here("04_figs"))
+# ggsave(p1, file = paste0("data_fig.pdf"), path = here::here("04_figs"))
 ```
 
 
 ```{r}
-ggplot(pld_hr, aes(log(predicted_homerange), predicted_pld)) +
+ggplot(pld_hr, aes(log(home_range), pld)) +
   geom_point() +
   theme_bw() +
   facet_wrap(~movement_keyword) +
@@ -66,7 +54,7 @@ ggplot(pld_hr, aes(log(predicted_homerange), predicted_pld)) +
 ```
 
 ```{r, include = FALSE}
-ggplot(pld_hr, aes(log(predicted_homerange), predicted_pld)) +
+ggplot(pld_hr, aes(log(home_range), pld)) +
   geom_point() +
   theme_bw() +
   facet_wrap(~demers_pelag) +
@@ -74,26 +62,56 @@ ggplot(pld_hr, aes(log(predicted_homerange), predicted_pld)) +
   stat_cor(label.y = 90)
 ```
 
+```{r, include = FALSE}
+ggplot(pld_hr, aes(log(home_range), pld)) +
+  geom_point() +
+  theme_bw() +
+  facet_wrap(~basin) +
+  geom_smooth(method = "lm", se = FALSE) +
+  stat_cor(label.y = 90)
+```
+
+```{r, include = FALSE}
+ggplot(pld_hr, aes(log(home_range), pld)) +
+  geom_point() +
+  theme_bw() +
+  facet_wrap(~dev_place) +
+  geom_smooth(method = "lm", se = FALSE) +
+  stat_cor(label.y = 90)
+```
+
 Family with > 5 representatives
 
 ```{r, include = FALSE}
-# fam_sum <- pld_hr %>%
-#   group_by(family) %>%
-#   summarize(count = n()) %>%
-#   ungroup() %>% 
-#   filter(count > 5)
-# 
-# fam_data <- pld_hr %>%
-#   filter(family %in% fam_sum$family)
+fam_sum <- pld_hr %>%
+  group_by(family) %>%
+  summarize(count = n()) %>%
+  ungroup() %>%
+  filter(count > 5)
+
+fam_data <- pld_hr %>%
+  filter(family %in% fam_sum$family)
 ```
 
 ```{r}
-# ggplot(fam_data, aes(log(predicted_homerange), predicted_pld)) +
-#   geom_point() +
-#   theme_bw() +
-#   facet_wrap(~family) +
-#   geom_smooth(method = "lm", se = FALSE) +
-#   stat_cor(label.y = 75)
+ggplot(fam_data, aes(log(home_range), pld)) +
+  geom_point() +
+  theme_bw() +
+  facet_wrap(~family) +
+  geom_smooth(method = "lm", se = FALSE) +
+  stat_cor(label.y = 75)
+```
+
+### Modeling
+
+```{r}
+lm1 = lm(pld ~ home_range, data = pld_hr)
+
+summary(lm1)
+
+lm2 = lm(home_range ~ pld, data = pld_hr)
+
+summary(lm2)
 ```
 
 
@@ -101,10 +119,10 @@ Family with > 5 representatives
 
 ```{r, include = FALSE}
 pld_data <- pld_hr %>%
-  dplyr::select(predicted_pld)
+  dplyr::select(pld)
 hr_data <- pld_hr %>%
-  dplyr::select(predicted_homerange) %>%
-  mutate(predicted_homerange = log(predicted_homerange))
+  dplyr::select(home_range) %>%
+  mutate(home_range = log(home_range))
 
 pld_km <- kmeans(pld_data, 3)
 hr_km <- kmeans(hr_data, 3)
@@ -117,10 +135,10 @@ pld_hr <- pld_hr %>%
 pld_hr <- pld_hr %>%
   mutate(pld_clusters = as.factor(pld_clusters))
 
-ggplot(pld_hr, aes(x = log(predicted_homerange), y = predicted_pld)) +
+ggplot(pld_hr, aes(x = log(home_range), y = pld)) +
   geom_jitter(aes(color = hr_clusters)) +
   theme_bw()
-ggplot(pld_hr, aes(x = log(predicted_homerange), y = predicted_pld)) +
+ggplot(pld_hr, aes(x = log(home_range), y = pld)) +
   geom_jitter(aes(color = pld_clusters)) +
   theme_bw()
 ```
@@ -129,8 +147,8 @@ Gaussian Mixture Model
 
 ```{r}
 gmm_data_log <- pld_hr %>%
-  dplyr::select(predicted_homerange, predicted_pld) %>%
-  mutate(predicted_homerange = log(predicted_homerange))
+  dplyr::select(home_range, pld) %>%
+  mutate(home_range = log(home_range))
 
 gmm_mclust <- Mclust(gmm_data_log)
 
@@ -141,10 +159,10 @@ plot(gmm_mclust, what = "classification")
 
 ```{r}
 gmm_data <- pld_hr %>%
-  dplyr::select(predicted_homerange, predicted_pld) %>%
-  mutate(log_predicted_homerange = log(predicted_homerange)) %>%
-  filter(log_predicted_homerange < 5) %>%
-  dplyr::select(-log_predicted_homerange)
+  dplyr::select(home_range, pld) %>%
+  mutate(log_home_range = log(home_range)) %>%
+  filter(log_home_range < 5) %>%
+  dplyr::select(-log_home_range)
 
 gmm_mclust <- Mclust(gmm_data)
 
@@ -157,10 +175,10 @@ plot(gmm_mclust, what = "classification", xlim = c(0, 1))
 
 ```{r, include = FALSE}
 hr <- data %>%
-  pull(predicted_homerange)
+  pull(home_range)
 
 pld <- data %>%
-  pull(predicted_pld)
+  pull(pld)
 
 MASS::boxcox(pld ~ hr)
 
