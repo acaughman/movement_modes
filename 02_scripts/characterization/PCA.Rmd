@@ -18,6 +18,7 @@ library(purrr)
 library(car)
 library(vegan)
 library(patchwork)
+library(ggpubr)
 ```
 
 ### Load data
@@ -47,11 +48,12 @@ expl_cont <- c(
 )
 
 box_data <- function(x, y) {
-  ggplot(plot_data, aes(x = .data[[x]], y = .data[[y]])) +
+  ggplot(plot_data, aes(x = .data[[y]], y = .data[[x]])) +
     geom_boxplot(aes(color = .data[[y]])) +
     theme_bw() +
+    coord_flip() +
     labs(
-      y = "Movement Class",
+      x = "Movement Class",
       color = "Class (homerange/PLD)"
     ) +
     scale_color_viridis_d()
@@ -113,7 +115,8 @@ plots_cat
 ```
 
 ```{r}
-climate_plot <- scatter_data(x = "climate", y = "class2")
+climate_plot <- scatter_data(x = "climate", y = "class2")+
+  stat_kruskal_test(label.y = 5, label.x = "6: high/mid")
 body_plot <- scatter_data(x = "body_shape_i", y = "class2")
 dev_plot <- scatter_data(x = "dev_place", y = "class2")
 demers_plot <- scatter_data(x = "demers_pelag", y = "class2")
@@ -397,7 +400,7 @@ p4 <- fviz_famd_var(f4, "quanti.var",
 )
 
 
-f4_fig <- fviz_famd_ind(f4, label = "none", habillage = famd_filled4$class2, addEllipses = TRUE, ellipse.level = 0.55, invisible = "quali.var") +
+f4_fig <- fviz_famd_ind(f4, label = "none", habillage = famd_filled4$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
   theme_bw()
 
 f4_fig # 2 and 3 completely separate, 2 and 5 as well
