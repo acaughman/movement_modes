@@ -1,0 +1,518 @@
+---
+title: "stats"
+author: "Lex Rosenberg"
+date: "2023-06-06"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(here)
+library(ggpubr)
+library(rstatix)
+library(FSA)
+library(chisq.posthoc.test)
+
+```
+
+### Load data
+
+```{r}
+
+filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
+  mutate_if(is.character, as.factor)
+
+```
+
+
+### ANOVA/Kruskal-Wallis/Chi-Squared --- ADD EFFECT SIZES FOR ANOVAS ----------------------------------
+
+```{r}
+# FOR CONTINOUS
+
+
+# length -------------------------------------------------------
+
+# check for outliers - there are a lot?
+outliers_length <- boxplot.stats(filled_data2$length)$out
+boxplot(filled_data2$length, main="Length", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_length, collapse=", ")), cex=0.4)
+
+# build the model
+model_length <- aov(length ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_length))
+# not normal
+
+# model with log transformed length
+model_length_log <- aov(log(length) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_length_log))
+# normal
+
+# test for homogeneity of variance
+plot(model_length_log, 1)
+# looks good
+
+summary(model_length_log)
+# p-value < 2e-16 ***
+
+
+# kfin ---------------------------------------------------------
+
+# look at outliers
+outliers_kfin <- boxplot.stats(filled_data2$kfin)$out
+boxplot(filled_data2$kfin, main="Carrying Capacity", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_kfin, collapse=", ")), cex=0.4)
+
+# build the model
+model_kfin <- aov(kfin ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_kfin))
+# not normal
+
+# model with log transformed variable
+model_kfin_log <- aov(log(kfin) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_kfin_log))
+# normal
+
+# test for homogeneity of variance
+plot(model_kfin_log, 1)
+# looks good
+
+summary(model_kfin_log)
+# p-value = 1.48e-12 ***
+
+
+# r_fin --------------------------------------------------------
+
+# look at outliers
+outliers_r_fin <- boxplot.stats(filled_data2$r_fin)$out
+boxplot(filled_data2$r_fin, main="Growth Rate", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_r_fin, collapse=", ")), cex=0.4)
+
+# build the model
+model_r_fin <- aov(r_fin ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_r_fin))
+# not normal
+
+# model with log transformed variable
+model_r_fin_log <- aov(log(r_fin) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_r_fin_log))
+# normal
+
+# test for homogeneity of variance
+plot(model_r_fin_log, 1)
+# looks fine
+
+summary(model_r_fin_log)
+# p-value = 4.43e-15 ***
+
+
+# diet_troph3 --------------------------------------------------
+
+# look at outliers
+outliers_diet_troph3 <- boxplot.stats(filled_data2$diet_troph3)$out
+boxplot(filled_data2$diet_troph3, main="Trophic Position", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_diet_troph3, collapse=", ")), cex=0.4)
+
+# build the model
+model_diet_troph3 <- aov(diet_troph3 ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_diet_troph3))
+# not normal
+
+# model with transformed variable
+model_diet_troph3_log <- aov(log(diet_troph3) ~ class2, data = filled_data2)
+model_diet_troph3_exp <- aov(exp(diet_troph3) ~ class2, data = filled_data2)
+model_diet_troph3_sqrt <- aov(sqrt(diet_troph3) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_diet_troph3_log))
+ggqqplot(residuals(model_diet_troph3_exp))
+ggqqplot(residuals(model_diet_troph3_sqrt))
+# none are normal
+
+# test for homogeneity of variance
+plot(model_diet_troph3, 1)
+# looks good
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(diet_troph3 ~ class2, data = filled_data2)
+# chi-squared = 39.128, df = 6, p-value = 6.755e-07
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(diet_troph3 ~ class2, data = filled_data2, method = "bh")
+# classes 1 and 3: p.adj = 1.269262e-06
+# classes 2 and 3: p.adj = 7.415925e-07
+# classes 3 and 4: p.adj = 3.371628e-06
+# classes 1 and 5: p.adj = 4.534619e-02
+# classes 3 and 5: p.adj = 5.351862e-05
+# classes 2 and 6: p.adj = 1.443286e-06
+# classes 3 and 7: p.adj = 9.496950e-03
+
+
+# fecundity_mean -----------------------------------------------
+
+# look at outliers
+outliers_fecundity <- boxplot.stats(filled_data2$fecundity_mean)$out
+boxplot(filled_data2$fecundity_mean, main="Fecundity", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_fecundity, collapse=", ")), cex=0.4)
+
+# build the model
+model_fecundity <- aov(fecundity_mean ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_fecundity))
+# not normal
+
+# model with log transformed variable
+model_fecundity_log <- aov(log(fecundity_mean) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_fecundity_log))
+# normal
+
+# test for homogeneity of variance
+plot(model_fecundity_log, 1)
+# looks fine
+
+summary(model_fecundity_log)
+# p-value = 5.1e-08 ***
+
+
+# sp_richness --------------------------------------------------
+
+# look at outliers
+outliers_sp <- boxplot.stats(filled_data2$sp_richness)$out
+boxplot(filled_data2$sp_richness, main="Species Richness by Family", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_sp, collapse=", ")), cex=0.4)
+
+# build the model
+model_sprich <- aov(sp_richness ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_sprich))
+# not normal
+
+# model with log transformed variable
+model_sprich_log <- aov(log(sp_richness) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_sprich_log))
+# less abnormal
+
+# test for homogeneity of variance
+plot(model_sprich, 1)
+# looks good
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(sp_richness ~ class2, data = filled_data2)
+# chi-squared = 26.85, df = 6, p-value = 0.0001545
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(sp_richness ~ class2, data = filled_data2, method = "bh")
+
+
+# temp_preferred -----------------------------------------------
+
+temp_data <- filled_data2 %>% 
+  filter(!is.na(temp_preferred)) %>% 
+  filter(temp_preferred > 0)
+
+# look at outliers
+outliers_temp <- boxplot.stats(temp_data$temp_preferred)$out
+boxplot(temp_data$temp_preferred, main="Preferred Temp", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_temp, collapse=", ")), cex=0.4)
+
+# build the model
+model_temp <- aov(temp_preferred ~ class2, data = temp_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temp))
+# not normal
+
+# model with log transformed variable
+model_temp_log <- aov(log(temp_preferred) ~ class2, data = temp_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temp_log))
+# more abnormal
+
+# test for homogeneity of variance
+plot(model_temp, 1)
+# looks fine
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(temp_preferred ~ class2, data = temp_data)
+# chi-squared = 78.81, df = 6, p-value = 6.291e-15
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(temp_preferred ~ class2, data = temp_data, method = "bh")
+
+
+# longevity_wild -----------------------------------------------
+
+longevity_data <- filled_data2 %>% 
+  filter(!is.na(longevity_wild))
+
+# look at outliers
+outliers_long <- boxplot.stats(longevity_data$longevity_wild)$out
+boxplot(longevity_data$longevity_wild, main="Longevity in the Wild", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_long, collapse=", ")), cex=0.4)
+
+# build the model
+model_long <- aov(longevity_wild ~ class2, data = longevity_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_long))
+# not normal
+
+# model with log transformed variable
+model_long_log <- aov(log(longevity_wild) ~ class2, data = longevity_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_long_log))
+# almost normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_long_log))
+# p-value = 0.00000807, not normal
+
+# test for homogeneity of variance
+plot(model_long, 1)
+# looks fine?
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(longevity_wild ~ class2, data = longevity_data)
+# chi-squared = 29.67, df = 6, p-value = 4.541e-05
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(longevity_wild ~ class2, data = longevity_data, method = "bh")
+
+
+# temp_range ---------------------------------------------------
+
+temprange_data <- filled_data2 %>% 
+  filter(!is.na(temp_range))
+
+# look at outliers
+outliers_trange <- boxplot.stats(temprange_data$temp_range)$out
+boxplot(temprange_data$temp_range, main="Temperature Range", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_trange, collapse=", ")), cex=0.4)
+
+# build the model
+model_temprange <- aov(temp_range ~ class2, data = temprange_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temprange))
+# not normal
+
+# model with log transformed variable
+model_temprange_log <- aov(log(temp_range) ~ class2, data = temprange_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temprange_log))
+# almost normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_temprange_log))
+# p-value = 0.0000239, not normal
+
+# test for homogeneity of variance
+plot(model_temprange, 1)
+# looks good
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(temp_range ~ class2, data = temprange_data)
+# chi-squared = 19.821, df = 6, p-value = 0.00298
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(temp_range ~ class2, data = temprange_data, method = "bh")
+
+
+# oxygen_cons --------------------------------------------------
+
+oxygen_data <- filled_data2 %>% 
+  filter(!is.na(oxygen_cons))
+
+# look at outliers
+outliers_ox <- boxplot.stats(oxygen_data$oxygen_cons)$out
+boxplot(oxygen_data$oxygen_cons, main="Oxygen Consumption", boxwex=0.1)
+mtext(paste("Outliers: ", paste(outliers_ox, collapse=", ")), cex=0.4)
+
+# build the model
+model_oxcons <- aov(oxygen_cons ~ class2, data = oxygen_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_oxcons))
+# not normal
+
+# model with log transformed variable
+model_oxcons_log <- aov(log(oxygen_cons) ~ class2, data = oxygen_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_oxcons_log))
+# not normal
+
+# test for homogeneity of variance
+plot(model_oxcons, 1)
+# not sure about this?
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(oxygen_cons ~ class2, data = oxygen_data)
+# chi-squared = 38.762, df = 6, p-value = 7.968e-07
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(oxygen_cons ~ class2, data = oxygen_data, method = "bh")
+
+
+
+```
+
+
+```{r}
+# FOR CATEGORICAL
+
+# demers_pelag -------------------------------------------------
+
+# Pearson's Chi-squared test
+chisq.test(filled_data2$class2, filled_data2$demers_pelag)
+# X-squared = 238.5, df = 36, p-value < 2.2e-16
+
+# contingency table
+demers_table <- table(filled_data2$class2, filled_data2$demers_pelag)
+demers_table
+
+# post-hoc test
+chisq.posthoc.test(demers_table, method = "bonferroni")
+
+
+# movement_keyword ---------------------------------------------
+
+# Pearson's Chi-squared test
+chisq.test(filled_data2$class2, filled_data2$movement_keyword)
+# X-squared = 317.3, df = 60, p-value < 2.2e-16
+
+# contingency table
+movement_table <- table(filled_data2$class2, filled_data2$movement_keyword)
+movement_table
+
+# post-hoc test
+chisq.posthoc.test(movement_table, method = "bonferroni")
+
+
+# body_shape_i -------------------------------------------------
+
+# Pearson's Chi-squared test
+chisq.test(filled_data2$class2, filled_data2$body_shape_i)
+# X-squared = 26.133, df = 18, p-value = 0.09675
+
+# contingency table
+body_table <- table(filled_data2$class2, filled_data2$body_shape_i)
+body_table
+
+# post-hoc test
+chisq.posthoc.test(body_table, method = "bonferroni")
+
+
+# climate ------------------------------------------------------
+
+# Pearson's Chi-squared test
+chisq.test(filled_data2$class2, filled_data2$climate)
+# X-squared = 54.16, df = 18, p-value = 1.733e-05
+
+# contingency table
+climate_table <- table(filled_data2$class2, filled_data2$climate)
+climate_table
+
+# post-hoc test
+chisq.posthoc.test(climate_table, method = "bonferroni")
+
+
+# dev_place ----------------------------------------------------
+
+# Pearson's Chi-squared test
+chisq.test(filled_data2$class2, filled_data2$dev_place)
+# X-squared = 27.78, df = 24, p-value = 0.2694
+
+# contingency table
+dev_table <- table(filled_data2$class2, filled_data2$dev_place)
+dev_table
+
+# post-hoc test
+chisq.posthoc.test(dev_table, method = "bonferroni")
+
+
+# food_mode ----------------------------------------------------
+
+# Pearson's Chi-squared test
+chisq.test(filled_data2$class2, filled_data2$food_mode)
+# X-squared = 8.1284, df = 6, p-value = 0.2288
+
+# contingency table
+food_table <- table(filled_data2$class2, filled_data2$food_mode)
+food_table
+
+# post-hoc test
+chisq.posthoc.test(food_table, method = "bonferroni")
+
+
+# ocean --------------------------------------------------------
+
+# Pearson's Chi-squared test
+chisq.test(filled_data2$class2, filled_data2$ocean)
+# X-squared = 361.63, df = 126, p-value < 2.2e-16
+
+# contingency table
+ocean_table <- table(filled_data2$class2, filled_data2$ocean)
+ocean_table
+
+# post-hoc test
+chisq.posthoc.test(ocean_table, method = "bonferroni")
+
+
+# basin --------------------------------------------------------
+
+# Pearson's Chi-squared test
+chisq.test(filled_data2$class2, filled_data2$basin)
+# X-squared = 30.172, df = 12, p-value = 0.002631
+
+# contingency table
+basin_table <- table(filled_data2$class2, filled_data2$basin)
+basin_table
+
+# post-hoc test
+chisq.posthoc.test(basin_table, method = "bonferroni")
+
+
+# iucn_category ------------------------------------------------
+
+# Pearson's Chi-squared test
+chisq.test(filled_data2$class2, filled_data2$iucn_category)
+# X-squared = 43.858, df = 30, p-value = 0.04912
+
+# contingency table
+iucn_table <- table(filled_data2$class2, filled_data2$iucn_category)
+iucn_table
+
+# post-hoc test
+chisq.posthoc.test(iucn_table, method = "bonferroni")
+
+
+
+```
