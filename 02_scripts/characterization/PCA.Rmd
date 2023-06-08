@@ -64,19 +64,19 @@ plots_cont
 ```
 
 ```{r}
-temp_plot <- box_data(x = "temp_preferred", y = "class2")
-fecund_plot <- box_data(x = "fecundity_mean", y = "class2")
-long_plot <- box_data(x = "longevity_wild", y = "class2")
-sp_rich_plot <- box_data(x = "sp_richness", y = "class2")
-length_plot <- box_data(x = "length", y = "class2")
-kfin_plot <- box_data(x = "kfin", y = "class2")
-r_fin_plot <- box_data(x = "r_fin", y = "class2")
-diet_plot <- box_data(x = "diet_troph3", y = "class2")
-oxygen_plot <- box_data(x = "oxygen_cons", y = "class2")
-temp_range_plot <- box_data(x = "temp_range", y = "class2")
+temp_plot <- box_data(x = "temp_preferred", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
+fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 100000, position = "jitter")
+long_plot <- box_data(x = "longevity_wild", y = "class2") + stat_kruskal_test(label.y = 50, position = "jitter")
+sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 500, position = "jitter")
+length_plot <- box_data(x = "length", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
+kfin_plot <- box_data(x = "kfin", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
+r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
+diet_plot <- box_data(x = "diet_troph3", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
+oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
+temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
 
 
-ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric")) 
 ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
 ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
 ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
