@@ -28,42 +28,6 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
   mutate_if(is.character, as.factor)
 ```
 
-### ANOVA/Kruskal-Wallis
-
-```{r}
-# FOR CONTINOUS
-
-# check for outliers
-filled_data2 %>%
-  mutate(class2 = as.factor(class2)) %>%
-  group_by(class2) %>%
-  identify_outliers(length) %>%
-  ungroup()
-
-# Build the linear model
-model <- aov(length ~ class2, data = filled_data2)
-# Create a QQ plot of residuals
-plot(model)
-# not normal
-
-# run Kruskal-wallis test
-kruskal.test(length ~ class2, data = filled_data2)
-# chi-squared = 20.152, df = 6, p-value = 0.002602
-
-dunnTest(length ~ class2, data = filled_data2, method = "bh")
-```
-
-```{r}
-# FOR CATEGORICAL
-
-chisq.test(filled_data2$class2, filled_data2$demers_pelag)
-
-contingency_table <- table(filled_data2$class2, filled_data2$demers_pelag)
-contingency_table
-
-chisq.posthoc.test(contingency_table, method = "bonferroni")
-```
-
 
 ### Plot data
 
@@ -129,7 +93,7 @@ ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here(
 
 expl_cat <- c(
   "climate", "body_shape_i", "dev_place", "movement_keyword",
-  "demers_pelag", "iucn_category", "food_i",
+  "demers_pelag", "iucn_category",
   "circadian", "food_mode", "ocean", "basin"
 )
 
