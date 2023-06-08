@@ -424,13 +424,6 @@ chisq.posthoc.test(movement_table, method = "bonferroni")
 chisq.test(filled_data2$class2, filled_data2$body_shape_i)
 # X-squared = 26.133, df = 18, p-value = 0.09675
 
-# contingency table
-body_table <- table(filled_data2$class2, filled_data2$body_shape_i)
-body_table
-
-# post-hoc test
-chisq.posthoc.test(body_table, method = "bonferroni")
-
 
 # climate ------------------------------------------------------
 
@@ -452,26 +445,12 @@ chisq.posthoc.test(climate_table, method = "bonferroni")
 chisq.test(filled_data2$class2, filled_data2$dev_place)
 # X-squared = 27.78, df = 24, p-value = 0.2694
 
-# contingency table
-dev_table <- table(filled_data2$class2, filled_data2$dev_place)
-dev_table
-
-# post-hoc test
-chisq.posthoc.test(dev_table, method = "bonferroni")
-
 
 # food_mode ----------------------------------------------------
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$food_mode)
 # X-squared = 8.1284, df = 6, p-value = 0.2288
-
-# contingency table
-food_table <- table(filled_data2$class2, filled_data2$food_mode)
-food_table
-
-# post-hoc test
-chisq.posthoc.test(food_table, method = "bonferroni")
 
 
 # ocean --------------------------------------------------------
