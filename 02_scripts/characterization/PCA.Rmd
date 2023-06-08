@@ -68,12 +68,12 @@ temp_plot <- box_data(x = "temp_preferred", y = "class2") + stat_kruskal_test(la
 fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 100000, position = "jitter")
 long_plot <- box_data(x = "longevity_wild", y = "class2") + stat_kruskal_test(label.y = 50, position = "jitter")
 sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 500, position = "jitter")
-length_plot <- box_data(x = "length", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
-kfin_plot <- box_data(x = "kfin", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
-r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
-diet_plot <- box_data(x = "diet_troph3", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
-oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
-temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
+length_plot <- box_data(x = "length", y = "class2") + stat_kruskal_test(label.y = 200, position = "jitter")
+kfin_plot <- box_data(x = "kfin", y = "class2") + stat_kruskal_test(label.y = 10000000, position = "jitter")
+r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 1, position = "jitter")
+diet_plot <- box_data(x = "diet_troph3", y = "class2") + stat_kruskal_test(label.y = 2.5, position = "jitter")
+oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(label.y = 2000, position = "jitter")
+temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 15, position = "jitter")
 
 
 ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric")) 
