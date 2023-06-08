@@ -76,7 +76,7 @@ oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(lab
 temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 15, position = "jitter")
 
 
-ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric")) 
+ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10) 
 ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
 ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
 ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
