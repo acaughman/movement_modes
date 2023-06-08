@@ -17,6 +17,8 @@ library(rstatix)
 library(FSA)
 library(chisq.posthoc.test)
 
+#library(red)
+
 ```
 
 ### Load data
