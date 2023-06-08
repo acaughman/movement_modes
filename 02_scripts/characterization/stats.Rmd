@@ -13,9 +13,11 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(here)
 library(ggpubr)
+library(effectsize)
 library(rstatix)
 library(FSA)
 library(chisq.posthoc.test)
+
 
 #library(red)
 
@@ -31,7 +33,7 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
 ```
 
 
-### ANOVA/Kruskal-Wallis/Chi-Squared --- ADD EFFECT SIZES FOR ANOVAS ----------------------------------
+### ANOVA/Kruskal-Wallis/Chi-Squared
 
 ```{r}
 # FOR CONTINOUS
@@ -65,6 +67,10 @@ plot(model_length_log, 1)
 summary(model_length_log)
 # p-value < 2e-16 ***
 
+# effect size
+eta_squared(model_length_log, partial = FALSE)
+# eta2 = 0.18, 95% CI: [0.13, 1.00]
+
 
 # kfin ---------------------------------------------------------
 
@@ -94,6 +100,10 @@ plot(model_kfin_log, 1)
 summary(model_kfin_log)
 # p-value = 1.48e-12 ***
 
+# effect size
+eta_squared(model_kfin_log, partial = FALSE)
+# eta2 = 0.10, 95% CI: [0.06, 1.00]
+
 
 # r_fin --------------------------------------------------------
 
@@ -122,6 +132,10 @@ plot(model_r_fin_log, 1)
 
 summary(model_r_fin_log)
 # p-value = 4.43e-15 ***
+
+# effect size
+eta_squared(model_r_fin_log, partial = FALSE)
+# eta2 = 0.12, 95% CI: [0.08, 1.00]
 
 
 # diet_troph3 --------------------------------------------------
@@ -195,6 +209,10 @@ plot(model_fecundity_log, 1)
 
 summary(model_fecundity_log)
 # p-value = 5.1e-08 ***
+
+# effect size
+eta_squared(model_fecundity_log, partial = FALSE)
+# eta2 = 7.15e-03, 95% CI: [0.00, 1.00]
 
 
 # sp_richness --------------------------------------------------
