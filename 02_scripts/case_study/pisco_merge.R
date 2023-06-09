@@ -274,9 +274,35 @@ ggplot() +
 
 lmer1 <- glmer(average_count ~ class + (1|MPA_Name), data = full_sum, family = poisson())
 summary(lmer1)
+deviance(lmer1)
 
 lmer2 <- glmer(average_count ~ class + (1|species), data = full_sum, family = poisson())
 summary(lmer2)
+deviance(lmer2)
 
-lmer3 <- glmer(average_count ~ class + (1|MPA_Name) + (1|Species), data = full_sum, family = poisson())
+lmer3 <- glmer(average_count ~ class + (1|MPA_Name) + (1|species), data = full_sum, family = poisson())
 summary(lmer3)
+deviance(lmer3)
+
+anova(lmer1, lmer2, lmer3, test = "Chi")
+
+emmeans(lmer, pairwise ~ class)
+
+emmeans(lmer, eff ~ class) %>%
+  pluck("contrasts")
+emmeans(lmer, del.eff ~ class) %>%
+  pluck("contrasts")
+
+sjPlot::plot_model(lmer, show.values = TRUE, show.p = TRUE, ci_method = "wald")
+
+effects <- effect(term = "class", mod = lmer)
+summary(effects)
+effects_df <- effects %>%
+  as.data.frame()
+
+ggplot() +
+  geom_point(data = full_sum, aes(class, average_count)) +
+  geom_point(data = effects_df, aes(x = class, y = fit), color = "blue") +
+  geom_line(data = effects_df, aes(x = class, y = fit), group = 1, color = "blue") +
+  geom_ribbon(data = effects_df, aes(x = class, ymin = lower, ymax = upper), alpha = 0.3, fill = "blue") +
+  theme_bw()
