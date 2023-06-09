@@ -211,334 +211,6 @@ vand_sum <- vand_SMR %>%
   group_by(class, month_year) %>%
   summarize(average_count = mean(average_count))
 
-ggplot(vand_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# South Point -------------------------------------------------------------
-
-south_SMR <- pisco_data %>%
-  filter(MPA_Name == "South Point SMR")
-
-ggplot(south_SMR, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(south_SMR) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-south_sum <- south_SMR %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count)) %>%
-  filter(class != 3)
-
-ggplot(south_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# Scorpion ----------------------------------------------------------------
-
-scorpion_SMR <- pisco_data %>%
-  filter(MPA_Name == "Scorpion SMR")
-
-ggplot(scorpion_SMR, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(scorpion_SMR) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-scorpion_sum <- scorpion_SMR %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(scorpion_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# Gull Island -------------------------------------------------------------
-gull_SMR <- pisco_data %>%
-  filter(MPA_Name == "Gull Island SMR")
-
-ggplot(gull_SMR, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(gull_SMR) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-gull_sum <- gull_SMR %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(gull_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# Santa Barbara -----------------------------------------------------------
-sb_SMR <- pisco_data %>%
-  filter(MPA_Name == "Santa Barbara Island SMR")
-
-ggplot(sb_SMR, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(sb_SMR) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-sb_sum <- sb_SMR %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(sb_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-
-# Point Dume SMCA ---------------------------------------------------------
-
-dume_SMCA <- pisco_data %>%
-  filter(MPA_Name == "Point Dume SMCA")
-
-ggplot(dume_SMCA, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(dume_SMCA) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-dume_SMCA_sum <- dume_SMCA %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(dume_SMCA_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-
-# Point Dume SMR ---------------------------------------------------------
-
-dume_SMR <- pisco_data %>%
-  filter(MPA_Name == "Point Dume SMR")
-
-ggplot(dume_SMR, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(dume_SMR) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-dume_SMR_sum <- dume_SMR %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(dume_SMR_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# Point Conception --------------------------------------------------------
-conception_SMR <- pisco_data %>%
-  filter(MPA_Name == "Point Conception SMR")
-
-ggplot(conception_SMR, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(conception_SMR) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-conception_SMR_sum <- conception_SMR %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(conception_SMR_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# Painted Cave ------------------------------------------------------------
-
-cave_SMCA <- pisco_data %>%
-  filter(MPA_Name == "Painted Cave SMCA")
-
-ggplot(cave_SMCA, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(cave_SMCA) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-cave_SMCA_sum <- cave_SMCA %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(cave_SMCA_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# Naples SMCA -------------------------------------------------------------
-
-naples_SMCA <- pisco_data %>%
-  filter(MPA_Name == "Naples SMCA")
-
-ggplot(naples_SMCA, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(naples_SMCA) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-naples_SMCA_sum <- naples_SMCA %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(naples_SMCA_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# Carrington Point --------------------------------------------------------
-
-carrington_SMR <- pisco_data %>%
-  filter(MPA_Name == "Carrington Point SMR")
-
-ggplot(carrington_SMR, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(carrington_SMR) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-carrington_SMR_sum <- carrington_SMR %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(carrington_SMR_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# Campus Point SMCA -------------------------------------------------------
-campus_SMCA <- pisco_data %>%
-  filter(MPA_Name == "Campus Point SMCA")
-
-ggplot(campus_SMCA, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(campus_SMCA) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-campus_SMCA_sum <- campus_SMCA %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(campus_SMCA_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-
-# Harris Point ------------------------------------------------------------
-
-
-harris_point <- pisco_data %>%
-  filter(MPA_Name == "Harris Point SMR")
-
-ggplot(harris_point, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(harris_point) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-harris_point_sum <- harris_point %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(harris_point_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-# Anacapa Island SMR ------------------------------------------------------
-
-anapaca_SMR <- pisco_data %>%
-  filter(MPA_Name == "Anacapa Island SMR")
-
-ggplot(anapaca_SMR, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(anapaca_SMR) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-anapaca_SMR_sum <- anapaca_SMR %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(anapaca_SMR_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
-
-# Anacapa Island SMCA -----------------------------------------------------
-
-anapaca_SMCA <- pisco_data %>%
-  filter(MPA_Name == "Anacapa Island SMCA")
-
-ggplot(anapaca_SMCA, aes(magnitude_homerange, month_pld, color = class)) +
-  geom_jitter(size = 2.5) +
-  theme_bw()
-
-ggplot(anapaca_SMCA) +
-  # geom_point(aes(date, average_count, color = species)) +
-  geom_line(aes(month_year, average_count, color = class, linetype = species)) +
-  theme_bw() +
-  guides(linetype = FALSE)
-
-anapaca_SMCA_sum <- anapaca_SMCA %>%
-  group_by(class, month_year) %>%
-  summarize(average_count = mean(average_count))
-
-ggplot(anapaca_SMCA_sum, aes(month_year, average_count)) +
-  geom_point(aes(color = class), size = 2.5) +
-  theme_bw()
-
 # Granger Test Playground -------------------------------------------------
 
 vand_ts <- vand_SMR %>%
@@ -556,13 +228,14 @@ ggplot(vand_ts) +
   # geom_line(aes(month_year, species2), color = "blue") +
   # geom_line(aes(month_year, species3)) +
   # geom_line(aes(month_year, species4), color = "green") +
-  # geom_line(aes(month_year, species5), color = "purple") +
-  # geom_line(aes(month_year, species6), color = "pink") +
+  geom_line(aes(month_year, species5), color = "purple") +
+  geom_line(aes(month_year, species6), color = "pink") +
   geom_line(aes(month_year, species7), color = "gold") +
   theme_bw()
 
 grangertest(species1 ~ species2, order = 1, data = vand_ts)
 grangertest(species1 ~ species3, order = 1, data = vand_ts)
+grangertest(species1 ~ species4, order = 1, data = vand_ts)
 grangertest(species1 ~ species5, order = 1, data = vand_ts)
 grangertest(species1 ~ species6, order = 1, data = vand_ts)
 grangertest(species1 ~ species7, order = 1, data = vand_ts)
@@ -570,23 +243,23 @@ grangertest(species1 ~ species7, order = 1, data = vand_ts)
 
 # Mixed Effects Model Playground ------------------------------------------
 
-lmer1 <- lmer(average_count ~ class + (1 + class | MPA_Name), data = full_sum)
-summary(lmer1)
+full_sum = pisco_sum %>% 
+  mutate(average_count = round(average_count,0))
 
-lm1 <- lm(average_count ~ class, data = full_sum)
+lm1 <- glm(average_count ~ class, data = full_sum, family = quasipoisson())
 summary(lm1)
-anova(lm1)
+anova(lm1, test = "Chi")
 
-emmeans(lmer1, pairwise ~ class)
+emmeans(lm1, pairwise ~ class)
 
-emmeans(lmer1, eff ~ class) %>%
+emmeans(lm1, eff ~ class) %>%
   pluck("contrasts")
-emmeans(lmer1, del.eff ~ class) %>%
+emmeans(lm1, del.eff ~ class) %>%
   pluck("contrasts")
 
-sjPlot::plot_model(lmer1, show.values = TRUE, show.p = TRUE)
+sjPlot::plot_model(lm1, show.values = TRUE, show.p = TRUE, ci_method = "wald")
 
-effects <- effect(term = "class", mod = lmer1)
+effects <- effect(term = "class", mod = lm1)
 summary(effects)
 effects_df <- effects %>%
   as.data.frame()
@@ -595,4 +268,15 @@ ggplot() +
   geom_point(data = full_sum, aes(class, average_count)) +
   geom_point(data = effects_df, aes(x = class, y = fit), color = "blue") +
   geom_line(data = effects_df, aes(x = class, y = fit), group = 1, color = "blue") +
-  geom_ribbon(data = effects_df, aes(x = class, ymin = lower, ymax = upper), alpha = 0.3, fill = "blue")
+  geom_ribbon(data = effects_df, aes(x = class, ymin = lower, ymax = upper), alpha = 0.3, fill = "blue") +
+  theme_bw()
+
+
+lmer1 <- glmer(average_count ~ class + (1|MPA_Name), data = full_sum, family = poisson())
+summary(lmer1)
+
+lmer2 <- glmer(average_count ~ class + (1|species), data = full_sum, family = poisson())
+summary(lmer2)
+
+lmer3 <- glmer(average_count ~ class + (1|MPA_Name) + (1|Species), data = full_sum, family = poisson())
+summary(lmer3)
