@@ -286,16 +286,16 @@ deviance(lmer3)
 
 anova(lmer1, lmer2, lmer3, test = "Chi")
 
-emmeans(lmer, pairwise ~ class)
+emmeans(lmer3, pairwise ~ class)
 
-emmeans(lmer, eff ~ class) %>%
+emmeans(lmer3, eff ~ class) %>%
   pluck("contrasts")
-emmeans(lmer, del.eff ~ class) %>%
+emmeans(lmer3, del.eff ~ class) %>%
   pluck("contrasts")
 
-sjPlot::plot_model(lmer, show.values = TRUE, show.p = TRUE, ci_method = "wald")
+sjPlot::plot_model(lmer3, show.values = TRUE, show.p = TRUE, ci_method = "wald")
 
-effects <- effect(term = "class", mod = lmer)
+effects <- effect(term = "class", mod = lmer3)
 summary(effects)
 effects_df <- effects %>%
   as.data.frame()
