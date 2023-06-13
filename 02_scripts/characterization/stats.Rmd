@@ -471,34 +471,6 @@ chisq.test(filled_data2$class2, filled_data2$food_mode)
 # X-squared = 8.1284, df = 6, p-value = 0.2288
 
 
-# ocean --------------------------------------------------------
-
-# Pearson's Chi-squared test
-chisq.test(filled_data2$class2, filled_data2$ocean)
-# X-squared = 361.63, df = 126, p-value < 2.2e-16
-
-# contingency table
-ocean_table <- table(filled_data2$class2, filled_data2$ocean)
-ocean_table
-
-# post-hoc test
-chisq.posthoc.test(ocean_table, method = "bonferroni")
-
-
-# basin --------------------------------------------------------
-
-# Pearson's Chi-squared test
-chisq.test(filled_data2$class2, filled_data2$basin)
-# X-squared = 30.172, df = 12, p-value = 0.002631
-
-# contingency table
-basin_table <- table(filled_data2$class2, filled_data2$basin)
-basin_table
-
-# post-hoc test
-chisq.posthoc.test(basin_table, method = "bonferroni")
-
-
 # iucn_category ------------------------------------------------
 
 # Pearson's Chi-squared test
@@ -513,5 +485,48 @@ iucn_table
 chisq.posthoc.test(iucn_table, method = "bonferroni")
 
 
+```
+
+
+### Old
+
+```{r}
+
+# # ocean --------------------------------------------------------
+# 
+# # Pearson's Chi-squared test
+# chisq.test(filled_data2$class2, filled_data2$ocean)
+# # X-squared = 361.63, df = 126, p-value < 2.2e-16
+# 
+# # contingency table
+# ocean_table <- table(filled_data2$class2, filled_data2$ocean)
+# ocean_table
+# 
+# # post-hoc test
+# chisq.posthoc.test(ocean_table, method = "bonferroni")
+# 
+# 
+# # basin --------------------------------------------------------
+# 
+# # Pearson's Chi-squared test
+# chisq.test(filled_data2$class2, filled_data2$basin)
+# # X-squared = 30.172, df = 12, p-value = 0.002631
+# 
+# # contingency table
+# basin_table <- table(filled_data2$class2, filled_data2$basin)
+# basin_table
+# 
+# # post-hoc test
+# chisq.posthoc.test(basin_table, method = "bonferroni")
 
 ```
+
+
+
+
+
+
+
+
+
+
