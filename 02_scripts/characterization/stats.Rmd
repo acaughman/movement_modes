@@ -71,6 +71,9 @@ summary(model_length_log)
 eta_squared(model_length_log, partial = FALSE)
 # eta2 = 0.18, 95% CI: [0.13, 1.00]
 
+# post hoc Tukey test
+TukeyHSD(model_length_log)
+
 
 # kfin ---------------------------------------------------------
 
@@ -104,6 +107,9 @@ summary(model_kfin_log)
 eta_squared(model_kfin_log, partial = FALSE)
 # eta2 = 0.10, 95% CI: [0.06, 1.00]
 
+# post hoc Tukey test
+TukeyHSD(model_kfin_log)
+
 
 # r_fin --------------------------------------------------------
 
@@ -136,6 +142,9 @@ summary(model_r_fin_log)
 # effect size
 eta_squared(model_r_fin_log, partial = FALSE)
 # eta2 = 0.12, 95% CI: [0.08, 1.00]
+
+# post hoc Tukey test
+TukeyHSD(model_r_fin_log)
 
 
 # diet_troph3 --------------------------------------------------
@@ -201,18 +210,15 @@ model_fecundity_log <- aov(log(fecundity_mean) ~ class2, data = filled_data2)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_fecundity_log))
-# normal
+# not normal
 
 # test for homogeneity of variance
-plot(model_fecundity_log, 1)
-# looks fine
+plot(model_fecundity, 1)
+# not horizontal
 
-summary(model_fecundity_log)
-# p-value = 5.1e-08 ***
-
-# effect size
-eta_squared(model_fecundity_log, partial = FALSE)
-# eta2 = 7.15e-03, 95% CI: [0.00, 1.00]
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(fecundity_mean ~ class2, data = filled_data2)
+# chi-squared = 2.8377, df = 5, p-value = 0.725
 
 
 # sp_richness --------------------------------------------------
@@ -440,7 +446,14 @@ chisq.posthoc.test(movement_table, method = "bonferroni")
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$body_shape_i)
-# X-squared = 26.133, df = 18, p-value = 0.09675
+# X-squared = 28.07, df = 15, p-value = 0.02114
+
+# contingency table
+body_table <- table(filled_data2$class2, filled_data2$body_shape_i)
+body_table
+
+# post-hoc test
+chisq.posthoc.test(body_table, method = "bonferroni")
 
 
 # climate ------------------------------------------------------
