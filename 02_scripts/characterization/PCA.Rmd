@@ -169,7 +169,7 @@ abline(v = 5, lwd = 3, lty = 2)
 ```
 
 
-### LOOK INTO THIS <---------------------------------------
+### Similarity percentage
 
 ```{r}
 
@@ -191,6 +191,8 @@ com <- com_data %>%
 #simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
 
 summary(simper_out)
+# shows which traits are primarily responsible for observed difference between classes. traits listed from highest to lowest % contribution to the difference between the two classes (cumsum shows total % contribution to the difference). p is signifigance.
+
 
 # load from rda in results folder
 #set.seed(123)
