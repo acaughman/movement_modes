@@ -59,8 +59,8 @@ box_data <- function(x, y) {
     scale_color_viridis_d()
 }
 
-plots_cont <- map(expl_cont, ~ box_data(.x, "class2"))
-plots_cont
+#plots_cont <- map(expl_cont, ~ box_data(.x, "class2"))
+#plots_cont
 ```
 
 ```{r}
@@ -68,24 +68,24 @@ temp_plot <- box_data(x = "temp_preferred", y = "class2") + stat_kruskal_test(la
 fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 100000, position = "jitter")
 long_plot <- box_data(x = "longevity_wild", y = "class2") + stat_kruskal_test(label.y = 50, position = "jitter")
 sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 500, position = "jitter")
-length_plot <- box_data(x = "length", y = "class2") + stat_kruskal_test(label.y = 200, position = "jitter")
-kfin_plot <- box_data(x = "kfin", y = "class2") + stat_kruskal_test(label.y = 10000000, position = "jitter")
-r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 1, position = "jitter")
+length_plot <- box_data(x = "length", y = "class2") + stat_anova_test(label.y = 200, position = "jitter")
+kfin_plot <- box_data(x = "kfin", y = "class2") + stat_anova_test(label.y = 10000000, position = "jitter")
+r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_anova_test(label.y = 1, position = "jitter")
 diet_plot <- box_data(x = "diet_troph3", y = "class2") + stat_kruskal_test(label.y = 2.5, position = "jitter")
 oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(label.y = 2000, position = "jitter")
 temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 15, position = "jitter")
 
 
 ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10) 
-ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
-ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
-ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
-ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
-ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
-ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
-ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
-ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
-ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"))
+ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 
 ```
 
@@ -110,8 +110,8 @@ scatter_data <- function(x, y) {
     theme(axis.text.x = element_text(angle = 40, hjust = 1))
 }
 
-plots_cat <- map(expl_cat, ~ scatter_data(.x, "class2"))
-plots_cat
+#plots_cat <- map(expl_cat, ~ scatter_data(.x, "class2"))
+#plots_cat
 ```
 
 ```{r}
@@ -127,15 +127,15 @@ ocean_plot <- scatter_data(x = "ocean", y = "class2")
 basin_plot <- scatter_data(x = "basin", y = "class2")
 
 
-ggsave(climate_plot, file = paste0("climate_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
-ggsave(body_plot, file = paste0("body_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
-ggsave(dev_plot, file = paste0("dev_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
-ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
-ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
-ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
-ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
-ggsave(ocean_plot, file = paste0("ocean_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
-ggsave(basin_plot, file = paste0("basin_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"))
+ggsave(climate_plot, file = paste0("climate_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+ggsave(body_plot, file = paste0("body_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+ggsave(dev_plot, file = paste0("dev_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+ggsave(ocean_plot, file = paste0("ocean_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+ggsave(basin_plot, file = paste0("basin_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 
 ```
 
