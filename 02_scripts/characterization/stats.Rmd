@@ -58,7 +58,11 @@ model_length_log <- aov(log(length) ~ class2, data = filled_data2)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_length_log))
-# normal
+# looks normal
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_length_log))
+# p-value = 0.0669, normal
 
 # test for homogeneity of variance
 plot(model_length_log, 1)
@@ -94,21 +98,22 @@ model_kfin_log <- aov(log(kfin) ~ class2, data = filled_data2)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_kfin_log))
-# normal
+# normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_kfin_log))
+# p-value = 0.00267, not normal
 
 # test for homogeneity of variance
-plot(model_kfin_log, 1)
-# looks good
+plot(model_kfin, 1)
+# looks fine
 
-summary(model_kfin_log)
-# p-value = 1.48e-12 ***
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(kfin ~ class2, data = filled_data2)
+# chi-squared = 61.516, df = 5, p-value = 5.906e-12
 
-# effect size
-eta_squared(model_kfin_log, partial = FALSE)
-# eta2 = 0.10, 95% CI: [0.06, 1.00]
-
-# post hoc Tukey test
-TukeyHSD(model_kfin_log)
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(kfin ~ class2, data = filled_data2, method = "bh")
 
 
 # r_fin --------------------------------------------------------
@@ -130,21 +135,22 @@ model_r_fin_log <- aov(log(r_fin) ~ class2, data = filled_data2)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_r_fin_log))
-# normal
+# normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_r_fin_log))
+# p-value = 0.000508, not normal
 
 # test for homogeneity of variance
-plot(model_r_fin_log, 1)
+plot(model_r_fin, 1)
 # looks fine
 
-summary(model_r_fin_log)
-# p-value = 4.43e-15 ***
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(r_fin ~ class2, data = filled_data2)
+# chi-squared = 42.245, df = 5, p-value = 5.255e-08
 
-# effect size
-eta_squared(model_r_fin_log, partial = FALSE)
-# eta2 = 0.12, 95% CI: [0.08, 1.00]
-
-# post hoc Tukey test
-TukeyHSD(model_r_fin_log)
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(r_fin ~ class2, data = filled_data2, method = "bh")
 
 
 # diet_troph3 --------------------------------------------------
