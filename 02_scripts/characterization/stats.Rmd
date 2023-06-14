@@ -418,7 +418,7 @@ dunnTest(oxygen_cons ~ class2, data = oxygen_data, method = "bh")
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$demers_pelag)
-# X-squared = 238.5, df = 36, p-value < 2.2e-16
+# X-squared = 232.88, df = 30, p-value < 2.2e-16
 
 # contingency table
 demers_table <- table(filled_data2$class2, filled_data2$demers_pelag)
