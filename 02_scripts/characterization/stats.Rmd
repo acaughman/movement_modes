@@ -184,17 +184,10 @@ plot(model_diet_troph3, 1)
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(diet_troph3 ~ class2, data = filled_data2)
-# chi-squared = 39.128, df = 6, p-value = 6.755e-07
+# chi-squared = 36.497, df = 5, p-value = 7.555e-07
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(diet_troph3 ~ class2, data = filled_data2, method = "bh")
-# classes 1 and 3: p.adj = 1.269262e-06
-# classes 2 and 3: p.adj = 7.415925e-07
-# classes 3 and 4: p.adj = 3.371628e-06
-# classes 1 and 5: p.adj = 4.534619e-02
-# classes 3 and 5: p.adj = 5.351862e-05
-# classes 2 and 6: p.adj = 1.443286e-06
-# classes 3 and 7: p.adj = 9.496950e-03
 
 
 # fecundity_mean -----------------------------------------------
@@ -225,6 +218,7 @@ plot(model_fecundity, 1)
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(fecundity_mean ~ class2, data = filled_data2)
 # chi-squared = 2.8377, df = 5, p-value = 0.725
+# not significant
 
 
 # sp_richness --------------------------------------------------
@@ -254,7 +248,7 @@ plot(model_sprich, 1)
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(sp_richness ~ class2, data = filled_data2)
-# chi-squared = 26.85, df = 6, p-value = 0.0001545
+# chi-squared = 28.128, df = 5, p-value = 3.437e-05
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(sp_richness ~ class2, data = filled_data2, method = "bh")
@@ -291,7 +285,7 @@ plot(model_temp, 1)
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(temp_preferred ~ class2, data = temp_data)
-# chi-squared = 78.81, df = 6, p-value = 6.291e-15
+# chi-squared = 77.77, df = 5, p-value = 2.455e-15
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(temp_preferred ~ class2, data = temp_data, method = "bh")
@@ -331,7 +325,7 @@ plot(model_long, 1)
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(longevity_wild ~ class2, data = longevity_data)
-# chi-squared = 29.67, df = 6, p-value = 4.541e-05
+# chi-squared = 25.928, df = 5, p-value = 9.216e-05
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(longevity_wild ~ class2, data = longevity_data, method = "bh")
@@ -371,7 +365,7 @@ plot(model_temprange, 1)
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(temp_range ~ class2, data = temprange_data)
-# chi-squared = 19.821, df = 6, p-value = 0.00298
+# chi-squared = 19.907, df = 5, p-value = 0.001301
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(temp_range ~ class2, data = temprange_data, method = "bh")
@@ -407,7 +401,7 @@ plot(model_oxcons, 1)
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(oxygen_cons ~ class2, data = oxygen_data)
-# chi-squared = 38.762, df = 6, p-value = 7.968e-07
+# chi-squared = 28.931, df = 5, p-value = 2.392e-05
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(oxygen_cons ~ class2, data = oxygen_data, method = "bh")
