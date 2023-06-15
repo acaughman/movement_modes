@@ -255,7 +255,7 @@ plot1 <- p1 + f1_fig
 
 plot1
 
-ggsave(plot1, file = paste0("f1.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
+#ggsave(plot1, file = paste0("f1.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
 ```
 
 
@@ -307,7 +307,7 @@ plot2 <- p2 + f2_fig
 
 plot2
 
-#ggsave(plot2, file = paste0("f2.png"), path = here::here("04_figs", "famd_with_arrows"))
+ggsave(plot2, file = paste0("f2.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
 ```
 
 
@@ -361,32 +361,31 @@ plot3 <- p3 + f3_fig
 
 plot3
 
-ggsave(plot3, file = paste0("f3.png"), path = here::here("04_figs", "famd_with_arrows"))
+#ggsave(plot3, file = paste0("f3.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
 ```
 
 
 ```{r}
 famd_filled4 <- filled_data2 %>%
   dplyr::select(
-    fecundity_mean,
-    length,
-    r_fin,
-    # diet_troph3,
-    oxygen_cons,
-    temp_range,
+    temp_preferred, longevity_wild, sp_richness, length, 
+    kfin, r_fin, diet_troph3, class2
+    # fecundity_mean, length, r_fin, diet_troph3,
+    # oxygen_cons,
+    # # temp_range,
     # climate,
-    # body_shape_i,
-    # dev_place,
-    demers_pelag,
-    # iucn_category,
-    # food_i,
-    class2
+    # # body_shape_i,
+    # # dev_place,
+    # demers_pelag,
+    # # iucn_category,
+    # # food_i,
+    # class2
   ) %>%
   mutate(class2 = as.factor(class2)) %>%
   na.omit()
 
 
-f4 <- FAMD(famd_filled4[, 1:6], graph = FALSE)
+f4 <- FAMD(famd_filled4[, 1:8], graph = FALSE)
 f4
 
 eigen_f4 <- f4$eig
@@ -414,7 +413,7 @@ plot4 <- p4 + f4_fig
 
 plot4
 
-# ggsave(plot4, file = paste0("f4.png"), path = here::here("04_figs", "famd_with_arrows"))
+#ggsave(plot4, file = paste0("f4.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
 ```
 
 
