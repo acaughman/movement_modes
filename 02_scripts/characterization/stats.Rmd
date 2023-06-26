@@ -18,18 +18,13 @@ library(rstatix)
 library(FSA)
 library(chisq.posthoc.test)
 
-
-#library(red)
-
 ```
 
 ### Load data
 
 ```{r}
-
 filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
   mutate_if(is.character, as.factor)
-
 ```
 
 
@@ -460,7 +455,7 @@ chisq.posthoc.test(body_table, method = "bonferroni")
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$climate)
-# X-squared = 54.16, df = 18, p-value = 1.733e-05
+# X-squared = 167.1, df = 75, p-value = 5.692e-09
 
 # contingency table
 climate_table <- table(filled_data2$class2, filled_data2$climate)
