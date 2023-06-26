@@ -28,23 +28,26 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
   mutate_if(is.character, as.factor)
 ```
 
-### Consolidate climtate variable
-
 ```{r}
 
-filled_data2 <- filled_data2 %>% 
-  mutate(climate = tolower(climate)) %>%
-  mutate(climate = map(str_split(climate, boundary("word")), unique)) %>%  #remove repeated words
-  mutate(climate = as.character(climate))
-  
-filled_data2$climate <- gsub("^c","", filled_data2$climate) #remove c("")
-filled_data2$climate <- gsub("[()\"]","", filled_data2$climate)
+### Consolidate climtate variable
 
-filled_data2 <- filled_data2 %>% 
-  mutate(climate = as.factor(climate))
+# filled_data2 <- filled_data2 %>% 
+#   mutate(climate = tolower(climate)) %>%
+#   mutate(climate = map(str_split(climate, boundary("word")), unique)) %>%  #remove repeated words
+#   mutate(climate = as.character(climate))
+#   
+# filled_data2$climate <- gsub("^c","", filled_data2$climate) #remove c("")
+# filled_data2$climate <- gsub("[()\"]","", filled_data2$climate)
+# 
+# filled_data2 <- filled_data2 %>% 
+#   mutate(climate = as.factor(climate))
 
 ```
 
+```{r}
+#write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+```
 
 
 ### Plot data
