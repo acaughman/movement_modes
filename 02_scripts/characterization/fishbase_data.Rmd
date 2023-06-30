@@ -1,0 +1,100 @@
+---
+title: "More Fishbase/Data"
+author: "Lex Rosenberg"
+date: "2023-06-30"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(here)
+library(rfishbase)
+library(naniar)
+library(car)
+library(sf)
+library(sp)
+library(ggpubr)
+library(rstatix)
+library(FSA)
+
+```
+
+### Load data
+
+```{r}
+filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
+  mutate_if(is.character, as.factor)
+```
+
+### Consolidate climtate variable
+
+```{r}
+
+filled_data2 <- filled_data2 %>%
+  mutate(climate = tolower(climate)) %>%
+  mutate(climate = map(str_split(climate, boundary("word")), unique)) %>%  #remove repeated words
+  mutate(climate = as.character(climate))
+
+filled_data2$climate <- gsub("^c","", filled_data2$climate) #remove c("")
+filled_data2$climate <- gsub("[()\"]","", filled_data2$climate)
+
+filled_data2 <- filled_data2 %>%
+  mutate(climate = as.factor(climate))
+
+```
+
+### Fill IUCN codes
+
+```{r}
+
+codes <- read_csv(here::here("01_data", "02_processed_data", "iucn_codes.csv"))
+
+filled_data2 <- filled_data2 %>%
+  left_join(codes, by = "species") %>%
+  mutate(iucn_category = coalesce(iucn_category.x, iucn_category.y)) %>%
+  dplyr::select(-iucn_category.x, -iucn_category.y)
+
+```
+
+```{r}
+#write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+```
+
+### New missing fig
+
+```{r}
+
+missing <- miss_var_summary(filled_data2)
+
+missing_data <- filled_data2 %>%
+  dplyr::select(
+    oxygen_cons, temp_range, basin,
+    longevity_wild, temp_preferred, iucn_category
+  )
+
+missing_filled_fig3 <- gg_miss_var(missing_data) + # figure showing the missing data
+  theme_bw()
+missing_filled_fig3
+
+ggsave(missing_filled_fig3, file = paste0("missing_filled_fig3.png"), path = here::here("04_figs", "missing_data"))
+
+```
+
+### Consolidate and clean development variable
+
+```{r}
+
+filled_data2 <- filled_data2 %>% 
+   mutate(dev_place2 = case_when(
+    dev_place == "2002-03-26T00:00:00Z" ~ NA,
+    dev_place != "planktonic" ~ "demersal",
+    TRUE ~ dev_place
+   ))
+
+```
+
+
