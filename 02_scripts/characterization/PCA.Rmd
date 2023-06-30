@@ -29,61 +29,6 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
   mutate_if(is.character, as.factor)
 ```
 
-```{r}
-
-### Consolidate climtate variable
-
-# filled_data2 <- filled_data2 %>% 
-#   mutate(climate = tolower(climate)) %>%
-#   mutate(climate = map(str_split(climate, boundary("word")), unique)) %>%  #remove repeated words
-#   mutate(climate = as.character(climate))
-#   
-# filled_data2$climate <- gsub("^c","", filled_data2$climate) #remove c("")
-# filled_data2$climate <- gsub("[()\"]","", filled_data2$climate)
-# 
-# filled_data2 <- filled_data2 %>% 
-#   mutate(climate = as.factor(climate))
-
-```
-
-```{r}
-
-### Fill IUCN codes
-
-# codes <- read_csv(here::here("01_data", "02_processed_data", "iucn_codes.csv"))
-# 
-# filled_data2 <- filled_data2 %>%
-#   left_join(codes, by = "species") %>%
-#   mutate(iucn_category = coalesce(iucn_category.x, iucn_category.y)) %>%
-#   dplyr::select(-iucn_category.x, -iucn_category.y)
-
-```
-
-```{r}
-#write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
-```
-
-```{r}
-
-### New missing fig
-
-# missing <- miss_var_summary(filled_data2)
-# 
-# missing_data <- filled_data2 %>%
-#   dplyr::select(
-#     oxygen_cons, temp_range, basin,
-#     longevity_wild, temp_preferred, iucn_category
-#   )
-# 
-# missing_filled_fig3 <- gg_miss_var(missing_data) + # figure showing the missing data
-#   theme_bw()
-# missing_filled_fig3
-# 
-# ggsave(missing_filled_fig3, file = paste0("missing_filled_fig3.png"), path = here::here("04_figs", "missing_data"))
-
-```
-
-
 
 ### Plot data
 
