@@ -262,7 +262,7 @@ famd_filled2 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, longevity_wild, sp_richness, length,
     r_fin, diet_troph3, temp_range, climate, 
-    dev_place, iucn_category, class2
+    dev_place, iucn_category, demers_pelag, class2
     # fecundity_mean, length, r_fin, diet_troph3,
     # # climate,
     # body_shape_i,
@@ -276,7 +276,7 @@ famd_filled2 <- filled_data2 %>%
   na.omit()
 
 
-f2 <- FAMD(famd_filled2[, 1:10], graph = FALSE)
+f2 <- FAMD(famd_filled2[, 1:11], graph = FALSE)
 f2
 
 eigen_f2 <- f2$eig
@@ -314,7 +314,7 @@ famd_filled3 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, longevity_wild, length,
     r_fin, temp_range, climate, 
-    dev_place, iucn_category, class2
+    dev_place, iucn_category, demers_pelag, class2
     # fecundity_mean, length, r_fin, diet_troph3,
     # oxygen_cons,
     # # temp_range,
@@ -330,7 +330,7 @@ famd_filled3 <- filled_data2 %>%
   na.omit()
 
 
-f3 <- FAMD(famd_filled3[, 1:8], graph = FALSE)
+f3 <- FAMD(famd_filled3[, 1:9], graph = FALSE)
 f3
 
 eigen_f3 <- f3$eig
@@ -367,7 +367,7 @@ plot3
 famd_filled4 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, longevity_wild, sp_richness, length, 
-    kfin, r_fin, diet_troph3, class2
+    kfin, r_fin, diet_troph3, demers_pelag, class2
     # fecundity_mean, length, r_fin, diet_troph3,
     # oxygen_cons,
     # # temp_range,
@@ -415,6 +415,54 @@ plot4
 #ggsave(plot4, file = paste0("f4.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
 ```
 
+```{r}
+# famd_filled5 <- filled_data2 %>%
+#   dplyr::select(
+#     temp_preferred, longevity_wild, length, 
+#     diet_troph3, demers_pelag, class2
+#     # fecundity_mean, length, r_fin, diet_troph3,
+#     # oxygen_cons,
+#     # # temp_range,
+#     # climate,
+#     # # body_shape_i,
+#     # # dev_place,
+#     # demers_pelag,
+#     # # iucn_category,
+#     # # food_i,
+#     # class2
+#   ) %>%
+#   mutate(class2 = as.factor(class2)) %>%
+#   na.omit()
+# 
+# f5 <- FAMD(famd_filled5[,1:5], graph = FALSE)
+# f5
+# 
+# eigen_f5 <- f5$eig
+# eigen_f5
+# 
+# # Contribution to the first dimension
+# fviz_contrib(f5, "var", axes = 1) + fviz_contrib(f5, "var", axes = 2)
+# # Contribution to the second dimension
+# 
+# 
+# 
+# # PLOTS ARROWS
+# p5<- fviz_famd_var(f5, "quanti.var",
+#   repel = TRUE,
+#   col.var = "black")
+# 
+# 
+# f5_fig <- fviz_famd_ind(f5, label = "none", habillage = famd_filled5$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
+#   theme_bw()
+# 
+# f5_fig # 2 and 3 completely separate, 2 and 5 as well
+# 
+# plot5 <- p5 + f5_fig
+# 
+# plot5
+# 
+# #ggsave(plot4, file = paste0("f4.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
+```
 
 
 ### NMDS 
