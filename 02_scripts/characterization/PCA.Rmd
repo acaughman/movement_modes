@@ -219,14 +219,14 @@ famd_filled <- filled_data2 %>%
   dplyr::select(
     temp_preferred, fecundity_mean, longevity_wild, sp_richness, length, 
     kfin, r_fin, diet_troph3, oxygen_cons, temp_range, climate, body_shape_i, 
-    dev_place, iucn_category, food_mode, class2
-    #demers_pelag
+    dev_place, iucn_category, food_mode, demers_pelag,
+    class2
   ) %>%
   mutate(class2 = as.factor(class2)) %>%
   na.omit()
 
 
-f1 <- FAMD(famd_filled[, 1:15], graph = FALSE)
+f1 <- FAMD(famd_filled[, 1:16], graph = FALSE)
 f1
 
 # Contribution to the first dimension
@@ -382,8 +382,9 @@ famd_filled4 <- filled_data2 %>%
   mutate(class2 = as.factor(class2)) %>%
   na.omit()
 
+sub4 = famd_filled4[,1:8]
 
-f4 <- FAMD(famd_filled4[, 1:8], graph = FALSE)
+f4 <- FAMD(sub4, graph = FALSE)
 f4
 
 eigen_f4 <- f4$eig
