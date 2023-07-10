@@ -98,7 +98,26 @@ ggsave(missing_filled_fig3, file = paste0("missing_filled_fig3.png"), path = her
 #write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
 ```
 
+### Plot of new clusters
 
+```{r}
+
+fishbase_data_gmm <- filled_data2 %>%
+  mutate(class2 = as.factor(class2))
+
+gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
+  geom_jitter(aes(color = class2)) +
+  theme_bw(base_size = 20) +
+  labs(
+    x = "Order of Magnitude of Predicted Home Range",
+    y = "Predicted Pelagic Larval Duration (Month)",
+    color = "Class (homerange/PLD)"
+  )
+
+gmm_new_fig
+
+# ggsave(gmm_new_fig, file = paste0("gmm_fig.pdf"), path = here::here("04_figs"), height = 8, width = 15)
+```
 
 
 
