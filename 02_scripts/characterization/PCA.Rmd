@@ -13,8 +13,8 @@ library(tidyverse)
 library(rfishbase)
 library(FactoMineR)
 library(factoextra)
-library(vcd)
-library(purrr)
+#library(vcd)
+#library(purrr)
 library(car)
 library(vegan)
 library(patchwork)
@@ -809,6 +809,33 @@ nmds_plot1
 #ggsave(nmds_plot1, file = paste0("nmds_1.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
 ```
 
+
+```{r}
+
+dst <- dist(com_data[,1:10], method = "euclidean")
+
+bd <- betadisper(dst, com_data$class2)
+
+anova(bd)
+
+permutest(bd, pairwise = TRUE, permutations = 9999)
+
+#bd_HSD <- TukeyHSD(bd)
+#plot(bd_HSD)
+
+
+labs <- paste("Dimension", 1:10, "(", 
+              round(100*bd$eig / sum(bd$eig), 2), "%)")
+
+plot(bd,
+     main="MDS coordinates",
+     xlab=labs[1], ylab=labs[2],
+     hull=FALSE, ellipse=TRUE, conf=0.95, lwd=2, label = FALSE)
+
+
+```
+
+
 ##### NMDS Plot 2
 
 ```{r}
@@ -860,14 +887,6 @@ nmds_plot2 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
 nmds_plot2
 
 #ggsave(nmds_plot2, file = paste0("nmds_2.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
-
-
-dist2 <- dist(m_com2, method = "euclidean")
-
-bd2 <- betadisper(dist2, com2$longevity_wild)
-
-anova(bd2)
-permutest(bd2)
 
 ```
 
