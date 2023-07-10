@@ -28,11 +28,9 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
 ```
 
 
-### ANOVA/Kruskal-Wallis/Chi-Squared
+### ANOVA/Kruskal-Wallis for Numeric/Continuous Variables
 
 ```{r}
-# FOR CONTINOUS
-
 
 # length -------------------------------------------------------
 
@@ -406,14 +404,16 @@ dunnTest(oxygen_cons ~ class2, data = oxygen_data, method = "bh")
 ```
 
 
+
+### Chi-Squared for Categorical Variables
+
 ```{r}
-# FOR CATEGORICAL
 
 # demers_pelag -------------------------------------------------
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$demers_pelag)
-# X-squared = 232.88, df = 30, p-value < 2.2e-16
+# X-squared = 232.88, df = 30, p-value < 2.2e-16 - there is a significant relationship
 
 # contingency table
 demers_table <- table(filled_data2$class2, filled_data2$demers_pelag)
@@ -427,7 +427,7 @@ chisq.posthoc.test(demers_table, method = "bonferroni")
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$movement_keyword)
-# X-squared = 317.3, df = 60, p-value < 2.2e-16
+# X-squared = 309.78, df = 50, p-value < 2.2e-16
 
 # contingency table
 movement_table <- table(filled_data2$class2, filled_data2$movement_keyword)
@@ -469,21 +469,21 @@ chisq.posthoc.test(climate_table, method = "bonferroni")
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$dev_place)
-# X-squared = 27.78, df = 24, p-value = 0.2694
+# X-squared = 3.5273, df = 5, p-value = 0.6193
 
 
 # food_mode ----------------------------------------------------
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$food_mode)
-# X-squared = 8.1284, df = 6, p-value = 0.2288
+# X-squared = 8.4677, df = 5, p-value = 0.1323
 
 
 # iucn_category ------------------------------------------------
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$iucn_category)
-# X-squared = 43.858, df = 30, p-value = 0.04912
+# X-squared = 40.009, df = 25, p-value = 0.0291
 
 # contingency table
 iucn_table <- table(filled_data2$class2, filled_data2$iucn_category)
