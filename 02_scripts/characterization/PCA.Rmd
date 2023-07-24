@@ -68,11 +68,11 @@ box_data <- function(x, y) {
 ```
 
 ```{r}
-temp_plot <- box_data(x = "temp_preferred", y = "class2") + stat_kruskal_test(label.y = 5, position = "jitter")
+temp_plot <- box_data(x = "temp_preferred", y = "class2") + labs(y = "Preferred Temperature", x = "Movement Class")
 fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 100000, position = "jitter")
-long_plot <- box_data(x = "longevity_wild", y = "class2") + stat_kruskal_test(label.y = 50, position = "jitter")
+long_plot <- box_data(x = "longevity_wild", y = "class2") 
 sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 500, position = "jitter")
-length_plot <- box_data(x = "length", y = "class2") + stat_anova_test(label.y = 200, position = "jitter")
+length_plot <- box_data(x = "length", y = "class2") 
 kfin_plot <- box_data(x = "kfin", y = "class2") + stat_kruskal_test(label.y = 10000000, position = "jitter")
 r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 1, position = "jitter")
 diet_plot <- box_data(x = "diet_troph3", y = "class2") + stat_kruskal_test(label.y = 2.5, position = "jitter")
@@ -90,7 +90,8 @@ ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs",
 ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-
+ 
+temp_plot / long_plot / length_plot + plot_layout(guides = "collect") + plot_annotation(tag_levels = 'A')
 ```
 
 ```{r}
