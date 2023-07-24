@@ -18,6 +18,7 @@ library(factoextra)
 library(car)
 library(vegan)
 library(patchwork)
+library(cowplot)
 library(ggpubr)
 library(naniar)
 #library(microViz) # for betadisp categorical wrapper
@@ -118,17 +119,16 @@ scatter_data <- function(x, y) {
 ```
 
 ```{r}
-climate_plot <- scatter_data(x = "climate", y = "class2") +
-  stat_kruskal_test(label.y = 5, label.x = "6: high/mid")
+climate_plot <- scatter_data(x = "climate", y = "class2") # + stat_kruskal_test(label.y = 5, label.x = "6: high/mid")
 body_plot <- scatter_data(x = "body_shape_i", y = "class2")
 dev_plot <- scatter_data(x = "dev_place", y = "class2")
 movement_plot <- scatter_data(x = "movement_keyword", y = "class2")
 demers_plot <- scatter_data(x = "demers_pelag", y = "class2")
 iucn_plot <- scatter_data(x = "iucn_category", y = "class2")
 food_plot <- scatter_data(x = "food_mode", y = "class2")
-circ_plot <- scatter_data(x = "circadian", y = "class2")
-ocean_plot <- scatter_data(x = "ocean", y = "class2")
-basin_plot <- scatter_data(x = "basin", y = "class2")
+# circ_plot <- scatter_data(x = "circadian", y = "class2")
+# ocean_plot <- scatter_data(x = "ocean", y = "class2")
+# basin_plot <- scatter_data(x = "basin", y = "class2")
 
 
 ggsave(climate_plot, file = paste0("climate_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
@@ -138,9 +138,9 @@ ggsave(movement_plot, file = paste0("movement_plot.png"), path = here::here("04_
 ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-ggsave(ocean_plot, file = paste0("ocean_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-ggsave(basin_plot, file = paste0("basin_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+# ggsave(circ_plot, file = paste0("circ_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+# ggsave(ocean_plot, file = paste0("ocean_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+# ggsave(basin_plot, file = paste0("basin_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 
 ```
 
@@ -149,13 +149,22 @@ ggsave(basin_plot, file = paste0("basin_plot.png"), path = here::here("04_figs",
 
 ```{r}
 
-cat_panel <- (climate_plot + body_plot + dev_plot + movement_plot + demers_plot + iucn_plot + food_plot) &
+cat_first_col <- (demers_plot / body_plot / climate_plot) &
+  theme(legend.position = "none")
+
+cat_second_col <- (movement_plot / dev_plot / food_plot) &
   theme(legend.position = "none") &
-  theme(axis.text.y = element_blank())
+  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
+
+cat_top <- (cat_first_col | cat_second_col)
+
+cat_bottom <- (iucn_plot | plot_spacer()) + plot_layout(widths = c(55,30))
+
+cat_panel <- (cat_top / cat_bottom) + plot_layout(heights = c(85,20))
 
 cat_panel
 
-#ggsave(cat_panel, file = paste0("cat_panel.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 14, width = 10)
+ggsave(cat_panel, file = paste0("cat_panel.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 14, width = 10)
 
 ```
 
