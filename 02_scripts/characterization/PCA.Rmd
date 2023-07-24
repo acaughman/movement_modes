@@ -155,7 +155,7 @@ cat_panel <- (climate_plot + body_plot + dev_plot + movement_plot + demers_plot 
 
 cat_panel
 
-ggsave(cat_panel, file = paste0("cat_panel.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 14, width = 10)
+#ggsave(cat_panel, file = paste0("cat_panel.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 14, width = 10)
 
 ```
 
@@ -528,15 +528,7 @@ plot13
 
 
 
-
-
-
-
-
-
-
-
-### NMDS 
+### NMDS 1
 
 ```{r}
 com_data <- filled_data2 %>%
@@ -610,7 +602,7 @@ permutest(bd, pairwise = TRUE, permutations = 9999)
 ```
 
 
-##### NMDS Plot 2
+##### NMDS 2
 
 ```{r}
 com_data2 <- filled_data2 %>%
@@ -674,7 +666,7 @@ permutest(bd2, pairwise = TRUE, permutations = 9999)
 
 
 
-##### NMDS Plot 5
+##### NMDS 5
 
 ```{r}
 com_data5 <- filled_data2 %>%
@@ -735,10 +727,10 @@ permutest(bd5, pairwise = TRUE, permutations = 9999)
 
 
 
-##### NMDS Plot 12
+##### NMDS 12
 
 ```{r}
-com_data5 <- filled_data2 %>%
+com_data12 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, r_fin, diet_troph3, temp_range,
     species, order, class2
@@ -746,32 +738,32 @@ com_data5 <- filled_data2 %>%
   mutate(temp_preferred = temp_preferred + 2) %>%
   na.omit()
 
-com5 <- com_data5 %>%
+com12 <- com_data12 %>%
   dplyr::select(-species, -order, -class2)
 
-m_com5 <- as.matrix(com5) 
+m_com12 <- as.matrix(com12) 
 
 set.seed(123)
-nmds <- metaMDS(m_com5, distance = "euclidean")
+nmds <- metaMDS(m_com12, distance = "euclidean")
 nmds
 
 
 # extract NMDS scores (x and y coordinates)
-filled_scores5 <- as.data.frame(scores(nmds)$sites)
+filled_scores12 <- as.data.frame(scores(nmds)$sites)
 
 # add columns to data frame
-filled_scores5$class2 <- com_data5$class2
-filled_scores5$species <- com_data5$species
-filled_scores5$order <- com_data5$order
+filled_scores12$class2 <- com_data12$class2
+filled_scores12$species <- com_data12$species
+filled_scores12$order <- com_data12$order
 
-filled_scores5 <- filled_scores5 %>%
+filled_scores12 <- filled_scores12 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
 species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
 
-nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
+nmds_plot12 <- ggplot(filled_scores12, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   theme_bw() +
   # theme(legend.position = "none") +
@@ -780,17 +772,17 @@ nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
   geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
   ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
-nmds_plot5
+nmds_plot12
 
-#ggsave(nmds_plot5, file = paste0("nmds_12.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
+#ggsave(nmds_plot12, file = paste0("nmds_12.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
 
-dst5 <- dist(com5, method = "euclidean")
+dst12 <- dist(com12, method = "euclidean")
 
-bd5 <- betadisper(dst5, com_data5$class2)
+bd12 <- betadisper(dst12, com_data12$class2)
 
-anova(bd5)
+anova(bd12)
 
-permutest(bd5, pairwise = TRUE, permutations = 9999)
+permutest(bd12, pairwise = TRUE, permutations = 9999)
 
 ```
 
@@ -798,7 +790,7 @@ permutest(bd5, pairwise = TRUE, permutations = 9999)
 ##### NMDS Plot 13
 
 ```{r}
-com_data5 <- filled_data2 %>%
+com_data13 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, r_fin, diet_troph3, sp_richness, temp_range,
     species, order, class2
@@ -806,31 +798,31 @@ com_data5 <- filled_data2 %>%
   mutate(temp_preferred = temp_preferred + 2) %>%
   na.omit()
 
-com5 <- com_data5 %>%
+com13 <- com_data13 %>%
   dplyr::select(-species, -order, -class2)
 
-m_com5 <- as.matrix(com5)
+m_com13 <- as.matrix(com13)
 
 set.seed(123)
-nmds <- metaMDS(m_com5, distance = "euclidean")
+nmds <- metaMDS(m_com13, distance = "euclidean")
 nmds
 
 # extract NMDS scores (x and y coordinates)
-filled_scores5 <- as.data.frame(scores(nmds)$sites)
+filled_scores13 <- as.data.frame(scores(nmds)$sites)
 
 # add columns to data frame
-filled_scores5$class2 <- com_data5$class2
-filled_scores5$species <- com_data5$species
-filled_scores5$order <- com_data5$order
+filled_scores13$class2 <- com_data13$class2
+filled_scores13$species <- com_data13$species
+filled_scores13$order <- com_data13$order
 
-filled_scores5 <- filled_scores5 %>%
+filled_scores13 <- filled_scores13 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
 species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
 
-nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
+nmds_plot13 <- ggplot(filled_scores13, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   theme_bw() +
   # theme(legend.position = "none") +
@@ -839,17 +831,17 @@ nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
   geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
   ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
-nmds_plot5
+nmds_plot13
 
-#ggsave(nmds_plot5, file = paste0("nmds_13.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
+#ggsave(nmds_plot13, file = paste0("nmds_13.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
 
-dst5 <- dist(com5, method = "euclidean")
+dst13 <- dist(com13, method = "euclidean")
 
-bd5 <- betadisper(dst5, com_data5$class2)
+bd13 <- betadisper(dst13, com_data13$class2)
 
-anova(bd5)
+anova(bd13)
 
-permutest(bd5, pairwise = TRUE, permutations = 9999)
+permutest(bd13, pairwise = TRUE, permutations = 9999)
 
 ```
 
@@ -858,7 +850,7 @@ permutest(bd5, pairwise = TRUE, permutations = 9999)
 ##### NMDS Plot 14
 
 ```{r}
-com_data5 <- filled_data2 %>%
+com_data14 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, r_fin, diet_troph3, sp_richness, kfin, temp_range,
     species, order, class2
@@ -866,32 +858,32 @@ com_data5 <- filled_data2 %>%
   mutate(temp_preferred = temp_preferred + 2) %>%
   na.omit()
 
-com5 <- com_data5 %>%
+com14 <- com_data14 %>%
   dplyr::select(-species, -order, -class2)
 
-m_com5 <- as.matrix(com5) 
+m_com14 <- as.matrix(com14) 
 
 set.seed(123)
-nmds <- metaMDS(m_com5, distance = "euclidean")
+nmds <- metaMDS(m_com14, distance = "euclidean")
 nmds
 
 
 # extract NMDS scores (x and y coordinates)
-filled_scores5 <- as.data.frame(scores(nmds)$sites)
+filled_scores14 <- as.data.frame(scores(nmds)$sites)
 
 # add columns to data frame
-filled_scores5$class2 <- com_data5$class2
-filled_scores5$species <- com_data5$species
-filled_scores5$order <- com_data5$order
+filled_scores14$class2 <- com_data14$class2
+filled_scores14$species <- com_data14$species
+filled_scores14$order <- com_data14$order
 
-filled_scores5 <- filled_scores5 %>%
+filled_scores14 <- filled_scores14 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
 species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
 
-nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
+nmds_plot14 <- ggplot(filled_scores14, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   theme_bw() +
   # theme(legend.position = "none") +
@@ -900,17 +892,17 @@ nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
   geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
   ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
-nmds_plot5
+nmds_plot14
 
-#ggsave(nmds_plot5, file = paste0("nmds_14.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
+#ggsave(nmds_plot14, file = paste0("nmds_14.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
 
-dst5 <- dist(com5, method = "euclidean")
+dst14 <- dist(com14, method = "euclidean")
 
-bd5 <- betadisper(dst5, com_data5$class2)
+bd14 <- betadisper(dst14, com_data14$class2)
 
-anova(bd5)
+anova(bd14)
 
-permutest(bd5, pairwise = TRUE, permutations = 9999)
+permutest(bd14, pairwise = TRUE, permutations = 9999)
 
 ```
 
@@ -919,7 +911,7 @@ permutest(bd5, pairwise = TRUE, permutations = 9999)
 ##### NMDS Plot 17
 
 ```{r}
-com_data5 <- filled_data2 %>%
+com_data17 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, r_fin, diet_troph3, oxygen_cons,
     species, order, class2
@@ -927,31 +919,31 @@ com_data5 <- filled_data2 %>%
   mutate(temp_preferred = temp_preferred + 2) %>%
   na.omit()
 
-com5 <- com_data5 %>%
+com17 <- com_data17 %>%
   dplyr::select(-species, -order, -class2)
 
-m_com5 <- as.matrix(com5) 
+m_com17 <- as.matrix(com17) 
 
 set.seed(123)
-nmds <- metaMDS(m_com5, distance = "euclidean")
+nmds <- metaMDS(m_com17, distance = "euclidean")
 nmds
 
 # extract NMDS scores (x and y coordinates)
-filled_scores5 <- as.data.frame(scores(nmds)$sites)
+filled_scores17 <- as.data.frame(scores(nmds)$sites)
 
 # add columns to data frame
-filled_scores5$class2 <- com_data5$class2
-filled_scores5$species <- com_data5$species
-filled_scores5$order <- com_data5$order
+filled_scores17$class2 <- com_data17$class2
+filled_scores17$species <- com_data17$species
+filled_scores17$order <- com_data17$order
 
-filled_scores5 <- filled_scores5 %>%
+filled_scores17 <- filled_scores17 %>%
   mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
 
 species_scores <- as.data.frame(nmds[["species"]]) %>%
   rownames_to_column(var = "var")
 
 
-nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
+nmds_plot17 <- ggplot(filled_scores17, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   theme_bw() +
   # theme(legend.position = "none") +
@@ -960,17 +952,17 @@ nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
   geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
   ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
 
-nmds_plot5
+nmds_plot17
 
-#ggsave(nmds_plot5, file = paste0("nmds_17.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
+#ggsave(nmds_plot17, file = paste0("nmds_17.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
 
-dst5 <- dist(com5, method = "euclidean")
+dst17 <- dist(com17, method = "euclidean")
 
-bd5 <- betadisper(dst5, com_data5$class2)
+bd17 <- betadisper(dst17, com_data17$class2)
 
-anova(bd5)
+anova(bd17)
 
-permutest(bd5, pairwise = TRUE, permutations = 9999)
+permutest(bd17, pairwise = TRUE, permutations = 9999)
 
 ```
 
