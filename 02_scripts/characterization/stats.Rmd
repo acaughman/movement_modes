@@ -455,7 +455,7 @@ chisq.posthoc.test(body_table, method = "bonferroni")
 
 # Pearson's Chi-squared test
 chisq.test(filled_data2$class2, filled_data2$climate)
-# X-squared = 167.1, df = 75, p-value = 5.692e-09
+# X-squared = 17.694, df = 5, p-value = 0.003355
 
 # contingency table
 climate_table <- table(filled_data2$class2, filled_data2$climate)
