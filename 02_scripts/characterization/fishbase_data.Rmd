@@ -28,50 +28,6 @@ library(FSA)
 ```{r}
 filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
   mutate_if(is.character, as.factor)
-```
-
-
-### Consolidate climtate variable
-
-```{r}
-
-filled_data2 <- filled_data2 %>%
-  mutate(climate = tolower(climate)) %>%
-  mutate(climate = map(str_split(climate, boundary("word")), unique)) %>%  #remove repeated words
-  mutate(climate = as.character(climate))
-
-filled_data2$climate <- gsub("^c","", filled_data2$climate) #remove c("")
-filled_data2$climate <- gsub("[()\"]","", filled_data2$climate)
-
-
-filled_data2 <- filled_data2 %>%
-  mutate(climate = as.factor(climate)) %>% 
-  mutate(climate = case_when(
-    climate == "subtropical, temperate, tropical" ~ "multiple",
-    climate == "boreal, subtropical, temperate" ~ "multiple",
-    climate == "boreal, polar, subtropical, temperate, tropical" ~ "multiple",
-    climate == "boreal, polar, subtropical, temperate" ~ "multiple",
-    climate == "tropical" ~ "warm_water",
-    climate == "polar, subtropical, tropical" ~ "multiple",
-    climate == "subtropical" ~ "warm_water",
-    climate == "boreal, polar, subtropical" ~ "multiple",
-    climate == "subtropical, tropical" ~ "warm_water",
-    climate == "polar, subtropical, temperate, tropical" ~ "multiple",
-    climate == "subtropical, temperate" ~ "multiple",
-    climate == "polar, subtropical, temperate" ~ "multiple",
-    climate == "boreal, subtropical, temperate, tropical" ~ "multiple",
-    climate == "polar, tropical" ~ "multiple",
-    climate == "temperate, tropical" ~ "multiple",
-    climate == "boreal, polar" ~ "multiple",
-    ))
-
-# check climate groups with temp_preferred
-climate_temp_sum <- filled_data2 %>% 
-  select(species, climate, temp_preferred, temp_range, class2) %>%
-  filter(!is.na(temp_preferred)) %>% 
-  group_by(climate) %>% 
-  summarise(avg_temp = mean(temp_preferred), min_temp = min(temp_preferred), max_temp = max(temp_preferred)) %>% 
-  ungroup()
 
 ```
 
@@ -101,7 +57,6 @@ filled_data2 <- filled_data2 %>%
 
 ```
 
-
 ### New missing fig
 
 ```{r}
@@ -123,9 +78,10 @@ ggsave(missing_filled_fig3, file = paste0("missing_filled_fig3.png"), path = her
 ```
 
 ```{r}
-#write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
-```
 
+#write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+
+```
 
 ### Plot of newest clusters
 
@@ -146,10 +102,62 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
 gmm_new_fig
 
 # ggsave(gmm_new_fig, file = paste0("gmm_fig.pdf"), path = here::here("04_figs"), height = 8, width = 15)
+
 ```
 
 
 
+
+
+
+
+
+
+
+### OLD
+
+
+```{r}
+
+# filled_data2 <- filled_data2 %>%
+#   mutate(climate = tolower(climate)) %>%
+#   mutate(climate = map(str_split(climate, boundary("word")), unique)) %>%  #remove repeated words
+#   mutate(climate = as.character(climate))
+# 
+# filled_data2$climate <- gsub("^c","", filled_data2$climate) #remove c("")
+# filled_data2$climate <- gsub("[()\"]","", filled_data2$climate)
+# 
+# 
+# filled_data2 <- filled_data2 %>%
+#   mutate(climate = as.factor(climate)) %>% 
+#   mutate(climate = case_when(
+#     climate == "subtropical, temperate, tropical" ~ "multiple",
+#     climate == "boreal, subtropical, temperate" ~ "multiple",
+#     climate == "boreal, polar, subtropical, temperate, tropical" ~ "multiple",
+#     climate == "boreal, polar, subtropical, temperate" ~ "multiple",
+#     climate == "tropical" ~ "warm_water",
+#     climate == "polar, subtropical, tropical" ~ "multiple",
+#     climate == "subtropical" ~ "warm_water",
+#     climate == "boreal, polar, subtropical" ~ "multiple",
+#     climate == "subtropical, tropical" ~ "warm_water",
+#     climate == "polar, subtropical, temperate, tropical" ~ "multiple",
+#     climate == "subtropical, temperate" ~ "multiple",
+#     climate == "polar, subtropical, temperate" ~ "multiple",
+#     climate == "boreal, subtropical, temperate, tropical" ~ "multiple",
+#     climate == "polar, tropical" ~ "multiple",
+#     climate == "temperate, tropical" ~ "multiple",
+#     climate == "boreal, polar" ~ "multiple",
+#     ))
+# 
+# # check climate groups with temp_preferred
+# climate_temp_sum <- filled_data2 %>% 
+#   select(species, climate, temp_preferred, temp_range, class2) %>%
+#   filter(!is.na(temp_preferred)) %>% 
+#   group_by(climate) %>% 
+#   summarise(avg_temp = mean(temp_preferred), min_temp = min(temp_preferred), max_temp = max(temp_preferred)) %>% 
+#   ungroup()
+
+```
 
 
 
