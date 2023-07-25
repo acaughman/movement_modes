@@ -13,16 +13,16 @@ library(tidyverse)
 library(rfishbase)
 library(FactoMineR)
 library(factoextra)
-#library(vcd)
-#library(purrr)
 library(car)
 library(vegan)
 library(patchwork)
 library(cowplot)
 library(ggpubr)
 library(naniar)
-#library(microViz) # for betadisp categorical wrapper
-#library(phyloseq) # for betadisp categorical wrapper
+#library(microViz) for betadisp categorical wrapper
+#library(phyloseq) for betadisp categorical wrapper
+#library(vcd)
+#library(purrr)
 ```
 
 ### Load data
@@ -58,7 +58,7 @@ box_data <- function(x, y) {
     coord_flip() +
     labs(
       x = "Movement Class",
-      color = "Class (homerange/PLD)"
+      color = "Class (Homerange/PLD)"
     ) +
     scale_color_viridis_d()
 }
@@ -68,17 +68,40 @@ box_data <- function(x, y) {
 ```
 
 ```{r}
-temp_plot <- box_data(x = "temp_preferred", y = "class2") + labs(y = "Preferred Temperature", x = "Movement Class")
-fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 100000, position = "jitter")
-long_plot <- box_data(x = "longevity_wild", y = "class2") 
-sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 500, position = "jitter")
-length_plot <- box_data(x = "length", y = "class2") 
-kfin_plot <- box_data(x = "kfin", y = "class2") + stat_kruskal_test(label.y = 10000000, position = "jitter")
-r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 1, position = "jitter")
-diet_plot <- box_data(x = "diet_troph3", y = "class2") + stat_kruskal_test(label.y = 2.5, position = "jitter")
-oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(label.y = 2000, position = "jitter")
-temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 15, position = "jitter")
+temp_plot <- box_data(x = "temp_preferred", y = "class2") + stat_kruskal_test(label.y = 1, label.x = 6, position = "jitter") +
+  labs(y = "Preferred Temperature", x = "Movement Class")
+fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 1000000, label.x = 5.5, position = "jitter") +
+  labs(y = "Mean Fecundity", x = "Movement Class")
+long_plot <- box_data(x = "longevity_wild", y = "class2") + stat_kruskal_test(label.y = 100, position = "jitter") +
+  labs(y = "Longevity", x = "Movement Class")
+sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 1100, position = "jitter") +
+  labs(y = "Species Richness", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+length_plot <- box_data(x = "length", y = "class2") + stat_anova_test(label.y = 400, position = "jitter") +
+  labs(y = "Length", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+kfin_plot <- box_data(x = "kfin", y = "class2") + stat_kruskal_test(label.y = 10000000, position = "jitter") +
+  labs(y = "Carrying Capacity", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 1, label.x = 6, position = "jitter") +
+  labs(y = "Growth Rate", x = "Movement Class")
+diet_plot <- box_data(x = "diet_troph3", y = "class2") + stat_kruskal_test(label.y = 2.5, label.x = 5.5, position = "jitter") +
+  labs(y = "Trophic Level", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(label.y = 2000, label.x = 6, position = "jitter") +
+  labs(y = "Oxygen Consumption", x = "Movement Class")
+temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 20, label.x = 3.5, position = "jitter") +
+  labs(y = "Temperature Range", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 
+ 
+numeric_panel <- ((temp_plot | length_plot) / 
+    (long_plot | diet_plot) /
+    (r_fin_plot | kfin_plot) / 
+    (fecund_plot | sp_rich_plot) /
+    (oxygen_plot | temp_range_plot)) + 
+  plot_layout(guides = "collect") + plot_annotation(tag_levels = 'A')
+
+ggsave(numeric_panel, file = paste0("numeric_panel.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 21, width = 14) 
+
+```
+
+```{r}
 
 ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10) 
 ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
@@ -90,9 +113,10 @@ ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs",
 ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
- 
-temp_plot / long_plot / length_plot + plot_layout(guides = "collect") + plot_annotation(tag_levels = 'A')
+
 ```
+
+
 
 ```{r}
 # categorical
@@ -120,7 +144,7 @@ scatter_data <- function(x, y) {
 ```
 
 ```{r}
-climate_plot <- scatter_data(x = "climate", y = "class2") # + stat_kruskal_test(label.y = 5, label.x = "6: high/mid")
+
 body_plot <- scatter_data(x = "body_shape_i", y = "class2")
 dev_plot <- scatter_data(x = "dev_place", y = "class2")
 movement_plot <- scatter_data(x = "movement_keyword", y = "class2")
@@ -130,7 +154,7 @@ food_plot <- scatter_data(x = "food_mode", y = "class2")
 # circ_plot <- scatter_data(x = "circadian", y = "class2")
 # ocean_plot <- scatter_data(x = "ocean", y = "class2")
 # basin_plot <- scatter_data(x = "basin", y = "class2")
-
+# climate_plot <- scatter_data(x = "climate", y = "class2") # + stat_kruskal_test(label.y = 5, label.x = "6: high/mid")
 
 ggsave(climate_plot, file = paste0("climate_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 ggsave(body_plot, file = paste0("body_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
@@ -144,31 +168,6 @@ ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "
 # ggsave(basin_plot, file = paste0("basin_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 
 ```
-
-
-### Plot panel
-
-```{r}
-
-cat_first_col <- (demers_plot / body_plot / climate_plot) &
-  theme(legend.position = "none")
-
-cat_second_col <- (movement_plot / dev_plot / food_plot) &
-  theme(legend.position = "none") &
-  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
-
-cat_top <- (cat_first_col | cat_second_col)
-
-cat_bottom <- (iucn_plot | plot_spacer()) + plot_layout(widths = c(55,30))
-
-cat_panel <- (cat_top / cat_bottom) + plot_layout(heights = c(85,20))
-
-cat_panel
-
-ggsave(cat_panel, file = paste0("cat_panel.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 14, width = 10)
-
-```
-
 
 
 
@@ -992,6 +991,32 @@ permutest(bd17, pairwise = TRUE, permutations = 9999)
 
 
 # Old
+
+
+
+### Plot panel
+
+```{r}
+
+# cat_first_col <- (demers_plot / body_plot / climate_plot) &
+#   theme(legend.position = "none")
+# 
+# cat_second_col <- (movement_plot / dev_plot / food_plot) &
+#   theme(legend.position = "none") &
+#   theme(axis.text.y = element_blank(), axis.title.y = element_blank())
+# 
+# cat_top <- (cat_first_col | cat_second_col)
+# 
+# cat_bottom <- (iucn_plot | plot_spacer()) + plot_layout(widths = c(55,30))
+# 
+# cat_panel <- (cat_top / cat_bottom) + plot_layout(heights = c(85,20))
+# 
+# cat_panel
+# 
+# ggsave(cat_panel, file = paste0("cat_panel.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 14, width = 10)
+
+```
+
 
 
 ```{r}
