@@ -110,7 +110,7 @@ long_plot <- box_data(x = "longevity_wild", y = "class2") + stat_kruskal_test(la
 sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 1100, position = "jitter") +
   labs(y = "Species Richness", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 length_plot <- box_data(x = "length", y = "class2") + stat_anova_test(label.y = 400, position = "jitter") +
-  labs(y = "Length", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+  labs(y = "Length", x = "Movement Class") #+ theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 kfin_plot <- box_data(x = "kfin", y = "class2") + stat_kruskal_test(label.y = 10000000, position = "jitter") +
   labs(y = "Carrying Capacity", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 1, label.x = 6, position = "jitter") +
@@ -131,8 +131,14 @@ numeric_panel <- ((temp_plot | length_plot) /
   plot_layout(guides = "collect") + plot_annotation(tag_levels = 'A')
 
 numeric_panel
-
 #ggsave(numeric_panel, file = paste0("numeric_panel.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 21, width = 14) 
+
+tll_panel <- (temp_plot / length_plot / long_plot) +
+  plot_layout(guides = "collect") + plot_annotation(tag_levels = "A") &
+  theme_bw(base_size = 16)
+
+tll_panel
+#ggsave(tll_panel, file = paste0("tll_panel.png"), path = here::here("04_figs"), height = 17, width = 11)
 
 ```
 
