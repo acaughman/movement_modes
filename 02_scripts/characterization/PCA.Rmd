@@ -32,67 +32,6 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
   mutate_if(is.character, as.factor)
 ```
 
-### Variable Inflation Factors (VIF): none above 5
-
-```{r}
-model <- lm(
-  class3 ~ temp_preferred+ fecundity_mean+ longevity_wild+
-    sp_richness+ length+ kfin+ r_fin+ diet_troph3,
-  data = filled_data2
-)
-
-summary(model)
-
-vif(model) # when including both fecundity variables, they have a VIF over 5
-
-# create vector of VIF values
-vif_values <- vif(model)
-
-# create horizontal bar chart to display each VIF value
-barplot(vif_values, main = "VIF Values", horiz = TRUE, col = "steelblue", xlim = c(0, 6), las = 2)
-
-# add vertical line at 5
-abline(v = 5, lwd = 3, lty = 2)
-
-
-# model2 <- lm(class2 ~ temp_preferred + length + r_fin, data = filled_data)
-# summary(model)
-```
-
-### Similarity percentage
-
-```{r}
-
-com_data <- filled_data2 %>%
-  dplyr::select(
-    temp_preferred, fecundity_mean, longevity_wild,
-    sp_richness, length, kfin, r_fin, diet_troph3, species, family, class2
-  ) %>%
-  mutate(class2 = as.factor(class2)) %>% 
-  filter(temp_preferred > 0) %>%
-  mutate(across(where(is.numeric),  ~ scale(.)[,1])) %>% 
-  na.omit()
-
-com <- com_data %>%
-  dplyr::select(-species, -family, -class2)
-
-# load from rda in results folder
-#set.seed(123)
-#simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
-
-summary(simper_out)
-# shows which traits are primarily responsible for observed difference between classes. traits listed from highest to lowest % contribution to the difference between the two classes (cumsum shows total % contribution to the difference). p is signifigance.
-
-
-# load from rda in results folder
-#set.seed(123)
-#ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
-
-summary(ano)
-
-plot(ano)
-```
-
 
 ### FAMD
 
