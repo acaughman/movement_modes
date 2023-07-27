@@ -36,8 +36,8 @@ p1 <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
   geom_jitter() +
   theme_bw(base_size = 16) +
   labs(
-    y = "Predicted Pelagic Larval Duration Month",
-    x = "Predicted Home Range Magnitude"
+    y = "Predicted Pelagic Larval Duration",
+    x = "ln(Predicted Home Range)"
   )
 
 p1
@@ -48,9 +48,9 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   theme_bw(base_size = 16) +
   labs(
     x = "Predicted Home Range Magnitude",
+    y = "Predicted Pelgaic Larval Duration Month",
     color = "Class (Homerange/PLD)"
-  ) +
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+  )
 
 gmm_new_fig
 #ggsave(gmm_new_fig, file = paste0("gmm_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
