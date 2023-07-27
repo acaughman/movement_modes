@@ -32,7 +32,7 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
 fishbase_data_gmm <- filled_data2 %>%
   mutate(class2 = as.factor(class2))
 
-p1 <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
+p1 <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
   geom_jitter() +
   theme_bw(base_size = 16) +
   labs(
