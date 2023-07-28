@@ -62,7 +62,7 @@ p1 <- fviz_famd_var(f1, "quanti.var",
   col.var = "black"
 ) +
   theme_bw(base_size = 16) +
-  labs(x = "Dimmension 1", y = "Dimmension 2")
+  labs(x = "Dimmension 1", y = "Dimmension 2", title = NULL)
   
 eigen_f1 <- f1$eig
 eigen_f1
@@ -70,7 +70,7 @@ eigen_f1
 
 f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_1$class2, palette = hcl.colors(6, "viridis"), addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
   theme_bw(base_size = 16) +
-  labs(x = "FAMD1", y = "FAMD2")
+  labs(x = "FAMD1", y = "FAMD2", color = "Class (Homerange/PLD)", fill = "Class (Homerange/PLD)", title = NULL)
 
 f1_fig
 
