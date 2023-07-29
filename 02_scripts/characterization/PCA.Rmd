@@ -51,6 +51,9 @@ famd_1 <- filled_data2 %>%
 f1 <- FAMD(famd_1[, 1:15], graph = FALSE)
 f1
 
+eigen_f1 <- f1$eig
+eigen_f1
+
 # Contribution to the first dimension
 fviz_contrib(f1, "var", axes = 1) + fviz_contrib(f1, "var", axes = 2)
 # Contribution to the second dimension
@@ -64,9 +67,6 @@ p1 <- fviz_famd_var(f1, "quanti.var",
   theme_bw(base_size = 16) +
   labs(x = "Dimmension 1", y = "Dimmension 2", title = NULL)
   
-eigen_f1 <- f1$eig
-eigen_f1
-
 
 f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_1$class2, palette = hcl.colors(6, "viridis"), addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
   theme_bw(base_size = 16) +
@@ -86,6 +86,7 @@ plot1
 
 
 ```{r}
+
 famd_4 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, longevity_wild, sp_richness, length, kfin, r_fin, diet_troph3, temp_range, oxygen_cons, demers_pelag, class2
@@ -149,21 +150,27 @@ fviz_contrib(f5, "var", axes = 1) + fviz_contrib(f5, "var", axes = 2)
 
 
 # PLOTS ARROWS
-p5<- fviz_famd_var(f5, "quanti.var",
+p5 <- fviz_famd_var(f5, "quanti.var",
   repel = TRUE,
-  col.var = "black")
+  col.var = "black"
+) +
+  theme_bw(base_size = 16) +
+  labs(x = "Dimmension 1", y = "Dimmension 2", title = NULL)
+  
 
-
-f5_fig <- fviz_famd_ind(f5, label = "none", habillage = famd_5$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
-  theme_bw()
+f5_fig <- fviz_famd_ind(f5, label = "none", habillage = famd_5$class2, palette = hcl.colors(6, "viridis"), addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
+  theme_bw(base_size = 16) +
+  labs(x = "FAMD1 (18.9%)", y = "FAMD2 (16.1%)", color = "Class (Homerange/PLD)", fill = "Class (Homerange/PLD)", title = NULL)
 
 f5_fig
 
-plot5 <- p5 + f5_fig
-
+plot5 <- (p5 | f5_fig) +
+  plot_annotation(tag_levels = 'A')
+  
 plot5
 
-#ggsave(plot5, file = paste0("f5.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
+#ggsave(plot5, file = paste0("f5.png"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 16)
+
 ```
 
 
@@ -187,23 +194,27 @@ fviz_contrib(f6, "var", axes = 1) + fviz_contrib(f6, "var", axes = 2)
 # Contribution to the second dimension
 
 
-
 # PLOTS ARROWS
-p6<- fviz_famd_var(f6, "quanti.var",
+p6 <- fviz_famd_var(f6, "quanti.var",
   repel = TRUE,
-  col.var = "black")
+  col.var = "black"
+) +
+  theme_bw(base_size = 16) +
+  labs(x = "Dimmension 1", y = "Dimmension 2", title = NULL)
+  
 
-
-f6_fig <- fviz_famd_ind(f6, label = "none", habillage = famd_6$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
-  theme_bw()
+f6_fig <- fviz_famd_ind(f6, label = "none", habillage = famd_6$class2, palette = hcl.colors(6, "viridis"), addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
+  theme_bw(base_size = 16) +
+  labs(x = "FAMD1 (15.8%)", y = "FAMD2 (14.5%)", color = "Class (Homerange/PLD)", fill = "Class (Homerange/PLD)", title = NULL)
 
 f6_fig
 
-plot6 <- p6 + f6_fig
-
+plot6 <- (p6 | f6_fig) +
+  plot_annotation(tag_levels = 'A')
+  
 plot6
 
-#ggsave(plot6, file = paste0("f6.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
+#ggsave(plot6, file = paste0("f6.png"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
 
 ```
 
@@ -228,23 +239,27 @@ fviz_contrib(f8, "var", axes = 1) + fviz_contrib(f8, "var", axes = 2)
 # Contribution to the second dimension
 
 
-
 # PLOTS ARROWS
-p8<- fviz_famd_var(f8, "quanti.var",
+p8 <- fviz_famd_var(f8, "quanti.var",
   repel = TRUE,
-  col.var = "black")
+  col.var = "black"
+) +
+  theme_bw(base_size = 16) +
+  labs(x = "Dimmension 1", y = "Dimmension 2", title = NULL)
 
 
-f8_fig <- fviz_famd_ind(f8, label = "none", habillage = famd_8$class2, addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
-  theme_bw()
+f8_fig <- fviz_famd_ind(f8, label = "none", habillage = famd_8$class2, palette = hcl.colors(6, "viridis"), addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var") +
+  theme_bw(base_size = 16) +
+  labs(x = "FAMD1 (17.4%)", y = "FAMD2 (16%)", color = "Class (Homerange/PLD)", fill = "Class (Homerange/PLD)", title = NULL)
 
 f8_fig
 
-plot8 <- p8 + f8_fig
-
+plot8 <- (p8 | f8_fig) +
+  plot_annotation(tag_levels = 'A')
+  
 plot8
 
-#ggsave(plot8, file = paste0("f8.png"), path = here::here("04_figs", "famd_with_arrows"), height = 12, width = 15)
+#ggsave(plot8, file = paste0("f8.png"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
 
 ```
 
@@ -910,7 +925,7 @@ nmds8 <- nmds_arrows8 + nmds_plot8 & theme_bw(base_size = 16)
 
 nmds8
 
-#ggsave(nmds8, file = paste0("nmds8_good_dispersion.png"), path = here::here("04_figs"), height = 8, width = 18)
+ggsave(nmds8, file = paste0("nmds8.png"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
 
 dst8 <- dist(com8, method = "euclidean")
 
