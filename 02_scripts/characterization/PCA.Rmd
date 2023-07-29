@@ -811,14 +811,33 @@ nmds_plot8 <- ggplot(filled_scores8, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   theme_bw() +
   geom_point(data = centroid8, aes(color = class2), size = 4) +
-  labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2, color = class2), alpha = 0.2) +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  labs(x = "NMDS1", y = "NMDS2", color = "Class (Homerange/PLD)") +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
+  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), alpha = 0.15, show.legend = FALSE) +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
 
 nmds_plot8
 
-#ggsave(nmds_plot8, file = paste0("nmds8.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
+
+nmds_arrows8 <- ggplot(filled_scores8, aes(x = NMDS1, y = NMDS2)) +
+  geom_point(alpha = 0) +
+  theme_bw() +
+  labs(x = "NMDS1", y = "NMDS2") +
+  theme(legend.position = "none") +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  geom_point(aes(x = 0, y = 0), size = 160, shape = 1, color = "grey")
+
+nmds_arrows8
+
+nmds8 <- nmds_arrows8 + nmds_plot8 & theme_bw(base_size = 16)
+
+nmds8
+
+#ggsave(nmds8, file = paste0("nmds8_good_dispersion.png"), path = here::here("04_figs"), height = 8, width = 18)
 
 dst8 <- dist(com8, method = "euclidean")
 
