@@ -559,14 +559,32 @@ nmds_plot5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   theme_bw() +
   geom_point(data = centroid5, aes(color = class2), size = 4) +
-  labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2, color = class2), alpha = 0.2) +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  labs(x = "NMDS1", y = "NMDS2", color = "Class (Homerange/PLD)") +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
+  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), alpha = 0.15, show.legend = FALSE) +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
 
 nmds_plot5
 
-#ggsave(nmds_plot5, file = paste0("nmds5.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
+nmds_arrows5 <- ggplot(filled_scores5, aes(x = NMDS1, y = NMDS2)) +
+  geom_point(alpha = 0) +
+  theme_bw() +
+  labs(x = "NMDS1", y = "NMDS2") +
+  theme(legend.position = "none") +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  geom_point(aes(x = 0, y = 0), size = 160, shape = 1, color = "grey")
+
+nmds_arrows5
+
+nmds5 <- nmds_arrows5 + nmds_plot5 & theme_bw(base_size = 16)
+
+nmds5
+
+#ggsave(nmds5, file = paste0("nmds5.png"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
 
 dst5 <- dist(com5, method = "euclidean")
 
@@ -624,14 +642,32 @@ nmds_plot6 <- ggplot(filled_scores6, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   theme_bw() +
   geom_point(data = centroid6, aes(color = class2), size = 4) +
-  labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2, color = class2), alpha = 0.2) +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  labs(x = "NMDS1", y = "NMDS2", color = "Class (Homerange/PLD)") +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
+  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), alpha = 0.15, show.legend = FALSE) +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
 
 nmds_plot6
 
-#ggsave(nmds_plot6, file = paste0("nmds6.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
+nmds_arrows6 <- ggplot(filled_scores6, aes(x = NMDS1, y = NMDS2)) +
+  geom_point(alpha = 0) +
+  theme_bw() +
+  labs(x = "NMDS1", y = "NMDS2") +
+  theme(legend.position = "none") +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  geom_point(aes(x = 0, y = 0), size = 160, shape = 1, color = "grey")
+
+nmds_arrows6
+
+nmds6 <- nmds_arrows6 + nmds_plot6 & theme_bw(base_size = 16)
+
+nmds6
+
+#ggsave(nmds6, file = paste0("nmds6.png"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
 
 dst6 <- dist(com6, method = "euclidean")
 
@@ -687,14 +723,32 @@ nmds_plot3 <- ggplot(filled_scores3, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   theme_bw() +
   geom_point(data = centroid3, aes(color = class2), size = 4) +
-  labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2, color = class2), alpha = 0.2) +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  labs(x = "NMDS1", y = "NMDS2", color = "Class (Homerange/PLD)") +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
+  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), alpha = 0.15, show.legend = FALSE) +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
 
 nmds_plot3
 
-#ggsave(nmds_plot3, file = paste0("nmds3.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
+nmds_arrows3 <- ggplot(filled_scores3, aes(x = NMDS1, y = NMDS2)) +
+  geom_point(alpha = 0) +
+  theme_bw() +
+  labs(x = "NMDS1", y = "NMDS2") +
+  theme(legend.position = "none") +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  geom_point(aes(x = 0, y = 0), size = 160, shape = 1, color = "grey")
+
+nmds_arrows3
+
+nmds3 <- nmds_arrows3 + nmds_plot3 & theme_bw(base_size = 16)
+
+nmds3
+
+#ggsave(nmds3, file = paste0("nmds3.png"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
 
 dst3 <- dist(com3, method = "euclidean")
 
@@ -749,14 +803,33 @@ nmds_plot7 <- ggplot(filled_scores7, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2)) +
   theme_bw() +
   geom_point(data = centroid7, aes(color = class2), size = 4) +
-  labs(x = "NMDS1", y = "NMDS2") +
-  stat_ellipse(geom = "polygon", aes(fill = class2, color = class2), alpha = 0.2) +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25)
+  labs(x = "NMDS1", y = "NMDS2", color = "Class (Homerange/PLD)") +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
+  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), alpha = 0.15, show.legend = FALSE) +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
 
 nmds_plot7
 
-#ggsave(nmds_plot7, file = paste0("nmds7.png"), path = here::here("04_figs", "nmds"), height = 12, width = 12)
+
+nmds_arrows7 <- ggplot(filled_scores7, aes(x = NMDS1, y = NMDS2)) +
+  geom_point(alpha = 0) +
+  theme_bw() +
+  labs(x = "NMDS1", y = "NMDS2") +
+  theme(legend.position = "none") +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
+  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") + 
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  geom_point(aes(x = 0, y = 0), size = 160, shape = 1, color = "grey")
+
+nmds_arrows7
+
+nmds7 <- nmds_arrows7 + nmds_plot7 & theme_bw(base_size = 16)
+
+nmds7
+
+#ggsave(nmds7, file = paste0("nmds_dispersion.png"), path = here::here("04_figs"), height = 8, width = 18)
 
 dst7 <- dist(com7, method = "euclidean")
 
