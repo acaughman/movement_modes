@@ -77,7 +77,7 @@ gmm_panel <- (dist_plot | p1) / gmm_new_fig +
   plot_annotation(tag_levels = 'A')
 
 gmm_panel
-#ggsave(gmm_panel, file = paste0("gmm_panel.png"), path = here::here("04_figs"), height = 10, width = 15)
+#ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs"), height = 10, width = 15)
 
 ```
 
@@ -154,7 +154,7 @@ tll_panel <- (temp_plot / length_plot / long_plot) +
   theme_bw(base_size = 16) & theme(legend.position = "none")
 
 tll_panel
-#ggsave(tll_panel, file = paste0("tll_panel.png"), path = here::here("04_figs"), height = 12, width = 6)
+#ggsave(tll_panel, file = paste0("tll_panel.pdf"), path = here::here("04_figs"), height = 12, width = 6)
 
 ```
 

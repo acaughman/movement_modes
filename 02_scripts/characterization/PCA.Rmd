@@ -79,7 +79,7 @@ plot1 <- (p1 | f1_fig) +
   
 plot1
 
-#ggsave(plot1, file = paste0("f1.png"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
+#ggsave(plot1, file = paste0("f1.pdf"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
 
 ```
 
@@ -125,7 +125,8 @@ plot4 <- (p4 | f4_fig) +
 
 plot4
 
-#ggsave(plot4, file = paste0("f4.png"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
+#ggsave(plot4, file = paste0("f4.pdf"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
+
 ```
 
 
@@ -169,7 +170,7 @@ plot5 <- (p5 | f5_fig) +
   
 plot5
 
-#ggsave(plot5, file = paste0("f5.png"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 16)
+#ggsave(plot5, file = paste0("f5.pdf"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 16)
 
 ```
 
@@ -214,7 +215,7 @@ plot6 <- (p6 | f6_fig) +
   
 plot6
 
-#ggsave(plot6, file = paste0("f6.png"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
+#ggsave(plot6, file = paste0("f6.pdf"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
 
 ```
 
@@ -259,7 +260,7 @@ plot8 <- (p8 | f8_fig) +
   
 plot8
 
-#ggsave(plot8, file = paste0("f8.png"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
+#ggsave(plot8, file = paste0("f8.pdf"), path = here::here("04_figs", "famd_with_arrows"), height = 8, width = 18)
 
 ```
 
@@ -342,7 +343,7 @@ nmds1 <- nmds_arrows1 + nmds_plot1 & theme_bw(base_size = 16)
 
 nmds1
 
-#ggsave(nmds1, file = paste0("nmds1.png"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
+#ggsave(nmds1, file = paste0("nmds1.pdf"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
 
 
 dst <- dist(com, method = "euclidean")
@@ -426,7 +427,7 @@ nmds2 <- nmds_arrows2 + nmds_plot2 & theme_bw(base_size = 16)
 
 nmds2
 
-#ggsave(nmds2, file = paste0("nmds2.png"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
+#ggsave(nmds2, file = paste0("nmds2.pdf"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
 
 
 dst2 <- dist(com2, method = "euclidean")
@@ -506,7 +507,7 @@ nmds4 <- nmds_arrows4 + nmds_plot4 & theme_bw(base_size = 16)
 
 nmds4
 
-#ggsave(nmds4, file = paste0("nmds4.png"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
+#ggsave(nmds4, file = paste0("nmds4.pdf"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
 
 
 
@@ -515,7 +516,7 @@ famd_nmds_sig <- plot4 / nmds4 +
 
 famd_nmds_sig
 
-#ggsave(famd_nmds_sig, file = paste0("nmds_famd_sig.png"), path = here::here("04_figs"), height = 16, width = 18)
+#ggsave(famd_nmds_sig, file = paste0("sig_nmds_famd.pdf"), path = here::here("04_figs"), height = 16, width = 18)
 
 
 
@@ -844,7 +845,8 @@ nmds7 <- nmds_arrows7 + nmds_plot7 & theme_bw(base_size = 16)
 
 nmds7
 
-#ggsave(nmds7, file = paste0("nmds_dispersion.png"), path = here::here("04_figs"), height = 8, width = 18)
+#ggsave(nmds7, file = paste0("nmds7.pdf"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
+
 
 dst7 <- dist(com7, method = "euclidean")
 
