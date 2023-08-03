@@ -82,6 +82,36 @@ gmm_panel
 ```
 
 
+### Missing data figure
+
+```{r}
+
+missing <- miss_var_summary(filled_data2)
+
+missing_data <- filled_data2 %>%
+  dplyr::select(
+    oxygen_cons, temp_range, dev_place,
+    longevity_wild, temp_preferred, iucn_category
+  ) %>% 
+  rename("Oxygen Consumption Rate" = oxygen_cons,
+         "Temperature Range" = temp_range,
+         "Place of Development" = dev_place,
+         "Maximum Recorded Lifespan" = longevity_wild,
+         "Optimal Temperature" = temp_preferred,
+         "IUCN Category" = iucn_category)
+
+missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
+  theme_bw(base_size = 16) +
+  labs(y = "Number of Species Missing Data", x = "Variable") +
+  theme(axis.title.x = element_text(vjust = -1))
+
+missing_fig
+
+#ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 5, width = 10)
+
+```
+
+
 ### Individual Plots
 
 ```{r}

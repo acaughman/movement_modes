@@ -57,25 +57,6 @@ filled_data2 <- filled_data2 %>%
 
 ```
 
-### New missing fig
-
-```{r}
-
-missing <- miss_var_summary(filled_data2)
-
-missing_data <- filled_data2 %>%
-  dplyr::select(
-    oxygen_cons, temp_range, basin, dev_place,
-    longevity_wild, temp_preferred, iucn_category
-  )
-
-missing_filled_fig3 <- gg_miss_var(missing_data) + # figure showing the missing data
-  theme_bw()
-missing_filled_fig3
-
-ggsave(missing_filled_fig3, file = paste0("missing_filled_fig3.png"), path = here::here("04_figs", "missing_data"))
-
-```
 
 ```{r}
 
