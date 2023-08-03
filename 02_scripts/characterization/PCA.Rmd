@@ -484,7 +484,7 @@ nmds4
 
 
 
-famd_nmds_sig <- nmds4 / plot4 + 
+famd_nmds_sig <- plot4 / nmds4 + 
   plot_annotation(tag_levels = 'A')
 
 famd_nmds_sig
