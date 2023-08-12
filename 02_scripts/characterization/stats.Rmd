@@ -27,6 +27,31 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
   mutate_if(is.character, as.factor)
 ```
 
+```{r}
+lm1 = lm(home_range ~ length*diet_troph3*longevity_wild*temp_preferred, data = filled_data2)
+lm2 = lm(pld ~ length*diet_troph3*longevity_wild*temp_preferred, data = filled_data2)
+stepAIC(lm1)
+stepAIC(lm2)
+
+lm1.1 = lm(home_range ~ length + diet_troph3 + longevity_wild + 
+    temp_preferred + length:diet_troph3 + length:longevity_wild + 
+    length:temp_preferred + diet_troph3:temp_preferred + longevity_wild:temp_preferred + 
+    length:diet_troph3:temp_preferred + length:longevity_wild:temp_preferred, data = filled_data2)
+lm2.1 = lm(pld ~ length + diet_troph3 + longevity_wild + temp_preferred + 
+    length:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred + 
+    longevity_wild:temp_preferred + length:longevity_wild:temp_preferred, data = filled_data2)
+
+summary(lm1.1)
+anova(lm1.1)
+
+summary(lm2.1)
+anova(lm2.1)
+
+plot_model(lm1.1, type = "int")
+plot_model(lm2.1, type = "int")
+```
+
+
 ### Variable Inflation Factors (VIF): none above 5
 
 ```{r}
