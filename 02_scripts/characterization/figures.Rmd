@@ -14,6 +14,7 @@ library(tidyverse)
 library(patchwork)
 library(cowplot)
 library(ggpubr)
+library(ggrepel)
 
 ```
 
@@ -56,7 +57,22 @@ p1 <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
 
 p1
 
+
+
 # gmm plot
+
+
+example_fish <- filled_data2 %>% 
+  select(species, fb_name, class2, class3, magnitude_homerange, month_pld) %>% 
+  filter(fb_name %in% c(
+    "Hogfish", "Yellow snapper", "Blackfin tuna", "Humphead wrasse", "Pacific red snapper", 
+    "Giant seabass", "Lemon sole", "Chum salmon", "Pacific ocean perch", "Atlantic herring", 
+    "Atlantic cod", "Haddock", "Atlantic salmon", "California sheephead", "Black seabream", 
+    "Blue marlin", "Yellowfin tuna", "Swordfish"
+    #"Blackhead seabream", "Pink salmon", "Coho salmon", "Ghost shark", "Pollack", "Polar cod", "Sockeye salmon", "Chinook salmon"
+    ))
+
+
 gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   geom_jitter(aes(color = class2)) +
   theme_bw(base_size = 16) +
@@ -66,7 +82,44 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
     color = "Class (Homerange/PLD)"
   ) +
   theme(legend.position = "bottom") +
-  scale_color_viridis_d()
+  scale_color_viridis_d() +
+  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Hogfish", "Yellow snapper", "Blackfin tuna")),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            vjust = "outward", hjust = "outward",
+                            min.segment.length = 0,
+                            nudge_y = -0.5,
+                            show.legend = FALSE) +
+  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Humphead wrasse", "Pacific red snapper", "Giant seabass")),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            #vjust = "outward", hjust = "outward",
+                            min.segment.length = 0,
+                            box.padding = 0.7,
+                            nudge_x = -2, 
+                            show.legend = FALSE) +
+  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "Chum salmon", "Pacific ocean perch")),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            vjust = "outward", hjust = "outward",
+                            min.segment.length = 0,
+                            nudge_x = 0, nudge_y = 0.8,
+                            show.legend = FALSE) +
+  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod", "Haddock")),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            vjust = "outward", hjust = "outward",
+                            min.segment.length = 0,
+                            nudge_y = 0, 
+                            show.legend = FALSE) +
+  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic salmon", "California sheephead", "Black seabream")),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            vjust = "outward", hjust = "outward",
+                            min.segment.length = 0,
+                            nudge_y = 1, nudge_x = 1.5, 
+                            show.legend = FALSE) +
+  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Blue marlin", "Yellowfin tuna", "Swordfish")),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            vjust = "outward", hjust = "outward",
+                            min.segment.length = 0,
+                            nudge_x = 0, 
+                            show.legend = FALSE)
 
 gmm_new_fig
 #ggsave(gmm_new_fig, file = paste0("gmm_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
@@ -148,7 +201,7 @@ box_data <- function(x, y) {
 
 ```{r}
 temp_plot <- box_data(x = "temp_preferred", y = "class2") +
-  labs(y = "Preferred Temperature", x = "")
+  labs(y = "Optimal Temperature", x = "")
 fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 1000000, label.x = 5.5, position = "jitter") +
   labs(y = "Mean Fecundity", x = "Movement Class")
 long_plot <- box_data(x = "longevity_wild", y = "class2") +
@@ -187,6 +240,7 @@ tll_panel
 #ggsave(tll_panel, file = paste0("tll_panel.pdf"), path = here::here("04_figs"), height = 12, width = 6)
 
 ```
+
 
 ```{r}
 
