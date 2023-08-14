@@ -74,7 +74,6 @@ example_fish <- filled_data2 %>%
 
 
 gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
-  geom_jitter(aes(color = class2)) +
   theme_bw(base_size = 16) +
   labs(
     x = "Predicted Home Range Magnitude",
@@ -84,42 +83,43 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d() +
   geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Hogfish", "Yellow snapper", "Blackfin tuna")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
                             vjust = "outward", hjust = "outward",
                             min.segment.length = 0,
                             nudge_y = -0.5,
                             show.legend = FALSE) +
   geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Humphead wrasse", "Pacific red snapper", "Giant seabass")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
                             #vjust = "outward", hjust = "outward",
                             min.segment.length = 0,
                             box.padding = 0.7,
                             nudge_x = -2, 
                             show.legend = FALSE) +
   geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "Chum salmon", "Pacific ocean perch")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
                             vjust = "outward", hjust = "outward",
                             min.segment.length = 0,
                             nudge_x = 0, nudge_y = 0.8,
                             show.legend = FALSE) +
   geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod", "Haddock")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
                             vjust = "outward", hjust = "outward",
                             min.segment.length = 0,
                             nudge_y = 0, 
                             show.legend = FALSE) +
   geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic salmon", "California sheephead", "Black seabream")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
                             vjust = "outward", hjust = "outward",
                             min.segment.length = 0,
                             nudge_y = 1, nudge_x = 1.5, 
                             show.legend = FALSE) +
   geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Blue marlin", "Yellowfin tuna", "Swordfish")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2, fontface = "bold"),
+                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
                             vjust = "outward", hjust = "outward",
                             min.segment.length = 0,
-                            nudge_x = 0, 
-                            show.legend = FALSE)
+                            nudge_x = 0,
+                            show.legend = FALSE) +
+    geom_jitter(aes(color = class2))
 
 gmm_new_fig
 #ggsave(gmm_new_fig, file = paste0("gmm_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
