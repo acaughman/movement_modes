@@ -17,6 +17,8 @@ library(effectsize)
 library(rstatix)
 library(FSA)
 library(chisq.posthoc.test)
+library(MASS)
+library(sjPlot)
 
 ```
 
@@ -26,6 +28,7 @@ library(chisq.posthoc.test)
 filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
   mutate_if(is.character, as.factor)
 ```
+
 
 ```{r}
 lm1 = lm(home_range ~ length*diet_troph3*longevity_wild*temp_preferred, data = filled_data2)
@@ -52,7 +55,7 @@ plot_model(lm2.1, type = "int")
 ```
 
 
-### Variable Inflation Factors (VIF): none above 5
+### Variable Inflation Factors (VIF)
 
 ```{r}
 model <- lm(
