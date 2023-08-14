@@ -57,6 +57,18 @@ filled_data2 <- filled_data2 %>%
 
 ```
 
+# Add common names
+
+```{r}
+
+names <- species(fields = c("SpecCode", "FBname")) %>% 
+  filter(SpecCode %in% filled_data2$spec_code) %>% 
+  rename(fb_name = FBname, spec_code = SpecCode)
+
+filled_data2 <- left_join(filled_data2, names)
+
+```
+
 
 ```{r}
 
