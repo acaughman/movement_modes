@@ -19,6 +19,8 @@ library(FSA)
 library(chisq.posthoc.test)
 library(MASS)
 library(sjPlot)
+library(marginaleffects)
+library(patchwork)
 
 ```
 
@@ -31,27 +33,87 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
 
 
 ```{r}
-lm1 = lm(home_range ~ length*diet_troph3*longevity_wild*temp_preferred, data = filled_data2)
+lm1 = lm(log(home_range) ~ length*diet_troph3*longevity_wild*temp_preferred, data = filled_data2)
 lm2 = lm(pld ~ length*diet_troph3*longevity_wild*temp_preferred, data = filled_data2)
 stepAIC(lm1)
 stepAIC(lm2)
 
-lm1.1 = lm(home_range ~ length + diet_troph3 + longevity_wild + 
+lm1.1 = lm(log(home_range) ~ length + diet_troph3 + longevity_wild + 
     temp_preferred + length:diet_troph3 + length:longevity_wild + 
-    length:temp_preferred + diet_troph3:temp_preferred + longevity_wild:temp_preferred + 
+    diet_troph3:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred + 
+    longevity_wild:temp_preferred + length:diet_troph3:longevity_wild + 
     length:diet_troph3:temp_preferred + length:longevity_wild:temp_preferred, data = filled_data2)
 lm2.1 = lm(pld ~ length + diet_troph3 + longevity_wild + temp_preferred + 
     length:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred + 
-    longevity_wild:temp_preferred + length:longevity_wild:temp_preferred, data = filled_data2)
+    longevity_wild:temp_preferred + length:longevity_wild:temp_preferred, 
+    data = filled_data2)
+
+anova(lm1, lm1.1)
+anova(lm2, lm2.1)
 
 summary(lm1.1)
-anova(lm1.1)
+Anova(lm1.1, type='III')
 
 summary(lm2.1)
-anova(lm2.1)
+Anova(lm2.1, type='III')
 
-plot_model(lm1.1, type = "int")
-plot_model(lm2.1, type = "int")
+# plot_model(lm1.1, type = "pred")
+# plot_model(lm2.1, type = "pred")
+# 
+# median_temp = median(filled_data2$temp_preferred, na.rm=TRUE)
+# 
+# filled_data2 = filled_data2 %>% 
+#   mutate(temp_bin = case_when(
+#     temp_preferred <= median_temp ~ "-1",
+#     temp_preferred > median_temp ~ "28"
+#   )) %>% 
+#   mutate(temp_bin = as.factor(temp_bin)) %>% 
+#   filter(!is.na(temp_bin))
+
+# ggplot(filled_data2, aes(longevity_wild, pld, color = temp_bin)) +
+#   geom_smooth(method = "lm") +
+#   scale_color_viridis_d()
+
+p1 = plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferred", "diet_troph3"), comparison = "difference") + 
+  labs(x = "Length",
+       y = "Home Range Difference with Optimal Temperature",
+       color = "Trophic Level",
+       fill = "Trophic Level") +
+  theme_bw() +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
+
+p2 = plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferred", "longevity_wild")) + 
+  labs(x = "Length",
+       y = "Home Range Difference with Optimal Temperature",
+       color = "Longevity",
+       fill = "Longevity") +
+  theme_bw() +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
+
+p3 = plot_comparisons(lm1.1, variables = "length", condition = c("longevity_wild", "diet_troph3"), comparison = "difference") + 
+  labs(x = "Length",
+       y = "Home Range Difference with Longevity",
+       color = "Trophic Level",
+       fill = "Trophic Level") +
+  theme_bw() +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
+
+p4 = plot_comparisons(lm2.1, variables = "length", condition = c("temp_preferred", "longevity_wild")) + 
+  labs(x = "Length",
+       y = "PLD Difference with Optimal Temperature",
+       color = "Longevity",
+       fill = "Longevity") +
+  theme_bw() +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d()
+
+interact_plot = (p2 + p4) / (p1 + p3) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
+interact_plot
+
+ggsave(interact_plot, file = paste0("interact_plot.pdf"), path = here::here("04_figs"), height = 8, width = 10)
 ```
 
 
