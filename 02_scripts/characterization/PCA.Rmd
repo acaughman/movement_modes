@@ -19,6 +19,7 @@ library(patchwork)
 library(cowplot)
 library(ggpubr)
 library(naniar)
+library(pairwiseAdonis)
 
 ```
 
@@ -511,13 +512,13 @@ permutest(bd4, pairwise = TRUE, permutations = 9999)
 com_data7 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, length, longevity_wild, diet_troph3,
-    species, order, class2
+    species, order, class2, class
   ) %>%
   mutate(temp_preferred = temp_preferred + 2) %>%
   na.omit()
 
 com7 <- com_data7 %>%
-  dplyr::select(-species, -order, -class2)
+  dplyr::select(-species, -order, -class2, -class)
 
 m_com7 <- as.matrix(com7)
 
@@ -586,6 +587,9 @@ bd7 <- betadisper(dst7, com_data7$class2)
 anova(bd7)
 
 permutest(bd7, pairwise = TRUE, permutations = 9999)
+
+adonis2(com_data7$class ~ m_com7, permutations = 9999)
+pairwise.adonis(m_com7, com_data7$class2, perm = 9999)
 
 ```
 
