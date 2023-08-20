@@ -21,7 +21,6 @@ library(MASS)
 library(sjPlot)
 library(marginaleffects)
 library(patchwork)
-
 ```
 
 ### Load data
@@ -33,84 +32,94 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
 
 
 ```{r}
-lm1 = lm(log(home_range) ~ length*diet_troph3*longevity_wild*temp_preferred, data = filled_data2)
-lm2 = lm(pld ~ length*diet_troph3*longevity_wild*temp_preferred, data = filled_data2)
+lm1 <- lm(log(home_range) ~ length * diet_troph3 * longevity_wild * temp_preferred, data = filled_data2)
+lm2 <- lm(pld ~ length * diet_troph3 * longevity_wild * temp_preferred, data = filled_data2)
 stepAIC(lm1)
 stepAIC(lm2)
 
-lm1.1 = lm(log(home_range) ~ length + diet_troph3 + longevity_wild + 
-    temp_preferred + length:diet_troph3 + length:longevity_wild + 
-    diet_troph3:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred + 
-    longevity_wild:temp_preferred + length:diet_troph3:longevity_wild + 
-    length:diet_troph3:temp_preferred + length:longevity_wild:temp_preferred, data = filled_data2)
-lm2.1 = lm(pld ~ length + diet_troph3 + longevity_wild + temp_preferred + 
-    length:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred + 
-    longevity_wild:temp_preferred + length:longevity_wild:temp_preferred, 
-    data = filled_data2)
+lm1.1 <- lm(log(home_range) ~ length + diet_troph3 + longevity_wild +
+  temp_preferred + length:diet_troph3 + length:longevity_wild +
+  diet_troph3:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred +
+  longevity_wild:temp_preferred + length:diet_troph3:longevity_wild +
+  length:diet_troph3:temp_preferred + length:longevity_wild:temp_preferred, data = filled_data2)
+lm2.1 <- lm(
+  pld ~ length + diet_troph3 + longevity_wild + temp_preferred +
+    length:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred +
+    longevity_wild:temp_preferred + length:longevity_wild:temp_preferred,
+  data = filled_data2
+)
 
 anova(lm1, lm1.1)
 anova(lm2, lm2.1)
 
 summary(lm1.1)
-Anova(lm1.1, type='III')
+Anova(lm1.1, type = "III")
 
 summary(lm2.1)
-Anova(lm2.1, type='III')
+Anova(lm2.1, type = "III")
 
 # plot_model(lm1.1, type = "pred")
 # plot_model(lm2.1, type = "pred")
-# 
+#
 # median_temp = median(filled_data2$temp_preferred, na.rm=TRUE)
-# 
-# filled_data2 = filled_data2 %>% 
+#
+# filled_data2 = filled_data2 %>%
 #   mutate(temp_bin = case_when(
 #     temp_preferred <= median_temp ~ "-1",
 #     temp_preferred > median_temp ~ "28"
-#   )) %>% 
-#   mutate(temp_bin = as.factor(temp_bin)) %>% 
+#   )) %>%
+#   mutate(temp_bin = as.factor(temp_bin)) %>%
 #   filter(!is.na(temp_bin))
 
 # ggplot(filled_data2, aes(longevity_wild, pld, color = temp_bin)) +
 #   geom_smooth(method = "lm") +
 #   scale_color_viridis_d()
 
-p1 = plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferred", "diet_troph3"), comparison = "difference") + 
-  labs(x = "Length",
-       y = "Home Range Difference with Optimal Temperature",
-       color = "Trophic Level",
-       fill = "Trophic Level") +
+p1 <- plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferred", "diet_troph3"), comparison = "difference") +
+  labs(
+    x = "Length",
+    y = "Home Range Difference with Optimal Temperature",
+    color = "Trophic Level",
+    fill = "Trophic Level"
+  ) +
   theme_bw() +
   scale_color_viridis_d() +
   scale_fill_viridis_d()
 
-p2 = plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferred", "longevity_wild")) + 
-  labs(x = "Length",
-       y = "Home Range Difference with Optimal Temperature",
-       color = "Longevity",
-       fill = "Longevity") +
+p2 <- plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferred", "longevity_wild")) +
+  labs(
+    x = "Length",
+    y = "Home Range Difference with Optimal Temperature",
+    color = "Longevity",
+    fill = "Longevity"
+  ) +
   theme_bw() +
   scale_color_viridis_d() +
   scale_fill_viridis_d()
 
-p3 = plot_comparisons(lm1.1, variables = "length", condition = c("longevity_wild", "diet_troph3"), comparison = "difference") + 
-  labs(x = "Length",
-       y = "Home Range Difference with Longevity",
-       color = "Trophic Level",
-       fill = "Trophic Level") +
+p3 <- plot_comparisons(lm1.1, variables = "length", condition = c("longevity_wild", "diet_troph3"), comparison = "difference") +
+  labs(
+    x = "Length",
+    y = "Home Range Difference with Longevity",
+    color = "Trophic Level",
+    fill = "Trophic Level"
+  ) +
   theme_bw() +
   scale_color_viridis_d() +
   scale_fill_viridis_d()
 
-p4 = plot_comparisons(lm2.1, variables = "length", condition = c("temp_preferred", "longevity_wild")) + 
-  labs(x = "Length",
-       y = "PLD Difference with Optimal Temperature",
-       color = "Longevity",
-       fill = "Longevity") +
+p4 <- plot_comparisons(lm2.1, variables = "length", condition = c("temp_preferred", "longevity_wild")) +
+  labs(
+    x = "Length",
+    y = "PLD Difference with Optimal Temperature",
+    color = "Longevity",
+    fill = "Longevity"
+  ) +
   theme_bw() +
   scale_color_viridis_d() +
   scale_fill_viridis_d()
 
-interact_plot = (p2 + p4) / (p1 + p3) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
+interact_plot <- (p2 + p4) / (p1 + p3) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 interact_plot
 
 ggsave(interact_plot, file = paste0("interact_plot.pdf"), path = here::here("04_figs"), height = 8, width = 10)
@@ -121,8 +130,8 @@ ggsave(interact_plot, file = paste0("interact_plot.pdf"), path = here::here("04_
 
 ```{r}
 model <- lm(
-  class3 ~ temp_preferred+ fecundity_mean+ longevity_wild+
-    sp_richness+ length+ kfin+ r_fin+ diet_troph3,
+  class3 ~ temp_preferred + fecundity_mean + longevity_wild +
+    sp_richness + length + kfin + r_fin + diet_troph3,
   data = filled_data2
 )
 
@@ -147,31 +156,30 @@ abline(v = 5, lwd = 3, lty = 2)
 ### Similarity percentage
 
 ```{r}
-
 com_data <- filled_data2 %>%
   dplyr::select(
     temp_preferred, fecundity_mean, longevity_wild,
     sp_richness, length, kfin, r_fin, diet_troph3, species, family, class2
   ) %>%
-  mutate(class2 = as.factor(class2)) %>% 
+  mutate(class2 = as.factor(class2)) %>%
   filter(temp_preferred > 0) %>%
-  mutate(across(where(is.numeric),  ~ scale(.)[,1])) %>% 
+  mutate(across(where(is.numeric), ~ scale(.)[, 1])) %>%
   na.omit()
 
 com <- com_data %>%
   dplyr::select(-species, -family, -class2)
 
 # load from rda in results folder
-#set.seed(123)
-#simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
+# set.seed(123)
+# simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
 
 summary(simper_out)
 # shows which traits are primarily responsible for observed difference between classes. traits listed from highest to lowest % contribution to the difference between the two classes (cumsum shows total % contribution to the difference). p is signifigance.
 
 
 # load from rda in results folder
-#set.seed(123)
-#ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
+# set.seed(123)
+# ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
 
 summary(ano)
 
@@ -182,13 +190,12 @@ plot(ano)
 ### ANOVA/Kruskal-Wallis for Numeric/Continuous Variables
 
 ```{r}
-
 # length -------------------------------------------------------
 
 # check for outliers - there are a lot?
 outliers_length <- boxplot.stats(filled_data2$length)$out
-boxplot(filled_data2$length, main="Length", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_length, collapse=", ")), cex=0.4)
+boxplot(filled_data2$length, main = "Length", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_length, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_length <- aov(length ~ class2, data = filled_data2)
@@ -227,8 +234,8 @@ TukeyHSD(model_length_log)
 
 # look at outliers
 outliers_kfin <- boxplot.stats(filled_data2$kfin)$out
-boxplot(filled_data2$kfin, main="Carrying Capacity", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_kfin, collapse=", ")), cex=0.4)
+boxplot(filled_data2$kfin, main = "Carrying Capacity", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_kfin, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_kfin <- aov(kfin ~ class2, data = filled_data2)
@@ -264,8 +271,8 @@ dunnTest(kfin ~ class2, data = filled_data2, method = "bh")
 
 # look at outliers
 outliers_r_fin <- boxplot.stats(filled_data2$r_fin)$out
-boxplot(filled_data2$r_fin, main="Growth Rate", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_r_fin, collapse=", ")), cex=0.4)
+boxplot(filled_data2$r_fin, main = "Growth Rate", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_r_fin, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_r_fin <- aov(r_fin ~ class2, data = filled_data2)
@@ -301,8 +308,8 @@ dunnTest(r_fin ~ class2, data = filled_data2, method = "bh")
 
 # look at outliers
 outliers_diet_troph3 <- boxplot.stats(filled_data2$diet_troph3)$out
-boxplot(filled_data2$diet_troph3, main="Trophic Position", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_diet_troph3, collapse=", ")), cex=0.4)
+boxplot(filled_data2$diet_troph3, main = "Trophic Position", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_diet_troph3, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_diet_troph3 <- aov(diet_troph3 ~ class2, data = filled_data2)
@@ -338,8 +345,8 @@ dunnTest(diet_troph3 ~ class2, data = filled_data2, method = "bh")
 
 # look at outliers
 outliers_fecundity <- boxplot.stats(filled_data2$fecundity_mean)$out
-boxplot(filled_data2$fecundity_mean, main="Fecundity", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_fecundity, collapse=", ")), cex=0.4)
+boxplot(filled_data2$fecundity_mean, main = "Fecundity", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_fecundity, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_fecundity <- aov(fecundity_mean ~ class2, data = filled_data2)
@@ -369,8 +376,8 @@ kruskal.test(fecundity_mean ~ class2, data = filled_data2)
 
 # look at outliers
 outliers_sp <- boxplot.stats(filled_data2$sp_richness)$out
-boxplot(filled_data2$sp_richness, main="Species Richness by Family", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_sp, collapse=", ")), cex=0.4)
+boxplot(filled_data2$sp_richness, main = "Species Richness by Family", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_sp, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_sprich <- aov(sp_richness ~ class2, data = filled_data2)
@@ -400,14 +407,14 @@ dunnTest(sp_richness ~ class2, data = filled_data2, method = "bh")
 
 # temp_preferred -----------------------------------------------
 
-temp_data <- filled_data2 %>% 
-  filter(!is.na(temp_preferred)) %>% 
+temp_data <- filled_data2 %>%
+  filter(!is.na(temp_preferred)) %>%
   filter(temp_preferred > 0)
 
 # look at outliers
 outliers_temp <- boxplot.stats(temp_data$temp_preferred)$out
-boxplot(temp_data$temp_preferred, main="Preferred Temp", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_temp, collapse=", ")), cex=0.4)
+boxplot(temp_data$temp_preferred, main = "Preferred Temp", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_temp, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_temp <- aov(temp_preferred ~ class2, data = temp_data)
@@ -437,13 +444,13 @@ dunnTest(temp_preferred ~ class2, data = temp_data, method = "bh")
 
 # longevity_wild -----------------------------------------------
 
-longevity_data <- filled_data2 %>% 
+longevity_data <- filled_data2 %>%
   filter(!is.na(longevity_wild))
 
 # look at outliers
 outliers_long <- boxplot.stats(longevity_data$longevity_wild)$out
-boxplot(longevity_data$longevity_wild, main="Longevity in the Wild", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_long, collapse=", ")), cex=0.4)
+boxplot(longevity_data$longevity_wild, main = "Longevity in the Wild", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_long, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_long <- aov(longevity_wild ~ class2, data = longevity_data)
@@ -477,13 +484,13 @@ dunnTest(longevity_wild ~ class2, data = longevity_data, method = "bh")
 
 # temp_range ---------------------------------------------------
 
-temprange_data <- filled_data2 %>% 
+temprange_data <- filled_data2 %>%
   filter(!is.na(temp_range))
 
 # look at outliers
 outliers_trange <- boxplot.stats(temprange_data$temp_range)$out
-boxplot(temprange_data$temp_range, main="Temperature Range", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_trange, collapse=", ")), cex=0.4)
+boxplot(temprange_data$temp_range, main = "Temperature Range", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_trange, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_temprange <- aov(temp_range ~ class2, data = temprange_data)
@@ -517,13 +524,13 @@ dunnTest(temp_range ~ class2, data = temprange_data, method = "bh")
 
 # oxygen_cons --------------------------------------------------
 
-oxygen_data <- filled_data2 %>% 
+oxygen_data <- filled_data2 %>%
   filter(!is.na(oxygen_cons))
 
 # look at outliers
 outliers_ox <- boxplot.stats(oxygen_data$oxygen_cons)$out
-boxplot(oxygen_data$oxygen_cons, main="Oxygen Consumption", boxwex=0.1)
-mtext(paste("Outliers: ", paste(outliers_ox, collapse=", ")), cex=0.4)
+boxplot(oxygen_data$oxygen_cons, main = "Oxygen Consumption", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_ox, collapse = ", ")), cex = 0.4)
 
 # build the model
 model_oxcons <- aov(oxygen_cons ~ class2, data = oxygen_data)
@@ -549,9 +556,6 @@ kruskal.test(oxygen_cons ~ class2, data = oxygen_data)
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(oxygen_cons ~ class2, data = oxygen_data, method = "bh")
-
-
-
 ```
 
 
@@ -559,7 +563,6 @@ dunnTest(oxygen_cons ~ class2, data = oxygen_data, method = "bh")
 ### Chi-Squared for Categorical Variables
 
 ```{r}
-
 # demers_pelag -------------------------------------------------
 
 # Pearson's Chi-squared test
@@ -642,50 +645,36 @@ iucn_table
 
 # post-hoc test
 chisq.posthoc.test(iucn_table, method = "bonferroni")
-
-
 ```
 
 
 ### Old
 
 ```{r}
-
 # # ocean --------------------------------------------------------
-# 
+#
 # # Pearson's Chi-squared test
 # chisq.test(filled_data2$class2, filled_data2$ocean)
 # # X-squared = 361.63, df = 126, p-value < 2.2e-16
-# 
+#
 # # contingency table
 # ocean_table <- table(filled_data2$class2, filled_data2$ocean)
 # ocean_table
-# 
+#
 # # post-hoc test
 # chisq.posthoc.test(ocean_table, method = "bonferroni")
-# 
-# 
+#
+#
 # # basin --------------------------------------------------------
-# 
+#
 # # Pearson's Chi-squared test
 # chisq.test(filled_data2$class2, filled_data2$basin)
 # # X-squared = 30.172, df = 12, p-value = 0.002631
-# 
+#
 # # contingency table
 # basin_table <- table(filled_data2$class2, filled_data2$basin)
 # basin_table
-# 
+#
 # # post-hoc test
 # chisq.posthoc.test(basin_table, method = "bonferroni")
-
 ```
-
-
-
-
-
-
-
-
-
-

@@ -15,7 +15,6 @@ library(patchwork)
 library(cowplot)
 library(ggpubr)
 library(ggrepel)
-
 ```
 
 ### Load data
@@ -28,24 +27,27 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
 ### Plot Homerange vs PLD and current classes
 
 ```{r}
-
 # homerange vs PLD
 fishbase_data_gmm <- filled_data2 %>%
   mutate(class2 = as.factor(class2))
 
-hr_hist = ggplot(fishbase_data_gmm, aes(log(home_range))) +
+hr_hist <- ggplot(fishbase_data_gmm, aes(log(home_range))) +
   geom_histogram() +
   theme_bw(base_size = 16) +
-  labs(y = "Count",
-       x = "ln(Predicted Home Range)")
+  labs(
+    y = "Count",
+    x = "ln(Predicted Home Range)"
+  )
 
-pld_hist = ggplot(fishbase_data_gmm, aes(pld)) +
+pld_hist <- ggplot(fishbase_data_gmm, aes(pld)) +
   geom_histogram() +
-  theme_bw(base_size = 16)  +
-  labs(y = "Count",
-       x = "Predicted Pelagic Larval Duration")
+  theme_bw(base_size = 16) +
+  labs(
+    y = "Count",
+    x = "Predicted Pelagic Larval Duration"
+  )
 
-dist_plot = hr_hist / pld_hist
+dist_plot <- hr_hist / pld_hist
 
 p1 <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
   geom_jitter() +
@@ -62,15 +64,15 @@ p1
 # gmm plot
 
 
-example_fish <- filled_data2 %>% 
-  select(species, fb_name, class2, class3, magnitude_homerange, month_pld) %>% 
+example_fish <- filled_data2 %>%
+  select(species, fb_name, class2, class3, magnitude_homerange, month_pld) %>%
   filter(fb_name %in% c(
-    "Hogfish", "Yellow snapper", "Blackfin tuna", "Humphead wrasse", "Pacific red snapper", 
-    "Giant seabass", "Lemon sole", "Chum salmon", "Pacific ocean perch", "Atlantic herring", 
-    "Atlantic cod", "Haddock", "Atlantic salmon", "California sheephead", "Black seabream", 
+    "Hogfish", "Yellow snapper", "Blackfin tuna", "Humphead wrasse", "Pacific red snapper",
+    "Giant seabass", "Lemon sole", "Chum salmon", "Pacific ocean perch", "Atlantic herring",
+    "Atlantic cod", "Haddock", "Atlantic salmon", "California sheephead", "Black seabream",
     "Blue marlin", "Yellowfin tuna", "Swordfish"
-    #"Blackhead seabream", "Pink salmon", "Coho salmon", "Ghost shark", "Pollack", "Polar cod", "Sockeye salmon", "Chinook salmon"
-    ))
+    # "Blackhead seabream", "Pink salmon", "Coho salmon", "Ghost shark", "Pollack", "Polar cod", "Sockeye salmon", "Chinook salmon"
+  ))
 
 
 gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
@@ -82,76 +84,88 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   ) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d() +
-  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Hogfish", "Yellow snapper", "Blackfin tuna")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
-                            vjust = "outward", hjust = "outward",
-                            min.segment.length = 0,
-                            nudge_y = -0.5,
-                            show.legend = FALSE) +
-  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Humphead wrasse", "Pacific red snapper", "Giant seabass")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
-                            #vjust = "outward", hjust = "outward",
-                            min.segment.length = 0,
-                            box.padding = 0.7,
-                            nudge_x = -2, 
-                            show.legend = FALSE) +
-  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "Chum salmon", "Pacific ocean perch")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
-                            vjust = "outward", hjust = "outward",
-                            min.segment.length = 0,
-                            nudge_x = 0, nudge_y = 0.8,
-                            show.legend = FALSE) +
-  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod", "Haddock")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
-                            vjust = "outward", hjust = "outward",
-                            min.segment.length = 0,
-                            nudge_y = 0, 
-                            show.legend = FALSE) +
-  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic salmon", "California sheephead", "Black seabream")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
-                            vjust = "outward", hjust = "outward",
-                            min.segment.length = 0,
-                            nudge_y = 1, nudge_x = 1.5, 
-                            show.legend = FALSE) +
-  geom_label_repel(data = subset(fishbase_data_gmm, fb_name %in% c("Blue marlin", "Yellowfin tuna", "Swordfish")),
-                            aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
-                            vjust = "outward", hjust = "outward",
-                            min.segment.length = 0,
-                            nudge_x = 0,
-                            show.legend = FALSE) +
-    geom_jitter(aes(color = class2))
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Hogfish", "Yellow snapper", "Blackfin tuna")),
+    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 0,
+    nudge_y = -0.5,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Humphead wrasse", "Pacific red snapper", "Giant seabass")),
+    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    # vjust = "outward", hjust = "outward",
+    min.segment.length = 0,
+    box.padding = 0.7,
+    nudge_x = -2,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "Chum salmon", "Pacific ocean perch")),
+    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 0,
+    nudge_x = 0, nudge_y = 0.8,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod", "Haddock")),
+    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 0,
+    nudge_y = 0,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic salmon", "California sheephead", "Black seabream")),
+    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 0,
+    nudge_y = 1, nudge_x = 1.5,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Blue marlin", "Yellowfin tuna", "Swordfish")),
+    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 0,
+    nudge_x = 0,
+    show.legend = FALSE
+  ) +
+  geom_jitter(aes(color = class2))
 
 gmm_new_fig
-#ggsave(gmm_new_fig, file = paste0("gmm_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
+# ggsave(gmm_new_fig, file = paste0("gmm_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
 
 
 # panel
-gmm_panel <- (dist_plot | p1) / gmm_new_fig + 
-  plot_annotation(tag_levels = 'A')
+gmm_panel <- (dist_plot | p1) / gmm_new_fig +
+  plot_annotation(tag_levels = "A")
 
 gmm_panel
-#ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs"), height = 10, width = 15)
-
+# ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs"), height = 10, width = 15)
 ```
 
 
 ### Missing data figure
 
 ```{r}
-
 missing <- miss_var_summary(filled_data2)
 
 missing_data <- filled_data2 %>%
   dplyr::select(
     oxygen_cons, temp_range, dev_place,
     longevity_wild, temp_preferred, iucn_category
-  ) %>% 
-  rename("Oxygen Consumption Rate" = oxygen_cons,
-         "Temperature Range" = temp_range,
-         "Place of Development" = dev_place,
-         "Maximum Recorded Lifespan" = longevity_wild,
-         "Optimal Temperature" = temp_preferred,
-         "IUCN Category" = iucn_category)
+  ) %>%
+  rename(
+    "Oxygen Consumption Rate" = oxygen_cons,
+    "Temperature Range" = temp_range,
+    "Place of Development" = dev_place,
+    "Maximum Recorded Lifespan" = longevity_wild,
+    "Optimal Temperature" = temp_preferred,
+    "IUCN Category" = iucn_category
+  )
 
 missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
   theme_bw(base_size = 16) +
@@ -160,8 +174,7 @@ missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
 
 missing_fig
 
-#ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 5, width = 10)
-
+# ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 5, width = 10)
 ```
 
 
@@ -171,10 +184,11 @@ missing_fig
 # continuous
 
 plot_data <- filled_data2 %>%
-  mutate(class2 = as.factor(class2), 
-         class3 = as.factor(class3), 
-         order = as.factor(order)
-         )
+  mutate(
+    class2 = as.factor(class2),
+    class3 = as.factor(class3),
+    order = as.factor(order)
+  )
 
 response <- "class2"
 expl_cont <- c(
@@ -195,8 +209,8 @@ box_data <- function(x, y) {
     scale_color_viridis_d()
 }
 
-#plots_cont <- map(expl_cont, ~ box_data(.x, "class2"))
-#plots_cont
+# plots_cont <- map(expl_cont, ~ box_data(.x, "class2"))
+# plots_cont
 ```
 
 ```{r}
@@ -221,30 +235,28 @@ oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(lab
 temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 20, label.x = 3.5, position = "jitter") +
   labs(y = "Temperature Range", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 
- 
-numeric_panel <- ((temp_plot | length_plot) / 
-    (long_plot | diet_plot) /
-    (r_fin_plot | kfin_plot) / 
-    (fecund_plot | sp_rich_plot) /
-    (oxygen_plot | temp_range_plot)) + 
-  plot_layout(guides = "collect") + plot_annotation(tag_levels = 'A')
+
+numeric_panel <- ((temp_plot | length_plot) /
+  (long_plot | diet_plot) /
+  (r_fin_plot | kfin_plot) /
+  (fecund_plot | sp_rich_plot) /
+  (oxygen_plot | temp_range_plot)) +
+  plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 
 numeric_panel
-#ggsave(numeric_panel, file = paste0("numeric_panel.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 21, width = 14) 
+# ggsave(numeric_panel, file = paste0("numeric_panel.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 21, width = 14)
 
 tll_panel <- (temp_plot / length_plot / long_plot) +
   plot_layout(guides = "collect") + plot_annotation(tag_levels = "A") &
   theme_bw(base_size = 16) & theme(legend.position = "none")
 
 tll_panel
-#ggsave(tll_panel, file = paste0("tll_panel.pdf"), path = here::here("04_figs"), height = 12, width = 6)
-
+# ggsave(tll_panel, file = paste0("tll_panel.pdf"), path = here::here("04_figs"), height = 12, width = 6)
 ```
 
 
 ```{r}
-
-ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10) 
+ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
@@ -254,7 +266,6 @@ ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs",
 ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-
 ```
 
 
@@ -280,12 +291,11 @@ scatter_data <- function(x, y) {
     theme(axis.text.x = element_text(angle = 40, hjust = 1))
 }
 
-#plots_cat <- map(expl_cat, ~ scatter_data(.x, "class2"))
-#plots_cat
+# plots_cat <- map(expl_cat, ~ scatter_data(.x, "class2"))
+# plots_cat
 ```
 
 ```{r}
-
 body_plot <- scatter_data(x = "body_shape_i", y = "class2")
 dev_plot <- scatter_data(x = "dev_place", y = "class2")
 movement_plot <- scatter_data(x = "movement_keyword", y = "class2")
@@ -301,15 +311,4 @@ ggsave(movement_plot, file = paste0("movement_plot.png"), path = here::here("04_
 ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-
 ```
-
-
-
-
-
-
-
-
-
-
