@@ -178,7 +178,7 @@ missing_fishbase_data <- fishbase_data %>%
 
 m1 <- gg_miss_var(missing_fishbase_data) +
   theme_bw(base_size = 16) +
-  labs(y = "Missing Data Before Genus-Level Fill", x = "") +
+  labs(y = "Missing Data Before Fills", x = "") +
   theme(axis.title.x = element_text(vjust = -1))
 m1
 
@@ -200,7 +200,7 @@ missing_filled_data <- filled_data %>%
 
 m2 <- gg_miss_var(missing_filled_data) + # figure showing the missing data
   theme_bw(base_size = 16) +
-  labs(y = "Missing Data Before Family-Level Fill", x = "Variable") +
+  labs(y = "Missing Data After Genus-Level Fill", x = "Variable") +
   theme(axis.title.x = element_text(vjust = -1))
 m2
 
@@ -220,7 +220,7 @@ missing_data <- filled_data2 %>%
 
 m3 <- gg_miss_var(missing_data) +
   theme_bw(base_size = 16) +
-  labs(y = "Final Missing Data", x = "") +
+  labs(y = "Missing Data After Family-Level Fill", x = "") +
   theme(axis.title.x = element_text(vjust = -1))
 m3
 
@@ -229,7 +229,7 @@ missing_fig <- (m1 / m2 / m3) +
   theme_bw(base_size = 16)
 missing_fig
 
-ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 8)
+#ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 8)
 
 ```
 
