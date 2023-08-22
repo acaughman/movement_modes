@@ -108,7 +108,7 @@ KEEP EITHER 2 or 4, whichever is all significant variables
 com_data2 <- filled_data2 %>%
   dplyr::select(
     longevity_wild,
-    sp_richness, kfin, r_fin, oxygen_cons,
+    sp_richness, r_fin, oxygen_cons,
     temp_range, species, order, class2
   ) %>%
   na.omit()
@@ -472,7 +472,7 @@ pairwise.adonis(m_com7, com_data7$class2, perm = 9999)
 ```{r}
 # famd_4 <- filled_data2 %>%
 #   dplyr::select(
-#     temp_preferred, longevity_wild, sp_richness, length, kfin, r_fin, diet_troph3, temp_range, oxygen_cons, demers_pelag, class2
+#     temp_preferred, longevity_wild, sp_richness, length,  r_fin, diet_troph3, temp_range, oxygen_cons, demers_pelag, class2
 #   ) %>%
 #   mutate(class2 = as.factor(class2)) %>%
 #   na.omit()
@@ -721,7 +721,7 @@ pairwise.adonis(m_com7, com_data7$class2, perm = 9999)
 ```{r}
 # famd_6 <- filled_data2 %>%
 #   dplyr::select(
-#   temp_preferred, length, longevity_wild, diet_troph3, kfin, demers_pelag, class2
+#   temp_preferred, length, longevity_wild, diet_troph3,  demers_pelag, class2
 #   ) %>%
 #   mutate(class2 = as.factor(class2)) %>%
 #   na.omit()
@@ -993,7 +993,7 @@ pairwise.adonis(m_com7, com_data7$class2, perm = 9999)
 ```{r}
 com_data3 <- filled_data2 %>%
   dplyr::select(
-    temp_preferred, length, longevity_wild, diet_troph3, kfin,
+    temp_preferred, length, longevity_wild, diet_troph3, 
     species, order, class2
   ) %>%
   mutate(temp_preferred = temp_preferred + 2) %>%
@@ -1074,7 +1074,7 @@ permutest(bd3, pairwise = TRUE, permutations = 9999)
 
 com_data5 <- filled_data2 %>%
   dplyr::select(
-    longevity_wild, sp_richness, length, kfin, r_fin, oxygen_cons,
+    longevity_wild, sp_richness, length,  r_fin, oxygen_cons,
     species, order, class2
   ) %>%
   na.omit()
@@ -1153,7 +1153,7 @@ permutest(bd5, pairwise = TRUE, permutations = 9999)
 ```{r}
 com_data6 <- filled_data2 %>%
   dplyr::select(
-    longevity_wild, kfin, oxygen_cons,
+    longevity_wild,  oxygen_cons,
     species, order, class2
   ) %>%
   na.omit()
@@ -1609,7 +1609,7 @@ permutest(bd6, pairwise = TRUE, permutations = 9999)
 ```{r}
 # com_data14 <- filled_data2 %>%
 #   dplyr::select(
-#     temp_preferred, r_fin, diet_troph3, sp_richness, kfin, temp_range,
+#     temp_preferred, r_fin, diet_troph3, sp_richness,  temp_range,
 #     species, order, class2
 #   ) %>%
 #   mutate(temp_preferred = temp_preferred + 2) %>%
@@ -2241,7 +2241,7 @@ Most of this can probably go in old now and then doing overall NMDS and FAMD the
 #
 # fishbase_f2 <- fishbase_data %>%
 #    dplyr::select(r_fin, env_temp, temp_preferred, demers_pelag,
-#           body_shape_i, fecundity_mean, longevity_wild, movement_keyword, length, class2, kfin, diet_troph3, food_i) %>%
+#           body_shape_i, fecundity_mean, longevity_wild, movement_keyword, length, class2,  diet_troph3, food_i) %>%
 #    mutate(class2 = as.factor(class2),
 #           env_temp = as.factor(env_temp),
 #           demers_pelag = as.factor(demers_pelag),
@@ -2295,7 +2295,7 @@ Most of this can probably go in old now and then doing overall NMDS and FAMD the
 ```{r}
 # fishbase_pca1 <- fishbase_data %>%
 #   dplyr::select(where(is.numeric)) %>%
-#   dplyr::select(r_fin, kfin, length, diet_troph3, class) %>%
+#   dplyr::select(r_fin,  length, diet_troph3, class) %>%
 #   mutate(class = as.factor(class))
 #
 # # this will only work if all variables are numeric
@@ -2351,7 +2351,7 @@ Most of this can probably go in old now and then doing overall NMDS and FAMD the
 #
 # fishbase_pca3 <- fishbase_data %>%
 #   dplyr::select(where(is.numeric)) %>%
-#   dplyr::select(kfin, length, diet_troph3, class) %>%
+#   dplyr::select( length, diet_troph3, class) %>%
 #   mutate(class = as.factor(class))
 #
 # pca3 <- PCA(fishbase_pca3[,1:3], graph = FALSE) # runs the PCA on the first 4 columns (not class)
@@ -2399,7 +2399,7 @@ Most of this can probably go in old now and then doing overall NMDS and FAMD the
 ```{r}
 #
 # fishbase_famd1 <- fishbase_data %>%
-#   dplyr::select(r_fin, kfin, length, diet_troph3, movement_keyword, food_i, class) %>%
+#   dplyr::select(r_fin,  length, diet_troph3, movement_keyword, food_i, class) %>%
 #   mutate(class = as.factor(class), movement_keyword = as.factor(movement_keyword), food_i = as.factor(food_i)) %>%
 #   na.omit(fishbase_famd1)
 #
@@ -2443,7 +2443,7 @@ Most of this can probably go in old now and then doing overall NMDS and FAMD the
 ```{r}
 #
 # fishbase_famd3 <- fishbase_data %>%
-#   dplyr::select(r_fin, kfin, diet_troph3, iucn_category, class) %>%
+#   dplyr::select(r_fin,  diet_troph3, iucn_category, class) %>%
 #   mutate(class = as.factor(class), iucn_category = as.factor(iucn_category)) %>%
 #   na.omit(fishbase_famd3)
 #
@@ -2538,7 +2538,7 @@ Most of this can probably go in old now and then doing overall NMDS and FAMD the
 ```{r}
 #
 # fishbase_famd5 <- fishbase_data %>%
-#   dplyr::select(r_fin, kfin, length, diet_troph3, movement_keyword, demers_pelag, food_i, class) %>%
+#   dplyr::select(r_fin,  length, diet_troph3, movement_keyword, demers_pelag, food_i, class) %>%
 #   mutate(class = as.factor(class),
 #          movement_keyword = as.factor(movement_keyword),
 #          food_i = as.factor(food_i),
@@ -2565,7 +2565,7 @@ Most of this can probably go in old now and then doing overall NMDS and FAMD the
 ```{r}
 #
 # fishbase_famd5 <- fishbase_data %>%
-#   dplyr::select(r_fin, kfin, length, diet_troph3, food_i, movement_keyword, iucn_category, demers_pelag, class) %>%
+#   dplyr::select(r_fin,  length, diet_troph3, food_i, movement_keyword, iucn_category, demers_pelag, class) %>%
 #   mutate(class = as.factor(class),
 #          demers_pelag = as.factor(demers_pelag),
 #          iucn_category = as.factor(iucn_category),
