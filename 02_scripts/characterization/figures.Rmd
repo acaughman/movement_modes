@@ -20,6 +20,10 @@ library(ggrepel)
 ### Load data
 
 ```{r}
+fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+
+filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv"))
+
 filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
   mutate_if(is.character, as.factor)
 ```
@@ -151,7 +155,54 @@ gmm_panel
 ### Missing data figure
 
 ```{r}
-missing <- miss_var_summary(filled_data2)
+missing <- miss_var_summary(fishbase_data)
+missing2 <- miss_var_summary(filled_data)
+missing3 <- miss_var_summary(filled_data2)
+
+missing_fishbase_data <- fishbase_data %>% 
+  dplyr::select(
+    oxygen_cons, temp_range, dev_place, temp_min, temp_max,
+    longevity_wild, temp_preferred, iucn_category, food_i,
+  ) %>%
+  rename(
+    "Oxygen Consumption Rate" = oxygen_cons,
+    "Temperature Range" = temp_range,
+    "Place of Development" = dev_place,
+    "Maximum Recorded Lifespan" = longevity_wild,
+    "Optimal Temperature" = temp_preferred,
+    "IUCN Category" = iucn_category,
+    "Diet Items" = food_i,
+    "Minimum Temperature" = temp_min,
+    "Maximum Temperature" = temp_max,
+  )
+
+m1 <- gg_miss_var(missing_fishbase_data) +
+  theme_bw(base_size = 16) +
+  labs(y = "Missing Data Before Genus-Level Fill", x = "") +
+  theme(axis.title.x = element_text(vjust = -1))
+m1
+
+missing_filled_data <- filled_data %>% 
+  dplyr::select(
+    oxygen_cons, temp_range, temp_min, temp_max,
+    longevity_wild, temp_preferred, iucn_category, food_i,
+  ) %>%
+  rename(
+    "Oxygen Consumption Rate" = oxygen_cons,
+    "Temperature Range" = temp_range,
+    "Maximum Recorded Lifespan" = longevity_wild,
+    "Optimal Temperature" = temp_preferred,
+    "IUCN Category" = iucn_category,
+    "Diet Items" = food_i,
+    "Minimum Temperature" = temp_min,
+    "Maximum Temperature" = temp_max,
+  )
+
+m2 <- gg_miss_var(missing_filled_data) + # figure showing the missing data
+  theme_bw(base_size = 16) +
+  labs(y = "Missing Data Before Family-Level Fill", x = "Variable") +
+  theme(axis.title.x = element_text(vjust = -1))
+m2
 
 missing_data <- filled_data2 %>%
   dplyr::select(
@@ -167,14 +218,19 @@ missing_data <- filled_data2 %>%
     "IUCN Category" = iucn_category
   )
 
-missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
+m3 <- gg_miss_var(missing_data) +
   theme_bw(base_size = 16) +
-  labs(y = "Number of Species Missing Data", x = "Variable") +
+  labs(y = "Final Missing Data", x = "") +
   theme(axis.title.x = element_text(vjust = -1))
+m3
 
+missing_fig <- (m1 / m2 / m3) +
+  plot_annotation(tag_levels = "A") &
+  theme_bw(base_size = 16)
 missing_fig
 
-# ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 5, width = 10)
+ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 8)
+
 ```
 
 
@@ -214,26 +270,40 @@ box_data <- function(x, y) {
 ```
 
 ```{r}
+
+# significant panel
 temp_plot <- box_data(x = "temp_preferred", y = "class2") +
-  labs(y = "Optimal Temperature", x = "")
-fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 1000000, label.x = 5.5, position = "jitter") +
-  labs(y = "Mean Fecundity", x = "Movement Class")
-long_plot <- box_data(x = "longevity_wild", y = "class2") +
-  labs(y = "Longevity", x = "")
-sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 1100, position = "jitter") +
-  labs(y = "Species Richness", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+  labs(y = "Optimal Temperature", x = "") +
+  scale_x_discrete(position = "top") +
+  theme(axis.text.y = element_blank())
 length_plot <- box_data(x = "length", y = "class2") +
-  labs(y = "Length", x = "Movement Class") #+ theme(axis.title.y = element_blank(), axis.text.y = element_blank())
-kfin_plot <- box_data(x = "kfin", y = "class2") + stat_kruskal_test(label.y = 10000000, position = "jitter") +
-  labs(y = "Carrying Capacity", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+  labs(y = "Length", x = "") +
+  scale_x_discrete(position = "top") +
+  theme(axis.text.y = element_blank())
+long_plot <- box_data(x = "longevity_wild", y = "class2") +
+  labs(y = "Longevity", x = "") +
+  scale_x_discrete(position = "top") +
+  theme(axis.text.y = element_blank())
+diet_plot <- box_data(x = "diet_troph3", y = "class2") + 
+  labs(y = "Trophic Level", x = "Movement Class") +
+  scale_x_discrete(position = "top") +
+  theme(axis.title.x = element_text(vjust = 0))
+kfin_plot <- box_data(x = "kfin", y = "class2") + 
+  labs(y = "Carrying Capacity", x = "Movement Class") +
+  scale_x_discrete(position = "top") +
+  theme(axis.title.x = element_text(vjust = 0))
+
+
 r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 1, label.x = 6, position = "jitter") +
   labs(y = "Growth Rate", x = "Movement Class")
-diet_plot <- box_data(x = "diet_troph3", y = "class2") + stat_kruskal_test(label.y = 2.5, label.x = 5.5, position = "jitter") +
-  labs(y = "Trophic Level", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(label.y = 2000, label.x = 6, position = "jitter") +
   labs(y = "Oxygen Consumption", x = "Movement Class")
 temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 20, label.x = 3.5, position = "jitter") +
   labs(y = "Temperature Range", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 1000000, label.x = 5.5, position = "jitter") +
+  labs(y = "Mean Fecundity", x = "Movement Class")
+sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 1100, position = "jitter") +
+  labs(y = "Species Richness", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 
 
 numeric_panel <- ((temp_plot | length_plot) /
@@ -246,12 +316,16 @@ numeric_panel <- ((temp_plot | length_plot) /
 numeric_panel
 # ggsave(numeric_panel, file = paste0("numeric_panel.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 21, width = 14)
 
-tll_panel <- (temp_plot / length_plot / long_plot) +
-  plot_layout(guides = "collect") + plot_annotation(tag_levels = "A") &
-  theme_bw(base_size = 16) & theme(legend.position = "none")
+individual_panel <- ((temp_plot | length_plot | diet_plot) / (long_plot | kfin_plot)) +
+  plot_layout(widths = c(8,8,8,8,8), guides = "collect") +
+  plot_annotation(tag_levels = "A") +
+  theme_bw(base_size = 16) &
+  theme(legend.position = "none")
 
-tll_panel
-# ggsave(tll_panel, file = paste0("tll_panel.pdf"), path = here::here("04_figs"), height = 12, width = 6)
+individual_panel
+
+ggsave(individual_panel, file = paste0("individual_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 13)
+
 ```
 
 
