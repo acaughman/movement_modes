@@ -322,44 +322,26 @@ centroid7 <- filled_scores7 %>%
   group_by(class2) %>%
   summarize(NMDS1 = mean(NMDS1), NMDS2 = mean(NMDS2))
 
-nmds_plot7 <- ggplot(filled_scores7, aes(x = NMDS1, y = NMDS2)) +
+nmds7 <- ggplot(filled_scores7, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2), alpha = 0.3) +
   theme_bw(base_size = 16) +
   geom_point(data = centroid7, aes(color = class2), size = 4) +
   labs(x = "NMDS1", y = "NMDS2", color = "Class (Homerange/PLD)") +
   theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
-  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), alpha = 0.15, show.legend = FALSE) +
+  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), size = 0.25, alpha = 0.3, show.legend = FALSE) +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
   scale_y_continuous(position = "right") +
   theme(legend.position = "left") +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") 
-
-nmds_plot7
-
-nmds_arrows7 <- ggplot(filled_scores7, aes(x = NMDS1, y = NMDS2)) +
-  geom_point(alpha = 0) +
-  theme_bw(base_size = 16) +
-  labs(x = "NMDS1", y = "NMDS2") +
-  theme(legend.position = "none") +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25) +
   geom_vline(xintercept = 0, linetype = "dashed", color = "grey") +
   geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
-  geom_point(aes(x = 0, y = 0), size = 160, shape = 1, color = "grey") +
-  scale_y_continuous(position = "right")
-
-nmds_arrows7
-
-nmds7 <- (nmds_plot7 | nmds_arrows7) +
-  plot_annotation(tag_levels = "A")
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 1, colour = "grey20", lwd = 0.3) +
+  ggrepel::geom_label_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), fill = "white", cex = 3, direction = "both", segment.size = .25)
 
 nmds7
 
-# ggsave(nmds7, file = paste0("nmds7_dispersion.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 18)
+
+ggsave(nmds7, file = paste0("nmds7_dispersion.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
 
 
 dst7 <- dist(com7, method = "euclidean")
