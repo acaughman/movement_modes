@@ -75,10 +75,10 @@ Anova(lm2.1, type = "III")
 #   geom_smooth(method = "lm") +
 #   scale_color_viridis_d()
 
-p1 <- plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferred", "diet_troph3"), comparison = "difference") +
+p1 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = c("length", "diet_troph3"), comparison = "difference") +
   labs(
-    x = "Length",
-    y = "Home Range Difference with Optimal Temperature",
+    x = "Optimal Temperature",
+    y = "Home Range Difference with Length",
     color = "Trophic Level",
     fill = "Trophic Level"
   ) +
@@ -86,10 +86,10 @@ p1 <- plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferre
   scale_color_viridis_d() +
   scale_fill_viridis_d()
 
-p2 <- plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferred", "longevity_wild")) +
+p2 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = c("length", "longevity_wild")) +
   labs(
-    x = "Length",
-    y = "Home Range Difference with Optimal Temperature",
+    x = "Optimal Temperature",
+    y = "Home Range Difference with Length",
     color = "Longevity",
     fill = "Longevity"
   ) +
@@ -97,10 +97,10 @@ p2 <- plot_comparisons(lm1.1, variables = "length", condition = c("temp_preferre
   scale_color_viridis_d() +
   scale_fill_viridis_d()
 
-p3 <- plot_comparisons(lm1.1, variables = "length", condition = c("longevity_wild", "diet_troph3"), comparison = "difference") +
+p3 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("length", "diet_troph3"), comparison = "difference") +
   labs(
-    x = "Length",
-    y = "Home Range Difference with Longevity",
+    x = "Longevity",
+    y = "Home Range Difference with Length",
     color = "Trophic Level",
     fill = "Trophic Level"
   ) +
@@ -108,10 +108,10 @@ p3 <- plot_comparisons(lm1.1, variables = "length", condition = c("longevity_wil
   scale_color_viridis_d() +
   scale_fill_viridis_d()
 
-p4 <- plot_comparisons(lm2.1, variables = "length", condition = c("temp_preferred", "longevity_wild")) +
+p4 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = c("length", "longevity_wild")) +
   labs(
-    x = "Length",
-    y = "PLD Difference with Optimal Temperature",
+    x = "Optimal Temperature",
+    y = "PLD Difference with Length",
     color = "Longevity",
     fill = "Longevity"
   ) +
