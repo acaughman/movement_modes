@@ -277,23 +277,21 @@ temp_plot <- box_data(x = "temp_preferred", y = "class2") +
   scale_x_discrete(position = "top") +
   theme(axis.text.y = element_blank())
 length_plot <- box_data(x = "length", y = "class2") +
-  labs(y = "Length", x = "") +
-  scale_x_discrete(position = "top") +
-  theme(axis.text.y = element_blank())
+  labs(y = "Length", x = "Movement Class") +
+  scale_x_discrete(position = "top")
 long_plot <- box_data(x = "longevity_wild", y = "class2") +
-  labs(y = "Longevity", x = "") +
+  labs(y = "Longevity", x = "Movement Class") +
+  scale_x_discrete(position = "top")
+diet_plot <- box_data(x = "diet_troph3", y = "class2") + 
+  labs(y = "Trophic Level", x = "") +
   scale_x_discrete(position = "top") +
   theme(axis.text.y = element_blank())
-diet_plot <- box_data(x = "diet_troph3", y = "class2") + 
-  labs(y = "Trophic Level", x = "Movement Class") +
-  scale_x_discrete(position = "top") +
-  theme(axis.title.x = element_text(vjust = 0))
+
+
 kfin_plot <- box_data(x = "kfin", y = "class2") + 
   labs(y = "Carrying Capacity", x = "Movement Class") +
   scale_x_discrete(position = "top") +
   theme(axis.title.x = element_text(vjust = 0))
-
-
 r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 1, label.x = 6, position = "jitter") +
   labs(y = "Growth Rate", x = "Movement Class")
 oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(label.y = 2000, label.x = 6, position = "jitter") +
@@ -316,15 +314,15 @@ numeric_panel <- ((temp_plot | length_plot) /
 numeric_panel
 # ggsave(numeric_panel, file = paste0("numeric_panel.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 21, width = 14)
 
-individual_panel <- ((temp_plot | length_plot | diet_plot) / (long_plot | kfin_plot)) +
-  plot_layout(widths = c(8,8,8,8,8), guides = "collect") +
+individual_panel <- ((temp_plot | length_plot) / (diet_plot | long_plot)) +
+  plot_layout(guides = "collect") +
   plot_annotation(tag_levels = "A") +
   theme_bw(base_size = 16) &
   theme(legend.position = "none")
 
 individual_panel
 
-ggsave(individual_panel, file = paste0("individual_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 13)
+#ggsave(individual_panel, file = paste0("individual_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 13)
 
 ```
 
