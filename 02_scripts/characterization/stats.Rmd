@@ -84,7 +84,9 @@ p1 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = c("lengt
   ) +
   theme_bw() +
   scale_color_viridis_d() +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() +
+  xlim(NA, 45) + 
+  ylim(-0.5, 0.5)
 
 p2 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = c("length", "longevity_wild")) +
   labs(
@@ -95,7 +97,9 @@ p2 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = c("lengt
   ) +
   theme_bw() +
   scale_color_viridis_d() +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() +
+  xlim(NA, 45) + 
+  ylim(-0.5, 1.5)
 
 p3 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("length", "diet_troph3"), comparison = "difference") +
   labs(
@@ -106,7 +110,9 @@ p3 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("lengt
   ) +
   theme_bw() +
   scale_color_viridis_d() +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() +
+  xlim(NA, 400) + 
+  ylim(-1, NA)
 
 p4 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = c("length", "longevity_wild")) +
   labs(
@@ -117,7 +123,9 @@ p4 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = c("lengt
   ) +
   theme_bw() +
   scale_color_viridis_d() +
-  scale_fill_viridis_d()
+  scale_fill_viridis_d() +
+  xlim(NA, 45) + 
+  ylim(NA, 1)
 
 plot_comparisons(lm2.1, variables = "length", condition = c("temp_preferred")) +
   labs(
@@ -144,7 +152,7 @@ plot_comparisons(lm2.1, variables = "length", condition = c("longevity_wild")) +
 interact_plot <- (p2 + p4) / (p1 + p3) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 interact_plot
 
-ggsave(interact_plot, file = paste0("interact_plot.pdf"), path = here::here("04_figs"), height = 8, width = 10)
+ggsave(interact_plot, file = paste0("interact_plot.png"), path = here::here("04_figs"), height = 8, width = 10)
 ```
 
 
