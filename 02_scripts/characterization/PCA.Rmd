@@ -81,7 +81,7 @@ p1 <- fviz_famd_var(f1, "quanti.var",
 
 f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_1$class2, palette = hcl.colors(6, "viridis"), addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var", alpha.ind = 0.3) +
   theme_bw(base_size = 16) +
-  labs(x = "FAMD1 (10.5%)", y = "FAMD2 (9%)", color = "Class (Homerange/PLD)", fill = "Class (Homerange/PLD)", title = NULL) +
+  labs(x = "FAMD1 (10.5%)", y = "FAMD2 (9%)", color = "Cohort (Homerange/PLD)", fill = "Cohort (Homerange/PLD)", title = NULL) +
   scale_y_continuous(position = "right") +
   theme(legend.position = "left") + 
   geom_segment(data = f1_var, aes(x = 0, xend = coord.Dim.1, y = 0, yend = coord.Dim.2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3)+
@@ -98,16 +98,17 @@ f1_fig
 ##### NMDS 4
 
 ```{r}
+
 com_data4 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, longevity_wild, sp_richness, length, r_fin, diet_troph3, temp_range, oxygen_cons,
-    species, order, class2
+    species, order, class2, class3
   ) %>%
   filter(temp_preferred > 0) %>%
   na.omit()
 
 com4 <- com_data4 %>%
-  dplyr::select(-species, -order, -class2)
+  dplyr::select(-species, -order, -class2, -class3)
 
 m_com4 <- as.matrix(com4)
 
@@ -133,51 +134,24 @@ centroid4 <- filled_scores4 %>%
   group_by(class2) %>%
   summarize(NMDS1 = mean(NMDS1), NMDS2 = mean(NMDS2))
 
-nmds_plot4 <- ggplot(filled_scores4, aes(x = NMDS1, y = NMDS2)) +
+nmds4 <- ggplot(filled_scores4, aes(x = NMDS1, y = NMDS2)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), linewidth = 0.25, alpha = 0.2, show.legend = FALSE) +
   geom_point(aes(color = class2), alpha = 0.3) +
   theme_bw(base_size = 16) +
-  geom_point(data = centroid4, aes(color = class2), size = 4) +
-  labs(x = "NMDS1", y = "NMDS2", color = "Class (Homerange/PLD)") +
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
-  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), alpha = 0.15, show.legend = FALSE) +
+  geom_point(data = centroid4, aes(color = class2), size = 4, alpha = 0.9) +
+  labs(x = "NMDS1", y = "NMDS2", color = "Cohort (Homerange/PLD)") +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.8, colour = "grey20", lwd = 0.3) +
+  ggrepel::geom_label_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), fill = "white", cex = 3, direction = "both", segment.size = .25) +
   scale_y_continuous(position = "right") +
   theme(legend.position = "left")
 
-nmds_plot4
-
-nmds_arrows4 <- ggplot(filled_scores4, aes(x = NMDS1, y = NMDS2)) +
-  geom_point(alpha = 0) +
-  theme_bw(base_size = 16) +
-  labs(x = "NMDS1", y = "NMDS2") +
-  theme(legend.position = "none") +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), colour = "grey10", lwd = 0.3) +
-  ggrepel::geom_text_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), cex = 3, direction = "both", segment.size = 0.25) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
-  geom_point(aes(x = 0, y = 0), size = 160, shape = 1, color = "grey") +
-  scale_y_continuous(position = "right")
-
-nmds_arrows4
-
-nmds4 <- (nmds_plot4 | nmds_arrows4) +
-  plot_annotation(tag_levels = "A")
-
 nmds4
 
-# ggsave(nmds4, file = paste0("nmds4.pdf"), path = here::here("04_figs", "nmds"), height = 8, width = 18)
-
-
-
-famd_nmds_sig <- plot4 / nmds4 +
-  plot_annotation(tag_levels = "A")
-
-famd_nmds_sig
-
-# ggsave(famd_nmds_sig, file = paste0("sig_nmds_famd_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 16, width = 18)
-
-
+#ggsave(nmds4, file = paste0("nmds4.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
 
 
 dst4 <- dist(com4, method = "euclidean")
@@ -187,6 +161,11 @@ bd4 <- betadisper(dst4, com_data4$class2)
 anova(bd4)
 
 permutest(bd4, pairwise = TRUE, permutations = 9999)
+
+adonis2(com_data4$class3 ~ m_com4, permutations = 9999)
+
+pairwise.adonis(m_com4, com_data4$class3, perm = 9999)
+
 ```
 
 
@@ -237,7 +216,7 @@ nmds7 <- ggplot(filled_scores7, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2), alpha = 0.3) +
   theme_bw(base_size = 16) +
   geom_point(data = centroid7, aes(color = class2), size = 4, alpha = 0.9) +
-  labs(x = "NMDS1", y = "NMDS2", color = "Class (Homerange/PLD)") +
+  labs(x = "NMDS1", y = "NMDS2", color = "Cohort (Homerange/PLD)") +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
   geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 1, colour = "grey20", lwd = 0.3) +
@@ -258,7 +237,8 @@ anova(bd7)
 
 permutest(bd7, pairwise = TRUE, permutations = 9999)
 
-adonis2(com_data7$class ~ m_com7, permutations = 9999)
+adonis2(com_data7$class2 ~ m_com7, permutations = 9999)
+
 pairwise.adonis(m_com7, com_data7$class2, perm = 9999)
 
 ```
