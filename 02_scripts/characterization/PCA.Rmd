@@ -144,7 +144,7 @@ nmds4 <- ggplot(filled_scores4, aes(x = NMDS1, y = NMDS2)) +
   labs(x = "NMDS1", y = "NMDS2", color = "Cohort (Homerange/PLD)") +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.8, colour = "grey20", lwd = 0.3) +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20", lwd = 0.3) +
   ggrepel::geom_label_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), fill = "white", cex = 3, direction = "both", segment.size = .25) +
   scale_y_continuous(position = "right") +
   theme(legend.position = "left")
@@ -177,13 +177,13 @@ pairwise.adonis(m_com4, com_data4$class3, perm = 9999)
 com_data7 <- filled_data2 %>%
   dplyr::select(
     temp_preferred, length, longevity_wild, diet_troph3,
-    species, order, class2, class
+    species, order, class2, class3
   ) %>%
   mutate(temp_preferred = temp_preferred + 2) %>%
   na.omit()
 
 com7 <- com_data7 %>%
-  dplyr::select(-species, -order, -class2, -class)
+  dplyr::select(-species, -order, -class2, -class3)
 
 m_com7 <- as.matrix(com7)
 
@@ -219,7 +219,7 @@ nmds7 <- ggplot(filled_scores7, aes(x = NMDS1, y = NMDS2)) +
   labs(x = "NMDS1", y = "NMDS2", color = "Cohort (Homerange/PLD)") +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
-  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 1, colour = "grey20", lwd = 0.3) +
+  geom_segment(data = species_scores, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20", lwd = 0.3) +
   ggrepel::geom_label_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), fill = "white", cex = 3, direction = "both", segment.size = .25) +
   scale_y_continuous(position = "right") +
   theme(legend.position = "left")
@@ -237,9 +237,9 @@ anova(bd7)
 
 permutest(bd7, pairwise = TRUE, permutations = 9999)
 
-adonis2(com_data7$class2 ~ m_com7, permutations = 9999)
+adonis2(com_data7$class3 ~ m_com7, permutations = 9999)
 
-pairwise.adonis(m_com7, com_data7$class2, perm = 9999)
+pairwise.adonis(m_com7, com_data7$class3, perm = 9999)
 
 ```
 
