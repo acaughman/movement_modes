@@ -99,7 +99,7 @@ p2 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = list("le
   scale_color_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
   scale_fill_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
   xlim(NA, 45) + 
-  ylim(-0.5, 1.5)
+  ylim(-0.25, 0.5)
 
 p3 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("length", "diet_troph3"), comparison = "difference") +
   labs(
@@ -114,9 +114,6 @@ p3 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("lengt
   xlim(NA, 400) + 
   ylim(-1, NA)
 
-ggplot(data = filled_data2, aes(longevity_wild)) +
-  geom_density(linewidth = 5)
-
 p4 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = list("length", "longevity_wild" = c(1, 10, 16, 25, 50, 100))) +
   labs(
     x = "Optimal Temperature",
@@ -128,7 +125,7 @@ p4 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = list("le
   scale_color_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
   scale_fill_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
   xlim(NA, 45) + 
-  ylim(NA, 1)
+  ylim(-3.5, 0.5)
 
 plot_comparisons(lm2.1, variables = "length", condition = c("temp_preferred")) +
   labs(
