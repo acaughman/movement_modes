@@ -58,23 +58,6 @@ Anova(lm1.1, type = "III")
 summary(lm2.1)
 Anova(lm2.1, type = "III")
 
-# plot_model(lm1.1, type = "pred")
-# plot_model(lm2.1, type = "pred")
-#
-# median_temp = median(filled_data2$temp_preferred, na.rm=TRUE)
-#
-# filled_data2 = filled_data2 %>%
-#   mutate(temp_bin = case_when(
-#     temp_preferred <= median_temp ~ "-1",
-#     temp_preferred > median_temp ~ "28"
-#   )) %>%
-#   mutate(temp_bin = as.factor(temp_bin)) %>%
-#   filter(!is.na(temp_bin))
-
-# ggplot(filled_data2, aes(longevity_wild, pld, color = temp_bin)) +
-#   geom_smooth(method = "lm") +
-#   scale_color_viridis_d()
-
 p1 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = c("length", "diet_troph3"), comparison = "difference") +
   labs(
     x = "Optimal Temperature",
