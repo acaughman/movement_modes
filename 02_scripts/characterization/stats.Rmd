@@ -28,6 +28,18 @@ library(patchwork)
 ```{r}
 filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
   mutate_if(is.character, as.factor)
+
+# Cohort sample size
+sample_size <- filled_data2 %>% 
+  group_by(class2) %>% 
+  summarise(n = length(class2))
+
+# Trait means by cohort
+means <- filled_data2 %>% 
+  dplyr::select(class2, length, temp_preferred, longevity_wild, diet_troph3) %>% 
+  group_by(class2) %>% 
+  summarise(across(where(is.numeric), \(x) mean(x, na.rm = TRUE)))
+
 ```
 
 
@@ -236,7 +248,7 @@ summary(model_length_log)
 # p-value < 2e-16 ***
 
 # effect size
-eta_squared(model_length_log, partial = FALSE)
+eta_squared(model_length_log)
 # eta2 = 0.18, 95% CI: [0.13, 1.00]
 
 # post hoc Tukey test
