@@ -34,11 +34,11 @@ sample_size <- filled_data2 %>%
   group_by(class2) %>% 
   summarise(n = length(class2))
 
-# Trait means by cohort
-means <- filled_data2 %>% 
+# Trait means, medians, and sd by cohort
+cohort_summary <- filled_data2 %>% 
   dplyr::select(class2, length, temp_preferred, longevity_wild, diet_troph3) %>% 
   group_by(class2) %>% 
-  summarise(across(where(is.numeric), \(x) mean(x, na.rm = TRUE)))
+  summarise(across(where(is.numeric), list(mean = mean, sd = sd, median = median), na.rm=TRUE))
 
 ```
 
