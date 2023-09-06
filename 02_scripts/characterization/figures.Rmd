@@ -150,14 +150,12 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
 gmm_new_fig
 #ggsave(gmm_new_fig, file = paste0("gmm_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
 
-
 # panel
-gmm_panel <- ((dist_plot) | p1) / gmm_new_fig +
-  plot_layout(heights = c(3,4)) &
+gmm_panel <- ((dist_plot) | p1) / gmm_new_fig &
   theme(plot.tag = element_text(face = "bold"))
 
 gmm_panel
-#ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
+ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
 
 ```
 
