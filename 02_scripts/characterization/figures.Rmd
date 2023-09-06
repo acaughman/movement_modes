@@ -40,7 +40,8 @@ hr_hist <- ggplot(fishbase_data_gmm, aes(log(home_range))) +
   theme_bw(base_size = 16) +
   labs(
     y = "Count",
-    x = "ln(Predicted Home Range)"
+    x = "ln(Predicted Home Range)",
+    tag = "A"
   ) +
   ggtitle("Individual Distributions of Species Movement Extents")
 
@@ -49,7 +50,7 @@ pld_hist <- ggplot(fishbase_data_gmm, aes(pld)) +
   theme_bw(base_size = 16) +
   labs(
     y = "Count",
-    x = "Predicted Pelagic Larval Duration"
+    x = "Predicted PLD"
   )
 
 dist_plot <- (hr_hist / pld_hist)
@@ -58,8 +59,9 @@ p1 <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
   geom_jitter() +
   theme_bw(base_size = 16) +
   labs(
-    y = "Predicted Pelagic Larval Duration",
-    x = "ln(Predicted Home Range)"
+    y = "Predicted PLD",
+    x = "ln(Predicted Home Range)",
+    tag = "B"
   ) +
   ggtitle("Combined Distribution of Species Movement Extents")
 
@@ -85,8 +87,9 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   theme_bw(base_size = 16) +
   labs(
     x = "Predicted Home Range Magnitude",
-    y = "Predicted Pelgaic Larval Duration Month",
-    color = "Cohort (Homerange/PLD)"
+    y = "Predicted PLD Month",
+    color = "Cohort (Homerange/PLD)",
+    tag = "C"
   ) +
   ylim(-0.1,6) +
   theme(legend.position = "bottom") +
@@ -142,16 +145,16 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
     show.legend = FALSE
   ) +
   geom_jitter(aes(color = class2)) +
-  ggtitle("Cohorts and Distribution of Scaled Species Movement Extents")
+  ggtitle("Distribution of Scaled Species Movement Extents")
 
 gmm_new_fig
 #ggsave(gmm_new_fig, file = paste0("gmm_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
 
 
 # panel
-gmm_panel <- (dist_plot | p1) / gmm_new_fig +
-  plot_annotation(tag_levels = "A") +
-  plot_layout(heights = c(3,4))
+gmm_panel <- ((dist_plot) | p1) / gmm_new_fig +
+  plot_layout(heights = c(3,4)) &
+  theme(plot.tag = element_text(face = "bold"))
 
 gmm_panel
 #ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
