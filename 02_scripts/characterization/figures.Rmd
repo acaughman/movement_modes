@@ -93,7 +93,7 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   scale_color_viridis_d() +
   geom_label_repel(
     data = subset(fishbase_data_gmm, fb_name %in% c("Hogfish", "Yellow snapper", "Blackfin tuna")),
-    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    aes(label = fb_name, color = class2),
     vjust = "outward", hjust = "outward",
     min.segment.length = 0.5,
     nudge_y = -1,
@@ -101,16 +101,16 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   ) +
   geom_label_repel(
     data = subset(fishbase_data_gmm, fb_name %in% c("Chocolate hind", "Lingcod", "Nassau grouper")),
-    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    aes(label = fb_name, color = class2),
     hjust = "inward",
     min.segment.length = 0.5,
     box.padding = 0.3,
-    nudge_x = -2,
+    nudge_x = -2, nudge_y = -0.8,
     show.legend = FALSE
   ) +
   geom_label_repel(
     data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "North Pacific hake", "Yellowstripe goatfish")),
-    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    aes(label = fb_name, color = class2),
     vjust = "outward", hjust = "outward",
     min.segment.length = 0.5,
     nudge_x = -1, nudge_y = 0.8,
@@ -118,7 +118,7 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   ) +
   geom_label_repel(
     data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod", "Summer flounder")),
-    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    aes(label = fb_name, color = class2),
     vjust = "outward", hjust = "outward",
     min.segment.length = 0.5,
     nudge_y = 0,
@@ -126,15 +126,15 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   ) +
   geom_label_repel(
     data = subset(fishbase_data_gmm, fb_name %in% c("Great barracuda", "Giant trevally", "Black seabream")),
-    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = class2),
+    aes(label = fb_name, color = class2),
     vjust = "outward", hjust = "outward",
     min.segment.length = 0.5,
-    nudge_y = 1, nudge_x = 1.5,
+    nudge_y = 1, nudge_x = 0.3,
     show.legend = FALSE
   ) +
   geom_label_repel(
     data = subset(fishbase_data_gmm, fb_name %in% c("Common snook", "Yellowfin tuna", "Swordfish")),
-    aes(x = magnitude_homerange, y = month_pld, label = fb_name, color = clas2),
+    aes(label = fb_name, color = clas2),
     color = "goldenrod1",
     vjust = "outward", hjust = "outward",
     min.segment.length = 30,
@@ -145,7 +145,7 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   ggtitle("Cohorts and Distribution of Scaled Species Movement Extents")
 
 gmm_new_fig
-# ggsave(gmm_new_fig, file = paste0("gmm_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
+#ggsave(gmm_new_fig, file = paste0("gmm_fig.png"), path = here::here("04_figs"), height = 8, width = 15)
 
 
 # panel
@@ -154,7 +154,7 @@ gmm_panel <- (dist_plot | p1) / gmm_new_fig +
   plot_layout(heights = c(3,4))
 
 gmm_panel
-ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
+#ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
 
 ```
 
