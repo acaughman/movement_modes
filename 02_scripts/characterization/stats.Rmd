@@ -181,34 +181,34 @@ abline(v = 5, lwd = 3, lty = 2)
 ### Similarity percentage
 
 ```{r}
-com_data <- filled_data2 %>%
-  dplyr::select(
-    temp_preferred, fecundity_mean, longevity_wild,
-    sp_richness, length, kfin, r_fin, diet_troph3, species, family, class2
-  ) %>%
-  mutate(class2 = as.factor(class2)) %>%
-  filter(temp_preferred > 0) %>%
-  mutate(across(where(is.numeric), ~ scale(.)[, 1])) %>%
-  na.omit()
-
-com <- com_data %>%
-  dplyr::select(-species, -family, -class2)
-
-# load from rda in results folder
-# set.seed(123)
-# simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
-
-summary(simper_out)
-# shows which traits are primarily responsible for observed difference between classes. traits listed from highest to lowest % contribution to the difference between the two classes (cumsum shows total % contribution to the difference). p is signifigance.
-
-
-# load from rda in results folder
-# set.seed(123)
-# ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
-
-summary(ano)
-
-plot(ano)
+# com_data <- filled_data2 %>%
+#   dplyr::select(
+#     temp_preferred, fecundity_mean, longevity_wild,
+#     sp_richness, length, kfin, r_fin, diet_troph3, species, family, class2
+#   ) %>%
+#   mutate(class2 = as.factor(class2)) %>%
+#   filter(temp_preferred > 0) %>%
+#   mutate(across(where(is.numeric), ~ scale(.)[, 1])) %>%
+#   na.omit()
+# 
+# com <- com_data %>%
+#   dplyr::select(-species, -family, -class2)
+# 
+# # load from rda in results folder
+# # set.seed(123)
+# # simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
+# 
+# summary(simper_out)
+# # shows which traits are primarily responsible for observed difference between classes. traits listed from highest to lowest % contribution to the difference between the two classes (cumsum shows total % contribution to the difference). p is signifigance.
+# 
+# 
+# # load from rda in results folder
+# # set.seed(123)
+# # ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
+# 
+# summary(ano)
+# 
+# plot(ano)
 ```
 
 
