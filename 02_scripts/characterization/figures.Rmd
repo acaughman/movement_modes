@@ -122,7 +122,7 @@ g <- ggplot(data1, aes(x = variable, y = cohort, fill = direction)) +
   geom_point(data = data1 %>% filter(significant == "yes"), shape = 8, size = 3) +
   theme_bw(base_size = 12) +
   theme(axis.title = element_blank(),
-        axis.text = element_text(face = "bold"),
+        axis.text = element_text(face = "bold", color = "black"),
         axis.ticks = element_blank(),
         panel.grid.major = element_blank()) +
   labs(fill = "Direction of Effect") +
@@ -132,7 +132,7 @@ g <- ggplot(data1, aes(x = variable, y = cohort, fill = direction)) +
 
 g
 
-ggsave(g, file = paste0("stats_sum.pdf"), path = here::here("04_figs"), height = 12, width = 12)
+ggsave(g, file = paste0("stats_sum.png"), path = here::here("04_figs"), height = 12, width = 12)
 
 #geom_point(data = data_arrows, mapping=aes(x = variable, y = cohort), pch = "x", inherit.aes = F)
 
