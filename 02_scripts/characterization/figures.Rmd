@@ -28,6 +28,124 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
   mutate_if(is.character, as.factor)
 ```
 
+
+### Summary figure
+
+```{r}
+
+cohort <- c("Cohort 1 vs 2", "Cohort 1 vs 3", "Cohort 1 vs 4", "Cohort 1 vs 5", "Cohort 1 vs 6",
+            "Cohort 2 vs 3", "Cohort 2 vs 4", "Cohort 2 vs 5", "Cohort 2 vs 6",
+            "Cohort 3 vs 4", "Cohort 3 vs 5", "Cohort 3 vs 6",
+            "Cohort 4 vs 5", "Cohort 4 vs 6",
+            "Cohort 5 vs 6")
+PERMDISP <- c(0.0019, 0.0003, 0.0327, 0.0001, 0.0001,
+              0.5182, 0.7507, 0.0138, 0.0005,
+              0.9792, 0.5276, 0.0029, 
+              0.7928, 0.1475, 
+              0.0052)
+PERMANOVA <- c(1.0000, 0.0015, 0.0495, 0.0015, 0.0015,
+               0.0015, 1.0000, 0.0015, 0.0015,
+               1.0000, 0.0015, 0.0015,
+               0.8175, 0.0090,
+               0.0015)
+Optimal_Temp <- c(0.005043306637114, 0.000000051454126, 0.000113116310469, 0.789451442990800, 0.010082693281337,
+                  0.000025756231358, 0.001765218761412, 0.000112331676538, 0.000038520195310,
+                  0.284373283785538, 0.000000002348839, 0.000000002258531, 
+                  0.000068856888538, 0.000001695644852, 
+                  0.010090438574951)
+temp_arrows <- c("higher", "higher", "higher", "equal", "lower",
+                 "higher", "higher","lower", "lower",
+                 "higher","lower", "lower",
+                 "lower", "lower",
+                 "lower")
+Length <- c(0.8592642, 0.9998089, 0.9872521, 0.0007795, 0.0000000,
+            0.9070423, 0.9181733, 0.0000000, 0.0000000,
+            0.9966266, 0.1494607, 0.0000000,
+            0.9897718, 0.0008647,
+            0.0000000)
+length_arrows <- c("lower", "lower", "lower", "lower", "lower",
+                   "lower", "lower", "lower", "lower",
+                   "lower", "lower", "lower",
+                   "lower", "lower",
+                   "lower")
+Lifespan <- c(0.57035468549, 0.00007769083, 0.55052882501, 0.74567296422, 0.31579160719,
+              0.00010263105, 0.59495732706, 0.73671251684, 0.20707475101,
+              0.38779558233, 0.00017543403, 0.00008096802,
+              0.58625833556, 0.24515673988,
+              0.24664224315)
+life_arrows <- c("lower", "lower", "lower", "equal", "higher",
+                 "lower", "lower", "higher", "higher",
+                 "higher", "higher", "higher",
+                 "higher", "higher",
+                 "higher")
+Trophic_Level <- c(0.1035871996367, 0.0891868417293, 0.5697644317228, 0.5148291779984, 0.0000607828670,
+                   0.5183877375223, 0.8682996282889, 0.2916548282051, 0.0000002614727,
+                   0.8630208058363, 0.2124781071891, 0.0000015574893, 
+                   0.7282998974706, 0.0082066924854, 
+                   0.0000032514102)
+trophic_arrows <- c("higher", "higher", "higher", "higher", "lower",
+                    "lower", "higher", "lower", "lower",
+                    "higher", "lower", "lower",
+                    "lower", "lower",
+                    "lower")
+
+# Create data frame
+data <- data.frame(cohort, PERMDISP, PERMANOVA, Optimal_Temp, Length, Lifespan, Trophic_Level)
+
+# Pivot to long data format
+data_long <- data %>% 
+  mutate(across(c("Optimal_Temp", "Length", "Lifespan", "Trophic_Level"), round, 4)) %>% 
+  pivot_longer(-cohort) %>% 
+  set_names(c("cohort", "variable", "p_value")) %>% 
+  mutate(significant = case_when(
+    p_value >= 0.05 ~ "no",
+    p_value < 0.05 ~ "yes"
+  ))
+
+# Add arrow information
+data1 <- data.frame(cohort, temp_arrows, length_arrows, life_arrows, trophic_arrows) %>% 
+  rename(Optimal_Temp = temp_arrows, Length = length_arrows, Lifespan = life_arrows, Trophic_Level = trophic_arrows) %>% 
+  pivot_longer(-cohort) %>% 
+  set_names(c("cohort", "variable", "direction")) %>% 
+  full_join(data_long, by = c("cohort","variable"))
+
+# Reorder and rename levels
+data1$variable <- factor(data1$variable, levels = c("PERMDISP", "PERMANOVA", "Optimal_Temp", "Length", "Lifespan", "Trophic_Level"))
+data1$variable <- recode_factor(data1$variable, PERMDISP = "PERMDISP", PERMANOVA = "PERMANOVA", Optimal_Temp = "Optimal Temperature", Length = "Length", Lifespan = "Lifespan", Trophic_Level = "Trophic Level")
+
+
+
+# Plot 
+g <- ggplot(data1, aes(x = variable, y = cohort, label = p_value("%0.2f", round(a, digits = 4)), fill = significant)) +
+  geom_tile(color = "white", lwd = 1) +
+  geom_text(color = "white") +
+  theme_bw() +
+  theme(axis.text = element_text(size = 14, face = "bold"),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        legend.text = element_text(size = 12),
+        legend.title = element_text(size = 14),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "grey")) +
+  labs(fill = "P-value < 0.05") +
+  scale_x_discrete(position = "top") +
+  scale_y_discrete(limits = rev)
+
+g
+
+
+#geom_point(data = data_arrows, mapping=aes(x = variable, y = cohort), pch = "x", inherit.aes = F)
+
+```
+
+
+
+
+
+
+
 ### Plot Homerange vs PLD and current classes
 
 ```{r}

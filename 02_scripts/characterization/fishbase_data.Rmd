@@ -74,9 +74,6 @@ filled_data2 <- left_join(filled_data2, names)
 
 
 
-
-
-
 ### OLD
 
 
