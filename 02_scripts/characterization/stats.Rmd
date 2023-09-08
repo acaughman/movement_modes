@@ -29,6 +29,12 @@ library(patchwork)
 filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
   mutate_if(is.character, as.factor)
 
+```
+
+### Characterize data
+
+```{r}
+
 # Cohort sample size
 sample_size <- filled_data2 %>% 
   group_by(class2) %>% 
@@ -42,6 +48,7 @@ cohort_summary <- filled_data2 %>%
 
 ```
 
+### Build linear models
 
 ```{r}
 lm1 <- lm(log(home_range) ~ length * diet_troph3 * longevity_wild * temp_preferred, data = filled_data2)
@@ -149,7 +156,6 @@ interact_plot
 
 ggsave(interact_plot, file = paste0("interact_plot.png"), path = here::here("04_figs"), height = 8, width = 10)
 ```
-
 
 ### Variable Inflation Factors (VIF)
 
