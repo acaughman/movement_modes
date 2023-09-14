@@ -94,8 +94,8 @@ p2 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = list("le
   labs(
     x = "Optimal Temperature",
     y = "Home Range Difference with Length",
-    color = "Longevity",
-    fill = "Longevity"
+    color = "Maximum Lifespan",
+    fill = "Maximum Lifespan"
   ) +
   theme_bw() +
   scale_color_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
@@ -105,7 +105,7 @@ p2 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = list("le
 
 p3 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("length", "diet_troph3"), comparison = "difference") +
   labs(
-    x = "Longevity",
+    x = "Maximum Lifespan",
     y = "Home Range Difference with Length",
     color = "Trophic Level",
     fill = "Trophic Level"
@@ -120,8 +120,8 @@ p4 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = list("le
   labs(
     x = "Optimal Temperature",
     y = "PLD Difference with Length",
-    color = "Longevity",
-    fill = "Longevity"
+    color = "Maximum Lifespan",
+    fill = "Maximum Lifespan"
   ) +
   theme_bw() +
   scale_color_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
@@ -133,8 +133,8 @@ plot_comparisons(lm2.1, variables = "length", condition = c("temp_preferred")) +
   labs(
     x = "Length",
     y = "PLD Difference with Optimal Temperature",
-    color = "Longevity",
-    fill = "Longevity"
+    color = "Maximum Lifespan",
+    fill = "Maximum Lifespan"
   ) +
   theme_bw() +
   scale_color_viridis_d() +
@@ -144,8 +144,8 @@ plot_comparisons(lm2.1, variables = "length", condition = c("longevity_wild")) +
   labs(
     x = "Length",
     y = "PLD Difference with Optimal Temperature",
-    color = "Longevity",
-    fill = "Longevity"
+    color = "Maximum Lifespan",
+    fill = "Maximum Lifespan"
   ) +
   theme_bw() +
   scale_color_viridis_d() +
@@ -182,39 +182,6 @@ abline(v = 5, lwd = 3, lty = 2)
 
 # model2 <- lm(class2 ~ temp_preferred + length + r_fin, data = filled_data)
 # summary(model)
-```
-
-### Similarity percentage
-
-```{r}
-# com_data <- filled_data2 %>%
-#   dplyr::select(
-#     temp_preferred, fecundity_mean, longevity_wild,
-#     sp_richness, length, kfin, r_fin, diet_troph3, species, family, class2
-#   ) %>%
-#   mutate(class2 = as.factor(class2)) %>%
-#   filter(temp_preferred > 0) %>%
-#   mutate(across(where(is.numeric), ~ scale(.)[, 1])) %>%
-#   na.omit()
-# 
-# com <- com_data %>%
-#   dplyr::select(-species, -family, -class2)
-# 
-# # load from rda in results folder
-# # set.seed(123)
-# # simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
-# 
-# summary(simper_out)
-# # shows which traits are primarily responsible for observed difference between classes. traits listed from highest to lowest % contribution to the difference between the two classes (cumsum shows total % contribution to the difference). p is signifigance.
-# 
-# 
-# # load from rda in results folder
-# # set.seed(123)
-# # ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
-# 
-# summary(ano)
-# 
-# plot(ano)
 ```
 
 
@@ -679,7 +646,45 @@ chisq.posthoc.test(iucn_table, method = "bonferroni")
 ```
 
 
+
+
+
+
 ### Old
+
+##### Similarity percentage
+
+```{r}
+# com_data <- filled_data2 %>%
+#   dplyr::select(
+#     temp_preferred, fecundity_mean, longevity_wild,
+#     sp_richness, length, kfin, r_fin, diet_troph3, species, family, class2
+#   ) %>%
+#   mutate(class2 = as.factor(class2)) %>%
+#   filter(temp_preferred > 0) %>%
+#   mutate(across(where(is.numeric), ~ scale(.)[, 1])) %>%
+#   na.omit()
+# 
+# com <- com_data %>%
+#   dplyr::select(-species, -family, -class2)
+# 
+# # load from rda in results folder
+# # set.seed(123)
+# # simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
+# 
+# summary(simper_out)
+# # shows which traits are primarily responsible for observed difference between classes. traits listed from highest to lowest % contribution to the difference between the two classes (cumsum shows total % contribution to the difference). p is signifigance.
+# 
+# 
+# # load from rda in results folder
+# # set.seed(123)
+# # ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
+# 
+# summary(ano)
+# 
+# plot(ano)
+```
+
 
 ```{r}
 # # ocean --------------------------------------------------------
