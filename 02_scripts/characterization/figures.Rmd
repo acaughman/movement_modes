@@ -140,11 +140,7 @@ ggsave(g, file = paste0("stats_sum.png"), path = here::here("04_figs"), height =
 
 
 
-
-
-
-
-### Plot Homerange vs PLD and current classes
+### Homerange vs PLD and current classes (Figure 1)
 
 ```{r}
 # homerange vs PLD
@@ -183,9 +179,6 @@ p1 <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
 
 p1
 
-
-
-# gmm plot
 
 
 # example_fish <- filled_data2 %>%
@@ -271,7 +264,7 @@ gmm_panel <- ((dist_plot) | p1) / gmm_new_fig &
   theme(plot.tag = element_text(face = "bold"))
 
 gmm_panel
-ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
+#ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
 
 ```
 
@@ -404,7 +397,7 @@ length_plot <- box_data(x = "length", y = "class2") +
   labs(y = "Length (cm)", x = "") +
   scale_x_discrete(position = "top")
 long_plot <- box_data(x = "longevity_wild", y = "class2") +
-  labs(y = "Maximum Lifespan (years)", x = "") +
+  labs(y = "Maximum Lifespan (yr)", x = "") +
   scale_x_discrete(position = "top")
 diet_plot <- box_data(x = "diet_troph3", y = "class2") + 
   labs(y = "Trophic Level", x = "") +
@@ -514,3 +507,124 @@ ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs
 ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
 ```
+
+
+### For WSN
+
+```{r}
+
+# PLD vs Home Range
+p1_wsn <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
+  geom_jitter(color = "#003366") +
+  theme_bw(base_size = 25) +
+  labs(
+    y = "PLD (days)",
+    x = "Natural Log of Predicted Home Range",
+    #tag = "B"
+  ) +
+  ggtitle("Combined Adult and Larval Movement")
+
+p1_wsn
+
+#ggsave(p1_wsn, file = paste0("PLD_HR.pdf"), path = here::here("04_figs", "WSN"), height = 7, width = 11)
+
+gmm_wsn <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
+  theme_bw(base_size = 16) +
+  labs(
+    x = "Home Range Magnitude",
+    y = "PLD (months)",
+    color = "Class (Homerange/PLD)",
+    #tag = "C"
+  ) +
+  ylim(-0.1,6) +
+  theme(legend.position = "bottom", 
+        legend.background = element_rect(color = "gray")) +
+  scale_color_viridis_d() +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Yellow snapper", "Blackfin tuna")),
+    aes(label = fb_name, color = class2),
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 50,
+    nudge_y = -1,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Lingcod", "Nassau grouper")),
+    aes(label = fb_name, color = class2),
+    hjust = "inward",
+    min.segment.length = 50,
+    box.padding = 0,
+    nudge_x = -3, nudge_y = -0.8,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "North Pacific hake")),
+    aes(label = fb_name, color = class2),
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 50,
+    nudge_x = -1, nudge_y = 0.8,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod")),
+    aes(label = fb_name, color = class2),
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 50,
+    nudge_y = 0,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Great barracuda", "Black seabream")),
+    aes(label = fb_name, color = class2),
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 50,
+    nudge_y = 1, nudge_x = 0.7,
+    show.legend = FALSE
+  ) +
+  geom_label_repel(
+    data = subset(fishbase_data_gmm, fb_name %in% c("Yellowfin tuna", "Swordfish")),
+    aes(label = fb_name, color = clas2),
+    color = "goldenrod1",
+    vjust = "outward", hjust = "outward",
+    min.segment.length = 50,
+    nudge_y = -0.5,
+    show.legend = FALSE
+  ) +
+  geom_jitter(aes(color = class2)) +
+  ggtitle("Adult and Larval Movement by Class")
+
+gmm_wsn
+
+#ggsave(gmm_wsn, file = paste0("gmm_wsn.pdf"), path = here::here("04_figs", "WSN"), height = 5, width = 12)
+
+
+
+# Individual panel
+ind_panel_wsn <- ((temp_plot | length_plot) / (diet_plot | long_plot)) +
+  plot_layout(guides = "collect") +
+  plot_annotation(tag_levels = "A") &
+  theme(text = element_text(size = 25), legend.position = "none")
+
+individual_panel_wsn <- wrap_elements(ind_panel_wsn) +
+  labs(tag = "Movement Cohort") +
+  theme(
+    plot.tag = element_text(size = 25, angle = 270),
+    plot.tag.position = "right"
+  )
+
+individual_panel_wsn
+
+ggsave(individual_panel_wsn, file = paste0("panel_wsn.pdf"), path = here::here("04_figs", "WSN"), height = 12, width = 16)
+
+
+
+
+
+
+```
+
+
+
+
+
+
