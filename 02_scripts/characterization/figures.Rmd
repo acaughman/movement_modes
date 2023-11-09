@@ -509,6 +509,14 @@ ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "
 ```
 
 
+
+
+
+
+
+
+
+
 ### For WSN
 
 ```{r}
@@ -529,73 +537,78 @@ p1_wsn
 #ggsave(p1_wsn, file = paste0("PLD_HR.pdf"), path = here::here("04_figs", "WSN"), height = 7, width = 11)
 
 gmm_wsn <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
-  theme_bw(base_size = 16) +
+  theme_bw(base_size = 32) +
   labs(
     x = "Home Range Magnitude",
-    y = "PLD (months)",
-    color = "Class (Homerange/PLD)",
+    y = "PLD (month)",
+    color = "Class (home range/PLD)",
     #tag = "C"
   ) +
   ylim(-0.1,6) +
   theme(legend.position = "bottom", 
         legend.background = element_rect(color = "gray")) +
   scale_color_viridis_d() +
-  geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Yellow snapper", "Blackfin tuna")),
-    aes(label = fb_name, color = class2),
-    vjust = "outward", hjust = "outward",
-    min.segment.length = 50,
-    nudge_y = -1,
-    show.legend = FALSE
-  ) +
-  geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Lingcod", "Nassau grouper")),
-    aes(label = fb_name, color = class2),
-    hjust = "inward",
-    min.segment.length = 50,
-    box.padding = 0,
-    nudge_x = -3, nudge_y = -0.8,
-    show.legend = FALSE
-  ) +
-  geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "North Pacific hake")),
-    aes(label = fb_name, color = class2),
-    vjust = "outward", hjust = "outward",
-    min.segment.length = 50,
-    nudge_x = -1, nudge_y = 0.8,
-    show.legend = FALSE
-  ) +
-  geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod")),
-    aes(label = fb_name, color = class2),
-    vjust = "outward", hjust = "outward",
-    min.segment.length = 50,
-    nudge_y = 0,
-    show.legend = FALSE
-  ) +
-  geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Great barracuda", "Black seabream")),
-    aes(label = fb_name, color = class2),
-    vjust = "outward", hjust = "outward",
-    min.segment.length = 50,
-    nudge_y = 1, nudge_x = 0.7,
-    show.legend = FALSE
-  ) +
-  geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Yellowfin tuna", "Swordfish")),
-    aes(label = fb_name, color = clas2),
-    color = "goldenrod1",
-    vjust = "outward", hjust = "outward",
-    min.segment.length = 50,
-    nudge_y = -0.5,
-    show.legend = FALSE
-  ) +
-  geom_jitter(aes(color = class2)) +
-  ggtitle("Adult and Larval Movement by Class")
+  # geom_label_repel(
+  #   data = subset(fishbase_data_gmm, fb_name %in% c("Yellow snapper", "Blackfin tuna")),
+  #   aes(label = fb_name, color = class2),
+  #   size = 8,
+  #   vjust = "outward", hjust = "outward",
+  #   min.segment.length = 50,
+  #   nudge_y = -1,
+  #   show.legend = FALSE
+  # ) +
+  # geom_label_repel(
+  #   data = subset(fishbase_data_gmm, fb_name %in% c("Lingcod", "Nassau grouper")),
+  #   aes(label = fb_name, color = class2),
+  #   size = 8,
+  #   hjust = "inward",
+  #   min.segment.length = 50,
+  #   box.padding = 0,
+  #   nudge_x = -3, nudge_y = -0.8,
+  #   show.legend = FALSE
+  # ) +
+  # geom_label_repel(
+  #   data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "North Pacific hake")),
+  #   aes(label = fb_name, color = class2),
+  #   size = 8,
+  #   vjust = "outward", hjust = "outward",
+  #   min.segment.length = 50,
+  #   nudge_x = -1, nudge_y = 0.8,
+  #   show.legend = FALSE
+  # ) +
+  # geom_label_repel(
+  #   data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod")),
+  #   aes(label = fb_name, color = class2),
+  #   size = 8,
+  #   vjust = "outward", hjust = "outward",
+  #   min.segment.length = 50,
+  #   nudge_y = 0,
+  #   show.legend = FALSE
+  # ) +
+  # geom_label_repel(
+  #   data = subset(fishbase_data_gmm, fb_name %in% c("Great barracuda", "Black seabream")),
+  #   aes(label = fb_name, color = class2),
+  #   size = 8,
+  #   vjust = "outward", hjust = "outward",
+  #   min.segment.length = 50,
+  #   nudge_y = 1, nudge_x = 0.7,
+  #   show.legend = FALSE
+  # ) +
+  # geom_label_repel(
+  #   data = subset(fishbase_data_gmm, fb_name %in% c("Yellowfin tuna", "Swordfish")),
+  #   aes(label = fb_name, color = clas2),
+  #   color = "goldenrod1",
+  #   size = 8,
+  #   vjust = "inward", #hjust = "outward",
+  #   min.segment.length = 50,
+  #   nudge_y = 0.5,
+  #   show.legend = FALSE
+  # ) +
+  geom_jitter(aes(color = class2), size = 4)
 
 gmm_wsn
 
-#ggsave(gmm_wsn, file = paste0("gmm_wsn.pdf"), path = here::here("04_figs", "WSN"), height = 5, width = 12)
+ggsave(gmm_wsn, file = paste0("gmm_wsn_nolabel.pdf"), path = here::here("04_figs", "WSN"), height = 10, width = 24)
 
 
 

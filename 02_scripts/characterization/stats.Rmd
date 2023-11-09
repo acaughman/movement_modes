@@ -159,7 +159,60 @@ interact_plot <- (p2 + p4) / (p1 + p3) + plot_layout(guides = "collect") + plot_
 interact_plot
 
 ggsave(interact_plot, file = paste0("interact_plot.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 15)
+
 ```
+
+
+
+
+### For WSN
+
+```{r}
+  
+p2 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = list("length", "longevity_wild" = c(1, 25, 50))) +
+  labs(
+    x = "Optimal Temperature (ºC)",
+    y = "Home Range Difference with Length",
+    color = "Maximum Lifespan (yr)",
+    fill = "Maximum Lifespan (yr)"
+  ) +
+  theme_bw(base_size = 18) +
+  scale_color_manual(values = c("#7ad151", "#21918c", "#482475")) +
+  scale_fill_manual(values = c("#7ad151", "#21918c", "#482475")) +
+  xlim(NA, 45) + 
+  ylim(-0.25, 0.25)
+
+p4 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = list("length", "longevity_wild" = c(1, 25, 50))) +
+  labs(
+    x = "Optimal Temperature (ºC)",
+    y = "PLD Difference with Length",
+    color = "Maximum Lifespan (yr)",
+    fill = "Maximum Lifespan (yr)"
+  ) +
+  theme_bw(base_size = 18) +
+  scale_color_manual(values = c("#7ad151", "#21918c", "#482475")) +
+  scale_fill_manual(values = c("#7ad151", "#21918c", "#482475")) +
+  xlim(NA, 45) + 
+  ylim(-2, 1)
+
+interact_wsn <- (p2 + p4) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
+interact_wsn
+
+ggsave(interact_wsn, file = paste0("interact_wsn.pdf"), path = here::here("04_figs", "WSN"), height = 7, width = 15)
+
+
+
+# filled_data3 <- filled_data2 %>% 
+#   dplyr::select(species, common_name, fb_name, longevity_wild, class2, movement_keyword, observed_pld, predicted_pld, pld, observed_homerange, predicted_homerange, home_range)
+
+
+
+
+
+
+
+```
+
 
 ### Variable Inflation Factors (VIF)
 
