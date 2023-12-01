@@ -13,35 +13,11 @@ library(AdaptGauss)
 set.seed(5)
 ```
 
-# Overview
-
-This project is interested in exploring the relationship between two different movement modes for marine species: larval dispersal and adult movement, which has been data limited in the past. To do this, I have a database of 607 species with information for both modes generated from a random forest regression model. The goal of the project is to create groupings of species with similar characteristic and model the relationship between pelagic larval duration and adult home ranges. This information will then be used to inform future work on species ability to track climate change as well as determine conservation strategies for different combinations of movement traits.
-
-### Outline of Tasks
-
-1. Read/Skim Baseline Papers
-
-* Lester, S. E., Ruttenberg, B. I., Gaines, S. D., & Kinlan, B. P. (2007). The relationship between dispersal ability and geographic range size. Ecology Letters, 10(8), 745–758. https://doi.org/10.1111/j.1461-0248.2007.01070.x <- (Please read this paper in its entirety)
-* Green, A. L., Maypa, A. P., Almany, G. R., Rhodes, K. L., Weeks, R., Abesamis, R. A., Gleason, M. G., Mumby, P. J., & White, A. T. (2015). Larval dispersal and movement patterns of coral reef fishes, and implications for marine reserve network design. Biological Reviews, 90(4), 1215–1247. https://doi.org/10.1111/brv.12155 <- marine reserve guidelines based on movement ecology overview; considers adult movement and larval dispersal separately (skim is fine)
-* Grüss, A., Kaplan, D. M., & Hart, D. R. (2011). Relative Impacts of Adult Movement, Larval Dispersal and Harvester Movement on the Effectiveness of Reserve Networks. PLoS ONE, 6(5), e19960. https://doi.org/10.1371/journal.pone.0019960 and * Moffitt, E. A., White, J. W., & Botsford, L. W. (2011). The utility and limitations of size and spacing guidelines for designing marine protected area (MPA) networks. Biological Conservation. https://doi.org/10.1016/j.biocon.2010.09.008 <- marine reserve guidelines considering both adult movement and larval dispersal together (skim Grüss, I'd read Moffitt more thoroughly)
-* O’Connor, M. I., Bruno, J. F., Gaines, S. D., Halpern, B. S., Lester, S. E., Kinlan, B. P., & Weiss, J. M. (2007). Temperature control of larval dispersal and the implications for marine ecology, evolution, and conservation. Proceedings of the National Academy of Sciences, 104(4), 1266–1271. https://doi.org/10.1073/pnas.0603422104 <- (skim; math heavy don't worry about the weeds)
-
-2. Create Groupings of Species (See below for Start; see Lester et al. (2007) and Fish base Tables for variable ideas)
-
-3. Model relationship
-* Start with "reproducing" Lester et al. (2007); don't aim for perfect reproduction, use as more guidelines. I also don't expect to largely use linear regression
-* Using this we can determine next steps for modeling
-
-### Deliverables
-
-1. All code developed, with comments (save code you end up not using at bottom of scripts)
-2. Detailed Methods of all things you did (even ones that didn't work well)
-3. Polished methods draft of work
 
 ### Data Overview
 
 ```{r}
-data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")) %>%
+data <- read_csv(here::here("01_data", "01_raw_data", "homerange_pld.csv")) %>%
   mutate(home_range = case_when(
     !is.na(observed_homerange) ~ observed_homerange,
     is.na(observed_homerange) ~ predicted_homerange
