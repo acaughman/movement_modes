@@ -10,10 +10,10 @@ The order of running scripts should be as follows:
 
 UPDATE THESE TO MATCH OUR WORKFLOW - with brief info about what each script does and it's outputs. This is an example from my last paper
 
-1. The first script is the simulation model `01_final_model.R`. It will produce a CSV file with the model data.
-2. The next script to be run after all simulation models is called `02_data_merge.Rmd`. This script merges all simulation data into one CSV for additional analysis and plotting.
-3. 
-4. The fourth script in the folder `04_supplemental.Rmd` contains all code for analysis and figure generation in the supplemental.
+1. The first script clusters the movement data (Darcy et al. 2024?) `01_clustering.R`. It runs a Guassian Mixture model and produces a CSV file with the assigned clusters for each species.
+2. The next script to be run is called `02_fishbase_data.Rmd`. This script .
+3. The third script to be run is called `02_PCA.Rmd`. This script .
+4. The fourth script in the folder `04_stats.Rmd` contains all code for .
 5. The final script to be run is `05_figures.Rmd`. It contains all additional analysis and figure generation for the paper and supplemental material.
 
 the 01_data folder contains the required .csv files for running all scripts.
@@ -32,8 +32,8 @@ Please ignore folders/data/scripts no listed here
       |__clusters.csv 
       |__ TO DO delete data that isn't used in paper scripts a add columns here
 02_scripts
-  |__01_fishbase_data.Rmd
-  |__02_clustering.Rmd
+  |__01_clustering.Rmd
+  |__02_fishbase_data.Rmd need to merge with fishbase_data_in.Rmd
   |__03_PCA.Rmd
   |__04_stats.Rmd
   |__05_figures.Rmd
