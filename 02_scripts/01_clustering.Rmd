@@ -1,0 +1,56 @@
+---
+title: "Guassian Mixture Model of Species Movement"
+output: pdf_document
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(mclust)
+library(AdaptGauss)
+
+set.seed(5)
+```
+
+
+```{r}
+data <- read_csv(here::here("01_data", "01_raw_data", "homerange_pld.csv")) %>%
+  mutate(home_range = case_when(
+    !is.na(observed_homerange) ~ observed_homerange,
+    is.na(observed_homerange) ~ predicted_homerange
+  )) %>% # assign empirical homerange as first priority then predicted
+  mutate(pld = case_when(
+    !is.na(observed_pld) ~ observed_pld,
+    is.na(observed_pld) ~ predicted_pld
+  )) %>% # assign empirical PLD as first priority then predicted
+  filter(pld < 400) %>% # remove 1 large outlier
+  mutate(magnitude_homerange = floor(log10(home_range))) %>% # calculate order of magnitude of home range
+  mutate(month_pld = ceiling(pld / 30)) # calculate month of PLD
+```
+
+##### GMM Clustering
+
+```{r}
+gmm_data <- data %>%
+  dplyr::select(magnitude_homerange, month_pld) # select movement values for clustering
+gmm_data2 <- data %>%
+  dplyr::select(magnitude_homerange, month_pld, species) # include species for visualization
+
+gmm_mclust <- Mclust(gmm_data, G = 9) # run GMM G = 9 guarentees at least 3 classes across each axis (homerange or PLD)
+summary(gmm_mclust)
+
+gmm_data2$class <- as.factor(gmm_mclust[["classification"]]) # add class variable to GMM data with species
+
+p2 <- ggplot(gmm_data2, aes(magnitude_homerange, month_pld)) +
+  geom_jitter(aes(color = class)) +
+  theme_bw() +
+  labs(
+    x = "Order of Magnitude of Predicted Home Range",
+    y = "Predicted Pelagic Larval Duration (Month)"
+  )
+
+p2 # visualize raw classes
+
+write_csv(gmm_data2, here::here("01_data", "02_processed_data", "clusters.csv"))
+```
