@@ -10,7 +10,7 @@ The order of running scripts should be as follows:
 
 UPDATE THESE TO MATCH OUR WORKFLOW - with brief info about what each script does and it's outputs. This is an example from my last paper
 
-1. The first script clusters the movement data (Darcy et al. 2024?) `01_clustering.R`. It runs a Guassian Mixture model and produces a CSV file with the assigned clusters for each species.
+1. The first script clusters the movement data from (Darcy et al. 2024?) `01_clustering.R`. It runs a Guassian Mixture model and produces a CSV file with the assigned clusters for each species.
 2. The next script to be run is called `02_fishbase_data.Rmd`. This script .
 3. The third script to be run is called `02_PCA.Rmd`. This script .
 4. The fourth script in the folder `04_stats.Rmd` contains all code for .
