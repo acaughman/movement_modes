@@ -9,6 +9,8 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 library(tidyverse)
 library(mclust)
 library(AdaptGauss)
+library(factoextra)
+library(fpc)
 
 set.seed(5)
 ```
@@ -53,4 +55,19 @@ p2 <- ggplot(gmm_data2, aes(magnitude_homerange, month_pld)) +
 p2 # visualize raw classes
 
 write_csv(gmm_data2, here::here("01_data", "02_processed_data", "clusters.csv"))
+```
+
+```{r}
+### compare highest AIC clustering to our clustering
+d <- dist(gmm_data)
+class1 <- Mclust(gmm_data)[["classification"]]
+class2 <- gmm_mclust[["classification"]]
+
+cluster.stats(d, class1) # internal stats for our clustering
+# avg.sil witdth = 0.3053463
+# dunn =  0.125
+
+cluster.stats(d, class2) # internal stats for highest AIC clustering
+# avg.sil witdth = 0.5524304 closer to 1 = better
+# dunn =  0.25 higher = better
 ```
