@@ -102,7 +102,7 @@ f1_fig
 ```
 
 
-##### NMDS 4: All significant traits
+##### NMDS: All significant traits
 
 ```{r}
 
@@ -153,7 +153,7 @@ nmds4 <- ggplot(filled_scores4, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2), alpha = 0.3) +
   theme_bw(base_size = 16) +
   geom_point(data = centroid4, aes(color = class2), size = 4, alpha = 0.9) +
-  labs(x = "nMDS1", y = "nMDS2", color = "Cohort (Homerange/PLD)") +
+  labs(x = "nMDS1", y = "nMDS2", color = "Class (Homerange/PLD)") +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
   geom_segment(data = species_scores4, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20") +
@@ -182,10 +182,9 @@ pairwise.adonis(m_com4, com_data4$class3, perm = 9999)
 ```
 
 
-##### NMDS 7: Optimal temperature, length, longevity, trophic level
+##### NMDS 4 key traits: Optimal temperature, length, longevity, trophic level
 
 ```{r}
-#Keep 
 
 com_data7 <- filled_data2 %>%
   dplyr::select(
@@ -244,7 +243,7 @@ nmds7 <- ggplot(filled_scores7, aes(x = NMDS1, y = NMDS2)) +
 
 nmds7
 
-#ggsave(nmds7, file = paste0("nmds_wsn.pdf"), path = here::here("04_figs", "WSN"), height = 8, width = 12)
+#ggsave(nmds7, file = paste0("nmds_4_traits.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
 
 
 dst7 <- dist(com7, method = "euclidean")
