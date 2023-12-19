@@ -198,7 +198,7 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   labs(
     x = "Predicted Home Range Magnitude",
     y = "Predicted PLD Month",
-    color = "Cohort (Homerange/PLD)",
+    color = "Class (Homerange/PLD)",
     tag = "C"
   ) +
   ylim(-0.1,6) +
@@ -438,7 +438,7 @@ ind_panel <- ((temp_plot | length_plot) / (diet_plot | long_plot)) +
   theme(text = element_text(size = 14), legend.position = "none")
 
 individual_panel <- wrap_elements(ind_panel) +
-  labs(tag = "Movement Cohort") +
+  labs(tag = "Movement Class") +
   theme(
     plot.tag = element_text(size = 14, angle = 270),
     plot.tag.position = "right"
