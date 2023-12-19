@@ -279,7 +279,7 @@ summary(model_length_log)
 
 # effect size
 eta_squared(model_length_log)
-# eta2 = 0.18, 95% CI: [0.13, 1.00]
+# eta2 = 0.18, LARGE effect
 
 # post hoc Tukey test
 TukeyHSD(model_length_log)
@@ -319,8 +319,13 @@ plot(model_temp, 1)
 kruskal.test(temp_preferred ~ class2, data = temp_data)
 # chi-squared = 77.77, df = 5, p-value = 2.455e-15
 
+# get effect size 
+temp_data %>% kruskal_effsize(temp_preferred ~ class2)
+# eta2 = 0.124, MODERATE effect
+
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(temp_preferred ~ class2, data = temp_data, method = "bh")
+
 
 
 # longevity_wild -----------------------------------------------
