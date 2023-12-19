@@ -285,180 +285,6 @@ eta_squared(model_length_log)
 TukeyHSD(model_length_log)
 
 
-# kfin ---------------------------------------------------------
-
-# look at outliers
-outliers_kfin <- boxplot.stats(filled_data2$kfin)$out
-boxplot(filled_data2$kfin, main = "Carrying Capacity", boxwex = 0.1)
-mtext(paste("Outliers: ", paste(outliers_kfin, collapse = ", ")), cex = 0.4)
-
-# build the model
-model_kfin <- aov(kfin ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_kfin))
-# not normal
-
-# model with log transformed variable
-model_kfin_log <- aov(log(kfin) ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_kfin_log))
-# normal?
-
-# run Shapiro-Wilk test of normality
-shapiro_test(residuals(model_kfin_log))
-# p-value = 0.00267, not normal
-
-# test for homogeneity of variance
-plot(model_kfin, 1)
-# looks fine
-
-# run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(kfin ~ class2, data = filled_data2)
-# chi-squared = 61.516, df = 5, p-value = 5.906e-12
-
-# Kruskal-Wallis is significant, run Dunn's test
-dunnTest(kfin ~ class2, data = filled_data2, method = "bh")
-
-
-# r_fin --------------------------------------------------------
-
-# look at outliers
-outliers_r_fin <- boxplot.stats(filled_data2$r_fin)$out
-boxplot(filled_data2$r_fin, main = "Growth Rate", boxwex = 0.1)
-mtext(paste("Outliers: ", paste(outliers_r_fin, collapse = ", ")), cex = 0.4)
-
-# build the model
-model_r_fin <- aov(r_fin ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_r_fin))
-# not normal
-
-# model with log transformed variable
-model_r_fin_log <- aov(log(r_fin) ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_r_fin_log))
-# normal?
-
-# run Shapiro-Wilk test of normality
-shapiro_test(residuals(model_r_fin_log))
-# p-value = 0.000508, not normal
-
-# test for homogeneity of variance
-plot(model_r_fin, 1)
-# looks fine
-
-# run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(r_fin ~ class2, data = filled_data2)
-# chi-squared = 42.245, df = 5, p-value = 5.255e-08
-
-# Kruskal-Wallis is significant, run Dunn's test
-dunnTest(r_fin ~ class2, data = filled_data2, method = "bh")
-
-
-# diet_troph3 --------------------------------------------------
-
-# look at outliers
-outliers_diet_troph3 <- boxplot.stats(filled_data2$diet_troph3)$out
-boxplot(filled_data2$diet_troph3, main = "Trophic Position", boxwex = 0.1)
-mtext(paste("Outliers: ", paste(outliers_diet_troph3, collapse = ", ")), cex = 0.4)
-
-# build the model
-model_diet_troph3 <- aov(diet_troph3 ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_diet_troph3))
-# not normal
-
-# model with transformed variable
-model_diet_troph3_log <- aov(log(diet_troph3) ~ class2, data = filled_data2)
-model_diet_troph3_exp <- aov(exp(diet_troph3) ~ class2, data = filled_data2)
-model_diet_troph3_sqrt <- aov(sqrt(diet_troph3) ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_diet_troph3_log))
-ggqqplot(residuals(model_diet_troph3_exp))
-ggqqplot(residuals(model_diet_troph3_sqrt))
-# none are normal
-
-# test for homogeneity of variance
-plot(model_diet_troph3, 1)
-# looks good
-
-# run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(diet_troph3 ~ class2, data = filled_data2)
-# chi-squared = 36.497, df = 5, p-value = 7.555e-07
-
-# Kruskal-Wallis is significant, run Dunn's test
-dunnTest(diet_troph3 ~ class2, data = filled_data2, method = "bh")
-
-
-# fecundity_mean -----------------------------------------------
-
-# look at outliers
-outliers_fecundity <- boxplot.stats(filled_data2$fecundity_mean)$out
-boxplot(filled_data2$fecundity_mean, main = "Fecundity", boxwex = 0.1)
-mtext(paste("Outliers: ", paste(outliers_fecundity, collapse = ", ")), cex = 0.4)
-
-# build the model
-model_fecundity <- aov(fecundity_mean ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_fecundity))
-# not normal
-
-# model with log transformed variable
-model_fecundity_log <- aov(log(fecundity_mean) ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_fecundity_log))
-# not normal
-
-# test for homogeneity of variance
-plot(model_fecundity, 1)
-# not horizontal
-
-# run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(fecundity_mean ~ class2, data = filled_data2)
-# chi-squared = 2.8377, df = 5, p-value = 0.725
-# not significant
-
-
-# sp_richness --------------------------------------------------
-
-# look at outliers
-outliers_sp <- boxplot.stats(filled_data2$sp_richness)$out
-boxplot(filled_data2$sp_richness, main = "Species Richness by Family", boxwex = 0.1)
-mtext(paste("Outliers: ", paste(outliers_sp, collapse = ", ")), cex = 0.4)
-
-# build the model
-model_sprich <- aov(sp_richness ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_sprich))
-# not normal
-
-# model with log transformed variable
-model_sprich_log <- aov(log(sp_richness) ~ class2, data = filled_data2)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_sprich_log))
-# less abnormal
-
-# test for homogeneity of variance
-plot(model_sprich, 1)
-# looks good
-
-# run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(sp_richness ~ class2, data = filled_data2)
-# chi-squared = 28.128, df = 5, p-value = 3.437e-05
-
-# Kruskal-Wallis is significant, run Dunn's test
-dunnTest(sp_richness ~ class2, data = filled_data2, method = "bh")
-
 
 # temp_preferred -----------------------------------------------
 
@@ -535,6 +361,189 @@ kruskal.test(longevity_wild ~ class2, data = longevity_data)
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(longevity_wild ~ class2, data = longevity_data, method = "bh")
+
+
+
+# diet_troph3 --------------------------------------------------
+
+# look at outliers
+outliers_diet_troph3 <- boxplot.stats(filled_data2$diet_troph3)$out
+boxplot(filled_data2$diet_troph3, main = "Trophic Position", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_diet_troph3, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_diet_troph3 <- aov(diet_troph3 ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_diet_troph3))
+# not normal
+
+# model with transformed variable
+model_diet_troph3_log <- aov(log(diet_troph3) ~ class2, data = filled_data2)
+model_diet_troph3_exp <- aov(exp(diet_troph3) ~ class2, data = filled_data2)
+model_diet_troph3_sqrt <- aov(sqrt(diet_troph3) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_diet_troph3_log))
+ggqqplot(residuals(model_diet_troph3_exp))
+ggqqplot(residuals(model_diet_troph3_sqrt))
+# none are normal
+
+# test for homogeneity of variance
+plot(model_diet_troph3, 1)
+# looks good
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(diet_troph3 ~ class2, data = filled_data2)
+# chi-squared = 36.497, df = 5, p-value = 7.555e-07
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(diet_troph3 ~ class2, data = filled_data2, method = "bh")
+
+
+
+
+
+
+# kfin ---------------------------------------------------------
+
+# look at outliers
+outliers_kfin <- boxplot.stats(filled_data2$kfin)$out
+boxplot(filled_data2$kfin, main = "Carrying Capacity", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_kfin, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_kfin <- aov(kfin ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_kfin))
+# not normal
+
+# model with log transformed variable
+model_kfin_log <- aov(log(kfin) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_kfin_log))
+# normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_kfin_log))
+# p-value = 0.00267, not normal
+
+# test for homogeneity of variance
+plot(model_kfin, 1)
+# looks fine
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(kfin ~ class2, data = filled_data2)
+# chi-squared = 61.516, df = 5, p-value = 5.906e-12
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(kfin ~ class2, data = filled_data2, method = "bh")
+
+
+# r_fin --------------------------------------------------------
+
+# look at outliers
+outliers_r_fin <- boxplot.stats(filled_data2$r_fin)$out
+boxplot(filled_data2$r_fin, main = "Growth Rate", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_r_fin, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_r_fin <- aov(r_fin ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_r_fin))
+# not normal
+
+# model with log transformed variable
+model_r_fin_log <- aov(log(r_fin) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_r_fin_log))
+# normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_r_fin_log))
+# p-value = 0.000508, not normal
+
+# test for homogeneity of variance
+plot(model_r_fin, 1)
+# looks fine
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(r_fin ~ class2, data = filled_data2)
+# chi-squared = 42.245, df = 5, p-value = 5.255e-08
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(r_fin ~ class2, data = filled_data2, method = "bh")
+
+
+
+# fecundity_mean -----------------------------------------------
+
+# look at outliers
+outliers_fecundity <- boxplot.stats(filled_data2$fecundity_mean)$out
+boxplot(filled_data2$fecundity_mean, main = "Fecundity", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_fecundity, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_fecundity <- aov(fecundity_mean ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_fecundity))
+# not normal
+
+# model with log transformed variable
+model_fecundity_log <- aov(log(fecundity_mean) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_fecundity_log))
+# not normal
+
+# test for homogeneity of variance
+plot(model_fecundity, 1)
+# not horizontal
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(fecundity_mean ~ class2, data = filled_data2)
+# chi-squared = 2.8377, df = 5, p-value = 0.725
+# not significant
+
+
+# sp_richness --------------------------------------------------
+
+# look at outliers
+outliers_sp <- boxplot.stats(filled_data2$sp_richness)$out
+boxplot(filled_data2$sp_richness, main = "Species Richness by Family", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_sp, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_sprich <- aov(sp_richness ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_sprich))
+# not normal
+
+# model with log transformed variable
+model_sprich_log <- aov(log(sp_richness) ~ class2, data = filled_data2)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_sprich_log))
+# less abnormal
+
+# test for homogeneity of variance
+plot(model_sprich, 1)
+# looks good
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(sp_richness ~ class2, data = filled_data2)
+# chi-squared = 28.128, df = 5, p-value = 3.437e-05
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(sp_richness ~ class2, data = filled_data2, method = "bh")
+
+
 
 
 # temp_range ---------------------------------------------------
