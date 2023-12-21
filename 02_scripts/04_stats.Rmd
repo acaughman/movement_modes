@@ -364,6 +364,10 @@ plot(model_long, 1)
 kruskal.test(longevity_wild ~ class2, data = longevity_data)
 # chi-squared = 25.928, df = 5, p-value = 9.216e-05
 
+# get effect size 
+longevity_data %>% kruskal_effsize(longevity_wild ~ class2)
+# eta2 = 0.0384, SMALL effect
+
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(longevity_wild ~ class2, data = longevity_data, method = "bh")
 
@@ -401,6 +405,10 @@ plot(model_diet_troph3, 1)
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(diet_troph3 ~ class2, data = filled_data2)
 # chi-squared = 36.497, df = 5, p-value = 7.555e-07
+
+# get effect size 
+filled_data2 %>% kruskal_effsize(diet_troph3 ~ class2)
+# eta2 = 0.0525, SMALL effect
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(diet_troph3 ~ class2, data = filled_data2, method = "bh")
