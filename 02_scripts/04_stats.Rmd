@@ -278,7 +278,10 @@ summary(model_length_log)
 # p-value < 2e-16 ***
 
 # effect size
-eta_squared(model_length_log)
+effectsize::cohens_f(model_length_log)
+
+effectsize::eta_squared(model_length_log)
+interpret_eta_squared(0.18, rules = "cohen1992")
 # eta2 = 0.18, LARGE effect
 
 # post hoc Tukey test
@@ -320,7 +323,7 @@ kruskal.test(temp_preferred ~ class2, data = temp_data)
 # chi-squared = 77.77, df = 5, p-value = 2.455e-15
 
 # get effect size 
-temp_data %>% kruskal_effsize(temp_preferred ~ class2)
+temp_data %>% kruskal_effsize(temp_preferred ~ class2, ci = TRUE)
 # eta2 = 0.124, MODERATE effect
 
 # Kruskal-Wallis is significant, run Dunn's test
@@ -365,7 +368,7 @@ kruskal.test(longevity_wild ~ class2, data = longevity_data)
 # chi-squared = 25.928, df = 5, p-value = 9.216e-05
 
 # get effect size 
-longevity_data %>% kruskal_effsize(longevity_wild ~ class2)
+longevity_data %>% kruskal_effsize(longevity_wild ~ class2, ci = TRUE)
 # eta2 = 0.0384, SMALL effect
 
 # Kruskal-Wallis is significant, run Dunn's test
@@ -407,7 +410,7 @@ kruskal.test(diet_troph3 ~ class2, data = filled_data2)
 # chi-squared = 36.497, df = 5, p-value = 7.555e-07
 
 # get effect size 
-filled_data2 %>% kruskal_effsize(diet_troph3 ~ class2)
+filled_data2 %>% kruskal_effsize(diet_troph3 ~ class2, ci = TRUE)
 # eta2 = 0.0525, SMALL effect
 
 # Kruskal-Wallis is significant, run Dunn's test
