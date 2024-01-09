@@ -52,8 +52,10 @@ eigen_f1 <- f1$eig
 eigen_f1
 
 # Contribution to the first dimension
-fviz_contrib(f1, "var", axes = 1) + fviz_contrib(f1, "var", axes = 2)
-# Contribution to the second dimension
+c1 <- fviz_contrib(f1, "var", axes = 1) + scale_y_continuous(breaks = seq(0,25,by = 0.5))
+# Contribution to the second dimension  
+c2 <- fviz_contrib(f1, "var", axes = 2) + scale_y_continuous(breaks = seq(0,26,by = 0.5))
+c1 + c2
 
 f1_var = as.data.frame(f1$var) 
 
