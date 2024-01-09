@@ -279,7 +279,7 @@ missing3 <- miss_var_summary(filled_data2)
 
 missing_fishbase_data <- fishbase_data %>% 
   dplyr::select(
-    oxygen_cons, temp_range, dev_place, temp_min, temp_max,
+    oxygen_cons, temp_range, dev_place,
     longevity_wild, temp_preferred, iucn_category, food_i,
   ) %>%
   rename(
@@ -289,20 +289,18 @@ missing_fishbase_data <- fishbase_data %>%
     "Maximum Recorded Lifespan" = longevity_wild,
     "Optimal Temperature" = temp_preferred,
     "IUCN Category" = iucn_category,
-    "Diet Items" = food_i,
-    "Minimum Temperature" = temp_min,
-    "Maximum Temperature" = temp_max,
+    "Diet Items" = food_i
   )
 
 m1 <- gg_miss_var(missing_fishbase_data) +
   theme_bw(base_size = 16) +
-  labs(y = "Missing Data Before Fills", x = "") +
+  labs(y = "Original Missing Data", x = "") +
   theme(axis.title.x = element_text(vjust = -1))
 m1
 
 missing_filled_data <- filled_data %>% 
   dplyr::select(
-    oxygen_cons, temp_range, temp_min, temp_max,
+    oxygen_cons, temp_range,
     longevity_wild, temp_preferred, iucn_category, food_i,
   ) %>%
   rename(
@@ -311,9 +309,7 @@ missing_filled_data <- filled_data %>%
     "Maximum Recorded Lifespan" = longevity_wild,
     "Optimal Temperature" = temp_preferred,
     "IUCN Category" = iucn_category,
-    "Diet Items" = food_i,
-    "Minimum Temperature" = temp_min,
-    "Maximum Temperature" = temp_max,
+    "Diet Items" = food_i
   )
 
 m2 <- gg_miss_var(missing_filled_data) + # figure showing the missing data
