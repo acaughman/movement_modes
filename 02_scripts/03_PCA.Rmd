@@ -88,7 +88,7 @@ plot1 <- fviz_famd_var(f1, "quanti.var",
   scale_y_continuous(position = "right")
 
 
-f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_1$class2, palette = hcl.colors(6, "viridis"), addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var", alpha.ind = 0.3, ellipse.alpha = 0.2) +
+f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_1$class2, palette = hcl.colors(6, "viridis"), addEllipses = FALSE, ellipse.level = 0.95, invisible = "quali.var", alpha.ind = 0.3, ellipse.alpha = 0.2) +
   theme_bw(base_size = 16) +
   labs(x = "FAMD1 (10.5%)", y = "FAMD2 (9%)", color = "Cohort (Homerange/PLD)", fill = "Cohort (Homerange/PLD)", title = NULL) +
   scale_y_continuous(position = "right") +

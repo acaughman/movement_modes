@@ -363,7 +363,7 @@ plot_data <- filled_data2 %>%
 response <- "class2"
 expl_cont <- c(
   "temp_preferred", "fecundity_mean",
-  "longevity_wild", "sp_richness", "length", "kfin",
+  "longevity_wild", "sp_richness", "length",
   "r_fin", "diet_troph3", "oxygen_cons", "temp_range"
 )
 
@@ -402,31 +402,45 @@ diet_plot <- box_data(x = "diet_troph3", y = "class2") +
   theme(axis.text.y = element_blank())
 
 
-kfin_plot <- box_data(x = "kfin", y = "class2") + 
-  labs(y = "Carrying Capacity", x = "Movement Class") +
-  scale_x_discrete(position = "top") +
-  theme(axis.title.x = element_text(vjust = 0))
-r_fin_plot <- box_data(x = "r_fin", y = "class2") + stat_kruskal_test(label.y = 1, label.x = 6, position = "jitter") +
-  labs(y = "Growth Rate", x = "Movement Class")
-oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + stat_kruskal_test(label.y = 2000, label.x = 6, position = "jitter") +
-  labs(y = "Oxygen Consumption", x = "Movement Class")
-temp_range_plot <- box_data(x = "temp_range", y = "class2") + stat_kruskal_test(label.y = 20, label.x = 3.5, position = "jitter") +
-  labs(y = "Temperature Range", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
-fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + stat_kruskal_test(label.y = 1000000, label.x = 5.5, position = "jitter") +
-  labs(y = "Mean Fecundity", x = "Movement Class")
-sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + stat_kruskal_test(label.y = 1100, position = "jitter") +
-  labs(y = "Species Richness", x = "Movement Class") + theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+r_fin_plot <- box_data(x = "r_fin", y = "class2") + 
+  stat_kruskal_test(label.y = 1, label.x = 6, position = "jitter") +
+  labs(y = "Growth Rate", x = "") +
+  theme(axis.text.y = element_blank()) +
+  scale_x_discrete(position = "top")
+oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + 
+  stat_kruskal_test(label.y = 2000, label.x = 6, position = "jitter") +
+  labs(y = "Oxygen Consumption", x = "") +
+  theme(axis.text.y = element_blank()) +
+  scale_x_discrete(position = "top")
+temp_range_plot <- box_data(x = "temp_range", y = "class2") + 
+  stat_kruskal_test(label.y = 20, label.x = 3.5, position = "jitter") +
+  labs(y = "Temperature Range", x = "") + 
+  scale_x_discrete(position = "top")
+fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + 
+  stat_kruskal_test(label.y = 1000000, label.x = 5.5, position = "jitter") +
+  labs(y = "Mean Fecundity", x = "") +
+  scale_x_discrete(position = "top")
+sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + 
+  stat_kruskal_test(label.y = 1100, position = "jitter") +
+  labs(y = "Species Richness", x = "") + 
+  scale_x_discrete(position = "top")
 
 
-numeric_panel <- ((temp_plot | length_plot) /
-  (long_plot | diet_plot) /
-  (r_fin_plot | kfin_plot) /
-  (fecund_plot | sp_rich_plot) /
-  (oxygen_plot | temp_range_plot)) +
-  plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
+num_panel <- r_fin_plot + temp_range_plot + oxygen_plot + sp_rich_plot + plot_spacer() + fecund_plot +
+  plot_layout(ncol = 2, guides = "collect") + 
+  plot_annotation(tag_levels = "A") &
+  theme(text = element_text(size = 14), legend.position = "none")
+
+numeric_panel <- wrap_elements(num_panel) +
+  labs(tag = "Movement Class") +
+  theme(
+    plot.tag = element_text(size = 14, angle = 270),
+    plot.tag.position = "right"
+  )
 
 numeric_panel
-# ggsave(numeric_panel, file = paste0("numeric_panel.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 21, width = 14)
+ggsave(numeric_panel, file = paste0("numeric_panel.pdf"), path = here::here("04_figs", "individual_plots", "numeric"), height = 11, width = 11)
+
 
 ind_panel <- ((temp_plot | length_plot) / (diet_plot | long_plot)) +
   plot_layout(guides = "collect") +
