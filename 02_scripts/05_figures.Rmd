@@ -418,7 +418,7 @@ temp_range_plot <- box_data(x = "temp_range", y = "class2") +
   scale_x_discrete(position = "top")
 fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + 
   stat_kruskal_test(label.y = 1000000, label.x = 5.5, position = "jitter") +
-  labs(y = "Mean Fecundity", x = "") +
+  labs(y = "Fecundity", x = "") +
   scale_x_discrete(position = "top")
 sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + 
   stat_kruskal_test(label.y = 1100, position = "jitter") +
@@ -439,7 +439,7 @@ numeric_panel <- wrap_elements(num_panel) +
   )
 
 numeric_panel
-ggsave(numeric_panel, file = paste0("numeric_panel.pdf"), path = here::here("04_figs", "individual_plots", "numeric"), height = 11, width = 11)
+#ggsave(numeric_panel, file = paste0("numeric_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 11, width = 11)
 
 
 ind_panel <- ((temp_plot | length_plot) / (diet_plot | long_plot)) +
@@ -462,16 +462,16 @@ individual_panel
 
 
 ```{r}
-ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
-ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(temp_plot, file = paste0("temp_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(fecund_plot, file = paste0("fecund_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(long_plot, file = paste0("long_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(sp_rich_plot, file = paste0("sp_rich_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(length_plot, file = paste0("length_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(kfin_plot, file = paste0("kfin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(r_fin_plot, file = paste0("r_fin_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(diet_plot, file = paste0("diet_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(oxygen_plot, file = paste0("oxygen_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
+# ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here("04_figs", "individual_plots", "numeric"), height = 10, width = 10)
 ```
 
 
@@ -480,9 +480,7 @@ ggsave(temp_range_plot, file = paste0("temp_range_plot.png"), path = here::here(
 # categorical
 
 expl_cat <- c(
-  "climate", "body_shape_i", "dev_place", "movement_keyword",
-  "demers_pelag", "iucn_category",
-  "circadian", "food_mode", "ocean", "basin"
+  "body_shape_i", "dev_place", "demers_pelag", "iucn_category","food_mode"
 )
 
 scatter_data <- function(x, y) {
@@ -502,21 +500,39 @@ scatter_data <- function(x, y) {
 ```
 
 ```{r}
-body_plot <- scatter_data(x = "body_shape_i", y = "class2")
-dev_plot <- scatter_data(x = "dev_place", y = "class2")
-movement_plot <- scatter_data(x = "movement_keyword", y = "class2")
-demers_plot <- scatter_data(x = "demers_pelag", y = "class2")
-iucn_plot <- scatter_data(x = "iucn_category", y = "class2")
-food_plot <- scatter_data(x = "food_mode", y = "class2")
+
+body_plot <- scatter_data(x = "body_shape_i", y = "class2") + 
+  labs(y = "", x = "Body Shape") +
+  scale_y_discrete(position = "right")
+dev_plot <- scatter_data(x = "dev_place", y = "class2") + 
+  labs(y = "", x = "Place of Development") +
+  scale_y_discrete(position = "right")
+demers_plot <- scatter_data(x = "demers_pelag", y = "class2") + 
+  labs(y = "", x = "Habitat Type") +
+  theme(axis.text.y = element_blank())
+iucn_plot <- scatter_data(x = "iucn_category", y = "class2") + 
+  labs(y = "", x = "IUCN Category") +
+  theme(axis.text.y = element_blank())
+food_plot <- scatter_data(x = "food_mode", y = "class2") + 
+  labs(y = "", x = "Feeding Mode") +
+  scale_y_discrete(position = "right")
 
 
-ggsave(climate_plot, file = paste0("climate_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-ggsave(body_plot, file = paste0("body_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-ggsave(dev_plot, file = paste0("dev_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-ggsave(movement_plot, file = paste0("movement_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-ggsave(demers_plot, file = paste0("demers_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-ggsave(iucn_plot, file = paste0("iucn_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
-ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "individual_plots", "categorical"), height = 10, width = 10)
+cat_panel <- demers_plot + dev_plot + iucn_plot + food_plot + plot_spacer() + body_plot +
+  plot_layout(ncol = 2, guides = "collect") + 
+  plot_annotation(tag_levels = "A") &
+  theme(text = element_text(size = 14), legend.position = "none")
+
+categorical_panel <- wrap_elements(cat_panel) +
+  labs(tag = "Movement Class") +
+  theme(
+    plot.tag = element_text(size = 14, angle = 270),
+    plot.tag.position = "right"
+  )
+
+categorical_panel
+#ggsave(categorical_panel, file = paste0("categorical_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 11, width = 11)
+
 ```
 
 
@@ -532,119 +548,114 @@ ggsave(food_plot, file = paste0("food_plot.png"), path = here::here("04_figs", "
 
 ```{r}
 
-# PLD vs Home Range
-p1_wsn <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
-  geom_jitter(color = "#003366") +
-  theme_bw(base_size = 25) +
-  labs(
-    y = "PLD (days)",
-    x = "Natural Log of Predicted Home Range",
-    #tag = "B"
-  ) +
-  ggtitle("Combined Adult and Larval Movement")
-
-p1_wsn
-
-#ggsave(p1_wsn, file = paste0("PLD_HR.pdf"), path = here::here("04_figs", "WSN"), height = 7, width = 11)
-
-gmm_wsn <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
-  theme_bw(base_size = 32) +
-  labs(
-    x = "Home Range Magnitude",
-    y = "PLD (month)",
-    color = "Class (home range/PLD)",
-    #tag = "C"
-  ) +
-  ylim(-0.1,6) +
-  theme(legend.position = "bottom", 
-        legend.background = element_rect(color = "gray")) +
-  scale_color_viridis_d() +
-  # geom_label_repel(
-  #   data = subset(fishbase_data_gmm, fb_name %in% c("Yellow snapper", "Blackfin tuna")),
-  #   aes(label = fb_name, color = class2),
-  #   size = 8,
-  #   vjust = "outward", hjust = "outward",
-  #   min.segment.length = 50,
-  #   nudge_y = -1,
-  #   show.legend = FALSE
-  # ) +
-  # geom_label_repel(
-  #   data = subset(fishbase_data_gmm, fb_name %in% c("Lingcod", "Nassau grouper")),
-  #   aes(label = fb_name, color = class2),
-  #   size = 8,
-  #   hjust = "inward",
-  #   min.segment.length = 50,
-  #   box.padding = 0,
-  #   nudge_x = -3, nudge_y = -0.8,
-  #   show.legend = FALSE
-  # ) +
-  # geom_label_repel(
-  #   data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "North Pacific hake")),
-  #   aes(label = fb_name, color = class2),
-  #   size = 8,
-  #   vjust = "outward", hjust = "outward",
-  #   min.segment.length = 50,
-  #   nudge_x = -1, nudge_y = 0.8,
-  #   show.legend = FALSE
-  # ) +
-  # geom_label_repel(
-  #   data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod")),
-  #   aes(label = fb_name, color = class2),
-  #   size = 8,
-  #   vjust = "outward", hjust = "outward",
-  #   min.segment.length = 50,
-  #   nudge_y = 0,
-  #   show.legend = FALSE
-  # ) +
-  # geom_label_repel(
-  #   data = subset(fishbase_data_gmm, fb_name %in% c("Great barracuda", "Black seabream")),
-  #   aes(label = fb_name, color = class2),
-  #   size = 8,
-  #   vjust = "outward", hjust = "outward",
-  #   min.segment.length = 50,
-  #   nudge_y = 1, nudge_x = 0.7,
-  #   show.legend = FALSE
-  # ) +
-  # geom_label_repel(
-  #   data = subset(fishbase_data_gmm, fb_name %in% c("Yellowfin tuna", "Swordfish")),
-  #   aes(label = fb_name, color = clas2),
-  #   color = "goldenrod1",
-  #   size = 8,
-  #   vjust = "inward", #hjust = "outward",
-  #   min.segment.length = 50,
-  #   nudge_y = 0.5,
-  #   show.legend = FALSE
-  # ) +
-  geom_jitter(aes(color = class2), size = 4)
-
-gmm_wsn
-
-ggsave(gmm_wsn, file = paste0("gmm_wsn_nolabel.pdf"), path = here::here("04_figs", "WSN"), height = 10, width = 24)
-
-
-
-# Individual panel
-ind_panel_wsn <- ((temp_plot | length_plot) / (diet_plot | long_plot)) +
-  plot_layout(guides = "collect") +
-  plot_annotation(tag_levels = "A") &
-  theme(text = element_text(size = 25), legend.position = "none")
-
-individual_panel_wsn <- wrap_elements(ind_panel_wsn) +
-  labs(tag = "Movement Cohort") +
-  theme(
-    plot.tag = element_text(size = 25, angle = 270),
-    plot.tag.position = "right"
-  )
-
-individual_panel_wsn
-
-ggsave(individual_panel_wsn, file = paste0("panel_wsn.pdf"), path = here::here("04_figs", "WSN"), height = 12, width = 16)
-
-
-
-
-
-
+# # PLD vs Home Range
+# p1_wsn <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
+#   geom_jitter(color = "#003366") +
+#   theme_bw(base_size = 25) +
+#   labs(
+#     y = "PLD (days)",
+#     x = "Natural Log of Predicted Home Range",
+#     #tag = "B"
+#   ) +
+#   ggtitle("Combined Adult and Larval Movement")
+# 
+# p1_wsn
+# 
+# #ggsave(p1_wsn, file = paste0("PLD_HR.pdf"), path = here::here("04_figs", "WSN"), height = 7, width = 11)
+# 
+# gmm_wsn <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
+#   theme_bw(base_size = 32) +
+#   labs(
+#     x = "Home Range Magnitude",
+#     y = "PLD (month)",
+#     color = "Class (home range/PLD)",
+#     #tag = "C"
+#   ) +
+#   ylim(-0.1,6) +
+#   theme(legend.position = "bottom", 
+#         legend.background = element_rect(color = "gray")) +
+#   scale_color_viridis_d() +
+#   # geom_label_repel(
+#   #   data = subset(fishbase_data_gmm, fb_name %in% c("Yellow snapper", "Blackfin tuna")),
+#   #   aes(label = fb_name, color = class2),
+#   #   size = 8,
+#   #   vjust = "outward", hjust = "outward",
+#   #   min.segment.length = 50,
+#   #   nudge_y = -1,
+#   #   show.legend = FALSE
+#   # ) +
+#   # geom_label_repel(
+#   #   data = subset(fishbase_data_gmm, fb_name %in% c("Lingcod", "Nassau grouper")),
+#   #   aes(label = fb_name, color = class2),
+#   #   size = 8,
+#   #   hjust = "inward",
+#   #   min.segment.length = 50,
+#   #   box.padding = 0,
+#   #   nudge_x = -3, nudge_y = -0.8,
+#   #   show.legend = FALSE
+#   # ) +
+#   # geom_label_repel(
+#   #   data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "North Pacific hake")),
+#   #   aes(label = fb_name, color = class2),
+#   #   size = 8,
+#   #   vjust = "outward", hjust = "outward",
+#   #   min.segment.length = 50,
+#   #   nudge_x = -1, nudge_y = 0.8,
+#   #   show.legend = FALSE
+#   # ) +
+#   # geom_label_repel(
+#   #   data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod")),
+#   #   aes(label = fb_name, color = class2),
+#   #   size = 8,
+#   #   vjust = "outward", hjust = "outward",
+#   #   min.segment.length = 50,
+#   #   nudge_y = 0,
+#   #   show.legend = FALSE
+#   # ) +
+#   # geom_label_repel(
+#   #   data = subset(fishbase_data_gmm, fb_name %in% c("Great barracuda", "Black seabream")),
+#   #   aes(label = fb_name, color = class2),
+#   #   size = 8,
+#   #   vjust = "outward", hjust = "outward",
+#   #   min.segment.length = 50,
+#   #   nudge_y = 1, nudge_x = 0.7,
+#   #   show.legend = FALSE
+#   # ) +
+#   # geom_label_repel(
+#   #   data = subset(fishbase_data_gmm, fb_name %in% c("Yellowfin tuna", "Swordfish")),
+#   #   aes(label = fb_name, color = clas2),
+#   #   color = "goldenrod1",
+#   #   size = 8,
+#   #   vjust = "inward", #hjust = "outward",
+#   #   min.segment.length = 50,
+#   #   nudge_y = 0.5,
+#   #   show.legend = FALSE
+#   # ) +
+#   geom_jitter(aes(color = class2), size = 4)
+# 
+# gmm_wsn
+# 
+# ggsave(gmm_wsn, file = paste0("gmm_wsn_nolabel.pdf"), path = here::here("04_figs", "WSN"), height = 10, width = 24)
+# 
+# 
+# 
+# # Individual panel
+# ind_panel_wsn <- ((temp_plot | length_plot) / (diet_plot | long_plot)) +
+#   plot_layout(guides = "collect") +
+#   plot_annotation(tag_levels = "A") &
+#   theme(text = element_text(size = 25), legend.position = "none")
+# 
+# individual_panel_wsn <- wrap_elements(ind_panel_wsn) +
+#   labs(tag = "Movement Cohort") +
+#   theme(
+#     plot.tag = element_text(size = 25, angle = 270),
+#     plot.tag.position = "right"
+#   )
+# 
+# individual_panel_wsn
+# 
+# ggsave(individual_panel_wsn, file = paste0("panel_wsn.pdf"), path = here::here("04_figs", "WSN"), height = 12, width = 16)
+# 
 ```
 
 
