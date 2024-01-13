@@ -279,17 +279,17 @@ missing3 <- miss_var_summary(filled_data2)
 
 missing_fishbase_data <- fishbase_data %>% 
   dplyr::select(
-    oxygen_cons, temp_range, dev_place,
-    longevity_wild, temp_preferred, iucn_category, food_i,
+    oxygen_cons, temp_range, fecundity_mean, dev_place,
+    longevity_wild, temp_preferred, iucn_category,
   ) %>%
   rename(
     "Oxygen Consumption Rate" = oxygen_cons,
     "Temperature Range" = temp_range,
+    "Fecundity" = fecundity_mean,
     "Place of Development" = dev_place,
     "Maximum Recorded Lifespan" = longevity_wild,
     "Optimal Temperature" = temp_preferred,
-    "IUCN Category" = iucn_category,
-    "Diet Items" = food_i
+    "IUCN Category" = iucn_category
   )
 
 m1 <- gg_miss_var(missing_fishbase_data) +
@@ -300,16 +300,17 @@ m1
 
 missing_filled_data <- filled_data %>% 
   dplyr::select(
-    oxygen_cons, temp_range,
-    longevity_wild, temp_preferred, iucn_category, food_i,
+    oxygen_cons, temp_range, dev_place, fecundity_mean,
+    longevity_wild, temp_preferred, iucn_category,
   ) %>%
   rename(
     "Oxygen Consumption Rate" = oxygen_cons,
     "Temperature Range" = temp_range,
+    "Place of Development" = dev_place,
+    "Fecundity" = fecundity_mean,
     "Maximum Recorded Lifespan" = longevity_wild,
     "Optimal Temperature" = temp_preferred,
-    "IUCN Category" = iucn_category,
-    "Diet Items" = food_i
+    "IUCN Category" = iucn_category
   )
 
 m2 <- gg_miss_var(missing_filled_data) + # figure showing the missing data
@@ -318,21 +319,22 @@ m2 <- gg_miss_var(missing_filled_data) + # figure showing the missing data
   theme(axis.title.x = element_text(vjust = -1))
 m2
 
-missing_data <- filled_data2 %>%
+missing_data_final <- filled_data2 %>%
   dplyr::select(
-    oxygen_cons, temp_range, dev_place,
+    oxygen_cons, temp_range, fecundity_mean, dev_place,
     longevity_wild, temp_preferred, iucn_category
   ) %>%
   rename(
     "Oxygen Consumption Rate" = oxygen_cons,
     "Temperature Range" = temp_range,
+    "Fecundity" = fecundity_mean,
     "Place of Development" = dev_place,
     "Maximum Recorded Lifespan" = longevity_wild,
     "Optimal Temperature" = temp_preferred,
     "IUCN Category" = iucn_category
   )
 
-m3 <- gg_miss_var(missing_data) +
+m3 <- gg_miss_var(missing_data_final) +
   theme_bw(base_size = 16) +
   labs(y = "Missing Data After Family-Level Fill", x = "") +
   theme(axis.title.x = element_text(vjust = -1))
@@ -403,12 +405,12 @@ diet_plot <- box_data(x = "diet_troph3", y = "class2") +
 
 
 r_fin_plot <- box_data(x = "r_fin", y = "class2") + 
-  stat_kruskal_test(label.y = 1, label.x = 6, position = "jitter") +
+  stat_kruskal_test(label.y = 0.9, label.x = 6, position = "jitter") +
   labs(y = "Growth Rate", x = "") +
   theme(axis.text.y = element_blank()) +
   scale_x_discrete(position = "top")
 oxygen_plot <- box_data(x = "oxygen_cons", y = "class2") + 
-  stat_kruskal_test(label.y = 2000, label.x = 6, position = "jitter") +
+  stat_kruskal_test(label.y = 2000, label.x = 5.8, position = "jitter") +
   labs(y = "Oxygen Consumption", x = "") +
   theme(axis.text.y = element_blank()) +
   scale_x_discrete(position = "top")
@@ -417,7 +419,7 @@ temp_range_plot <- box_data(x = "temp_range", y = "class2") +
   labs(y = "Temperature Range", x = "") + 
   scale_x_discrete(position = "top")
 fecund_plot <- box_data(x = "fecundity_mean", y = "class2") + 
-  stat_kruskal_test(label.y = 1000000, label.x = 5.5, position = "jitter") +
+  stat_kruskal_test(label.y = 40000000, label.x = 5.5, position = "jitter") +
   labs(y = "Fecundity", x = "") +
   scale_x_discrete(position = "top")
 sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + 

@@ -27,6 +27,126 @@ library(FSA)
 ```{r}
 filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
   mutate_if(is.character, as.factor)
+
+#write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
+
+```
+
+### Correct fecundity variable
+
+```{r}
+
+# populate fecundity table
+fecund <- fecundity()
+
+# pull spec codes into vector
+codes <- fecund %>% 
+  dplyr::pull(SpecCode)
+
+# populate species names
+names <- species_names(codes, server = getOption("FISHBASE_API", "fishbase"))
+
+# add species names to fecundity table
+fecund <- left_join(names, fecund)
+
+# clean up, calculate mean fecundity when absent
+fecund <- fecund %>%
+  filter(Species %in% filled_data2$species) %>%
+  dplyr::select(SpecCode, Species, FecundityMax, FecundityMin, FecundityMean) %>% 
+  filter(rowSums(is.na(.[3])) < ncol(.[5])) %>% 
+  group_by(Species) %>%
+  summarise_all(list(mean = ~mean(., na.rm = TRUE))) %>% 
+  mutate(avg_fecundity = ifelse(is.nan(FecundityMean_mean),
+                                      (FecundityMin_mean + FecundityMax_mean) / 2,
+                                      FecundityMean_mean)) %>% 
+  ungroup() %>% 
+  mutate(avg_fecundity = replace(avg_fecundity, is.nan(avg_fecundity), NA)) %>% 
+  janitor::clean_names()
+
+# merge with fishbase data
+fecund <- fecund %>% 
+  dplyr::select(species, avg_fecundity) %>% 
+  na.omit()
+
+fishbase_data <- left_join(fishbase_data, fecund) %>% 
+  dplyr::select(-fecundity_mean) %>% 
+  rename(fecundity_mean = avg_fecundity)
+
+#write_csv(fishbase_data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
+
+
+# replace NAs with mean of genus
+
+mode <- function(x) {
+  names(which.max(table(x)))
+}
+
+fish_genera <- load_taxa(server = "fishbase") %>%
+  as.data.frame() %>% 
+  filter(Genus %in% filled_data2$genus) %>%
+  dplyr::select(SpecCode, Genus) %>%
+  janitor::clean_names()
+
+missing_fecund <- fecundity() %>%
+  filter(SpecCode %in% fish_genera$spec_code) %>%
+  dplyr::select(SpecCode, FecundityMean) %>%
+  janitor::clean_names() %>% 
+  group_by(spec_code) %>%
+  summarise_all(list(mean = ~mean(., na.rm = TRUE))) %>% 
+  ungroup() %>% 
+  rename(fecundity_mean = mean) %>% 
+  mutate(fecundity_mean = replace(fecundity_mean, is.nan(fecundity_mean), NA))
+
+missing_fecund <- left_join(fish_genera, missing_fecund, relationship = "many-to-many") %>% 
+  dplyr::select(-spec_code) %>% 
+  na.omit()
+
+missing_fecund <- missing_fecund %>%
+  group_by(genus) %>%
+  summarise_all(list(fecundity_mean = ~mean(., na.rm = TRUE))) %>%
+  ungroup()
+
+filled_data <- fishbase_data %>%
+  left_join(missing_fecund, by = "genus") %>%
+  mutate(fecundity_mean = coalesce(fecundity_mean.x, fecundity_mean.y)) %>%
+  dplyr::select(-fecundity_mean.x, -fecundity_mean.y)
+
+#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+
+
+# replace NAs with mean of family
+
+fish_fam <- load_taxa(server = "fishbase") %>%
+  as.data.frame() %>% 
+  filter(Family %in% filled_data2$family) %>%
+  dplyr::select(SpecCode, Family) %>%
+  janitor::clean_names()
+
+missing_fecund2 <- fecundity() %>%
+  filter(SpecCode %in% fish_genera$spec_code) %>%
+  dplyr::select(SpecCode, FecundityMean) %>%
+  janitor::clean_names() %>% 
+  group_by(spec_code) %>%
+  summarise_all(list(mean = ~mean(., na.rm = TRUE))) %>% 
+  ungroup() %>% 
+  rename(fecundity_mean = mean) %>% 
+  mutate(fecundity_mean = replace(fecundity_mean, is.nan(fecundity_mean), NA))
+
+missing_fecund2 <- left_join(fish_fam, missing_fecund2, relationship = "many-to-many") %>% 
+  dplyr::select(-spec_code) %>% 
+  na.omit()
+
+missing_fecund2 <- missing_fecund2 %>%
+  group_by(family) %>%
+  summarise_all(list(fecundity_mean = ~mean(., na.rm = TRUE))) %>%
+  ungroup()
+
+filled_data2 <- filled_data %>%
+  left_join(missing_fecund2, by = "family") %>%
+  mutate(fecundity_mean = coalesce(fecundity_mean.x, fecundity_mean.y)) %>%
+  dplyr::select(-fecundity_mean.x, -fecundity_mean.y)
+
+
 ```
 
 ### Fill IUCN codes
@@ -59,11 +179,6 @@ names <- species(fields = c("SpecCode", "FBname")) %>%
   rename(fb_name = FBname, spec_code = SpecCode)
 
 filled_data2 <- left_join(filled_data2, names)
-```
-
-
-```{r}
-# write_csv(filled_data2, here::here("01_data", "02_processed_data", "filled_data2.csv"))
 ```
 
 
