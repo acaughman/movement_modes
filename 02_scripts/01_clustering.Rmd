@@ -60,14 +60,9 @@ write_csv(gmm_data2, here::here("01_data", "02_processed_data", "clusters.csv"))
 ```{r}
 ### compare highest AIC clustering to our clustering
 d <- dist(gmm_data)
-class1 <- Mclust(gmm_data)[["classification"]]
-class2 <- gmm_mclust[["classification"]]
+class1 <- gmm_mclust[["classification"]]
 
 cluster.stats(d, class1) # internal stats for our clustering
-# avg.sil witdth = 0.3053463
-# dunn =  0.125
-
-cluster.stats(d, class2) # internal stats for highest AIC clustering
-# avg.sil witdth = 0.5524304 closer to 1 = better
+# avg.sil witdth = 0.5567485 closer to 1 = better
 # dunn =  0.25 higher = better
 ```
