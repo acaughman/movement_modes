@@ -3,7 +3,6 @@
 .RData
 .Ruserdata
 05_writing_drafts
-01_data/01_raw_data
 *.html
 *.pdf
 *.shp
