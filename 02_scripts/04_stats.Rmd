@@ -28,39 +28,40 @@ library(patchwork)
 ```{r}
 filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
   mutate_if(is.character, as.factor)
-
 ```
 
 ### Characterize data
 
 ```{r}
-
 # Cohort sample size
-sample_size <- filled_data2 %>% 
-  group_by(class2) %>% 
+sample_size <- filled_data2 %>%
+  group_by(class2) %>%
   summarise(n = length(class2))
 
 # Trait means, medians, and sd by cohort
-trait_summary <- filled_data2 %>% 
-  dplyr::select(class2, length, temp_preferred, longevity_wild, diet_troph3) %>% 
-  group_by(class2) %>% 
-  summarise(across(where(is.numeric), 
-                   list(
-                     mean = ~mean(., na.rm = TRUE), 
-                     sd = ~sd(., na.rm = TRUE), 
-                     median = ~median(., na.rm = TRUE)
-                     )))
+trait_summary <- filled_data2 %>%
+  dplyr::select(class2, length, temp_preferred, longevity_wild, diet_troph3) %>%
+  group_by(class2) %>%
+  summarise(across(
+    where(is.numeric),
+    list(
+      mean = ~ mean(., na.rm = TRUE),
+      sd = ~ sd(., na.rm = TRUE),
+      median = ~ median(., na.rm = TRUE)
+    )
+  ))
 
-trait_summary2 <- filled_data2 %>% 
-  dplyr::select(class2, r_fin, temp_range, oxygen_cons, sp_richness, fecundity_mean) %>% 
-  group_by(class2) %>% 
-  summarise(across(where(is.numeric), 
-                   list(
-                     mean = ~mean(., na.rm = TRUE), 
-                     sd = ~sd(., na.rm = TRUE), 
-                     median = ~median(., na.rm = TRUE)
-                     )))
-
+trait_summary2 <- filled_data2 %>%
+  dplyr::select(class2, r_fin, temp_range, oxygen_cons, sp_richness, fecundity_mean) %>%
+  group_by(class2) %>%
+  summarise(across(
+    where(is.numeric),
+    list(
+      mean = ~ mean(., na.rm = TRUE),
+      sd = ~ sd(., na.rm = TRUE),
+      median = ~ median(., na.rm = TRUE)
+    )
+  ))
 ```
 
 ### Build linear models
@@ -71,11 +72,14 @@ lm2 <- lm(pld ~ length * diet_troph3 * longevity_wild * temp_preferred, data = f
 stepAIC(lm1)
 stepAIC(lm2)
 
-lm1.1 <- lm(log(home_range) ~ length + diet_troph3 + longevity_wild +
-  temp_preferred + length:diet_troph3 + length:longevity_wild +
-  diet_troph3:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred +
-  longevity_wild:temp_preferred + length:diet_troph3:longevity_wild +
-  length:diet_troph3:temp_preferred + length:longevity_wild:temp_preferred, data = filled_data2)
+lm1.1 <- lm(
+  log(home_range) ~ length + diet_troph3 + longevity_wild +
+    temp_preferred + length:diet_troph3 + length:longevity_wild +
+    diet_troph3:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred +
+    longevity_wild:temp_preferred + length:diet_troph3:longevity_wild +
+    length:diet_troph3:temp_preferred + length:longevity_wild:temp_preferred,
+  data = filled_data2
+)
 lm2.1 <- lm(
   pld ~ length + diet_troph3 + longevity_wild + temp_preferred +
     length:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred +
@@ -100,13 +104,17 @@ p1 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = c("lengt
     fill = "Trophic Level",
   ) +
   theme_bw(base_size = 18) +
-  scale_color_manual(values = c("#2a788e", "#355f8d", "#414487", "#482475", "#440154"),
-                     name = "Trophic Level", labels = c("2.00", "3.48", "3.84", "4.21", "4.65")) +
-  scale_fill_manual(values = c("#2a788e", "#355f8d", "#414487", "#482475", "#440154"), 
-                    name = "Trophic Level", labels = c("2.00", "3.48", "3.84", "4.21", "4.65")) +
-  xlim(NA, 45) + 
+  scale_color_manual(
+    values = c("#2a788e", "#355f8d", "#414487", "#482475", "#440154"),
+    name = "Trophic Level", labels = c("2.00", "3.48", "3.84", "4.21", "4.65")
+  ) +
+  scale_fill_manual(
+    values = c("#2a788e", "#355f8d", "#414487", "#482475", "#440154"),
+    name = "Trophic Level", labels = c("2.00", "3.48", "3.84", "4.21", "4.65")
+  ) +
+  xlim(NA, 45) +
   ylim(-0.5, 0.5)
-  
+
 p2 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = list("length", "longevity_wild" = c(1, 10, 16, 25, 50, 100))) +
   labs(
     x = "Optimal Temperature (ºC)",
@@ -117,7 +125,7 @@ p2 <- plot_comparisons(lm1.1, variables = "temp_preferred", condition = list("le
   theme_bw(base_size = 18) +
   scale_color_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
   scale_fill_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
-  xlim(NA, 45) + 
+  xlim(NA, 45) +
   ylim(-0.25, 0.5)
 
 p3 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("length", "diet_troph3"), comparison = "difference") +
@@ -128,11 +136,15 @@ p3 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("lengt
     fill = "Trophic Level"
   ) +
   theme_bw(base_size = 18) +
-  scale_color_manual(values = c("#2a788e", "#355f8d", "#414487", "#482475", "#440154"), 
-                    name = "Trophic Level", labels = c("2.00", "3.48", "3.84", "4.21", "4.65")) +
-  scale_fill_manual(values = c("#2a788e", "#355f8d", "#414487", "#482475", "#440154"), 
-                    name = "Trophic Level", labels = c("2.00", "3.48", "3.84", "4.21", "4.65")) +
-  xlim(NA, 400) + 
+  scale_color_manual(
+    values = c("#2a788e", "#355f8d", "#414487", "#482475", "#440154"),
+    name = "Trophic Level", labels = c("2.00", "3.48", "3.84", "4.21", "4.65")
+  ) +
+  scale_fill_manual(
+    values = c("#2a788e", "#355f8d", "#414487", "#482475", "#440154"),
+    name = "Trophic Level", labels = c("2.00", "3.48", "3.84", "4.21", "4.65")
+  ) +
+  xlim(NA, 400) +
   ylim(-1, NA)
 
 p4 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = list("length", "longevity_wild" = c(1, 10, 16, 25, 50, 100))) +
@@ -145,7 +157,7 @@ p4 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = list("le
   theme_bw(base_size = 18) +
   scale_color_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
   scale_fill_manual(values = c("#fde725", "#bddf26", "#7ad151", "#44bf70", "#22a884", "#21918c")) +
-  xlim(NA, 45) + 
+  xlim(NA, 45) +
   ylim(-3.5, 0.5)
 
 plot_comparisons(lm2.1, variables = "length", condition = c("temp_preferred")) +
@@ -174,7 +186,6 @@ interact_plot <- (p2 + p4) / (p1 + p3) + plot_layout(guides = "collect") + plot_
 interact_plot
 
 ggsave(interact_plot, file = paste0("interact_plot.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 15)
-
 ```
 
 
@@ -209,7 +220,6 @@ abline(v = 5, lwd = 3, lty = 2)
 ### ANOVA/Kruskal-Wallis for Numeric/Continuous Variables
 
 ```{r}
-
 # optimal temperature -----------------------------------------------
 
 temp_data <- filled_data2 %>%
@@ -243,7 +253,7 @@ plot(model_temp, 1)
 kruskal.test(temp_preferred ~ class2, data = temp_data)
 # chi-squared = 77.77, df = 5, p-value = 2.455e-15
 
-# get effect size 
+# get effect size
 temp_data %>% kruskal_effsize(temp_preferred ~ class2, ci = TRUE)
 # eta2 = 0.124, MODERATE effect
 
@@ -329,7 +339,7 @@ plot(model_diet_troph3, 1)
 kruskal.test(diet_troph3 ~ class2, data = filled_data2)
 # chi-squared = 36.497, df = 5, p-value = 7.555e-07
 
-# get effect size 
+# get effect size
 filled_data2 %>% kruskal_effsize(diet_troph3 ~ class2, ci = TRUE)
 # eta2 = 0.0525, SMALL effect
 
@@ -374,7 +384,7 @@ plot(model_long, 1)
 kruskal.test(longevity_wild ~ class2, data = longevity_data)
 # chi-squared = 25.928, df = 5, p-value = 9.216e-05
 
-# get effect size 
+# get effect size
 longevity_data %>% kruskal_effsize(longevity_wild ~ class2, ci = TRUE)
 # eta2 = 0.0384, SMALL effect
 
@@ -417,7 +427,7 @@ plot(model_r_fin, 1)
 kruskal.test(r_fin ~ class2, data = filled_data2)
 # chi-squared = 42.245, df = 5, p-value = 5.255e-08
 
-# get effect size 
+# get effect size
 filled_data2 %>% kruskal_effsize(r_fin ~ class2, ci = TRUE)
 # eta2 = 0.0621, MODERATE effect
 
@@ -462,7 +472,7 @@ plot(model_temprange, 1)
 kruskal.test(temp_range ~ class2, data = temprange_data)
 # chi-squared = 19.907, df = 5, p-value = 0.001301
 
-# get effect size 
+# get effect size
 filled_data2 %>% kruskal_effsize(temp_range ~ class2, ci = TRUE)
 # eta2 = 0.0248, SMALL effect
 
@@ -503,7 +513,7 @@ plot(model_oxcons, 1)
 kruskal.test(oxygen_cons ~ class2, data = oxygen_data)
 # chi-squared = 28.931, df = 5, p-value = 2.392e-05
 
-# get effect size 
+# get effect size
 filled_data2 %>% kruskal_effsize(oxygen_cons ~ class2, ci = TRUE)
 # eta2 = 0.0399, SMALL effect
 
@@ -541,7 +551,7 @@ plot(model_sprich, 1)
 kruskal.test(sp_richness ~ class2, data = filled_data2)
 # chi-squared = 28.128, df = 5, p-value = 3.437e-05
 
-# get effect size 
+# get effect size
 filled_data2 %>% kruskal_effsize(sp_richness ~ class2, ci = TRUE)
 # eta2 = 0.0385, SMALL effect
 
@@ -579,8 +589,6 @@ plot(model_fecundity, 1)
 kruskal.test(fecundity_mean ~ class2, data = filled_data2)
 # chi-squared = 2.8377, df = 5, p-value = 0.725
 # not significant
-
-
 ```
 
 
@@ -691,24 +699,24 @@ chisq.posthoc.test(iucn_table, method = "bonferroni")
 #   filter(temp_preferred > 0) %>%
 #   mutate(across(where(is.numeric), ~ scale(.)[, 1])) %>%
 #   na.omit()
-# 
+#
 # com <- com_data %>%
 #   dplyr::select(-species, -family, -class2)
-# 
+#
 # # load from rda in results folder
 # # set.seed(123)
 # # simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
-# 
+#
 # summary(simper_out)
 # # shows which traits are primarily responsible for observed difference between classes. traits listed from highest to lowest % contribution to the difference between the two classes (cumsum shows total % contribution to the difference). p is signifigance.
-# 
-# 
+#
+#
 # # load from rda in results folder
 # # set.seed(123)
 # # ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
-# 
+#
 # summary(ano)
-# 
+#
 # plot(ano)
 ```
 
