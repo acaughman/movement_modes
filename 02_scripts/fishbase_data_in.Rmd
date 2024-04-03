@@ -25,7 +25,7 @@ library(chisq.posthoc.test)
 ### Read in data
 
 ```{r}
-data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld.csv")) %>%
+data <- read_csv(here::here("01_data", "01_processed_data", "homerange_pld.csv")) %>%
   mutate(home_range = case_when(
     !is.na(observed_homerange) ~ observed_homerange,
     is.na(observed_homerange) ~ predicted_homerange
