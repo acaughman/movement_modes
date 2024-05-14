@@ -36,7 +36,7 @@ filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.
 
 famd_1 <- filled_data %>%
   dplyr::select(
-    temp_preferred, temp_max, fecundity_mean, longevity_wild, sp_richness, length,
+    temp_preferred, fecundity_mean, longevity_wild, sp_richness, length,
     r_fin, diet_troph3, oxygen_cons, temp_range, body_shape_i,
     dev_place, iucn_category, demers_pelag,
     class2
@@ -45,7 +45,7 @@ famd_1 <- filled_data %>%
   na.omit()
 
 
-f1 <- FAMD(famd_1[, 1:14], graph = FALSE)
+f1 <- FAMD(famd_1[, 1:13], graph = FALSE)
 f1
 
 eigen_f1 <- f1$eig
@@ -59,7 +59,7 @@ c1 + c2
 
 f1_var = as.data.frame(f1$var) 
 
-rownames(f1_var) <- c("Optimal Temperature", "Maximum Temperature", "Average Fecundity", "Lifespan", "Species Richness", "Length", 
+rownames(f1_var) <- c("Optimal Temperature", "Average Fecundity", "Lifespan", "Species Richness", "Length", 
                       "Growth Rate", "Trophic Level", "Oxygen Consumption", "Temperature Range",
                       "Body Shape", "Place of Development", "IUCN Category", "Habitat Type")
 
@@ -116,7 +116,7 @@ f1_fig
 
 com_data4 <- filled_data %>%
   dplyr::select(
-    temp_preferred, temp_max, longevity_wild, sp_richness, length, r_fin, diet_troph3, temp_range, oxygen_cons,
+    temp_preferred, longevity_wild, sp_richness, length, r_fin, diet_troph3, temp_range, oxygen_cons,
     species, order, class2, class3
   ) %>%
   filter(temp_preferred > 0) %>%
@@ -144,7 +144,7 @@ filled_scores4 <- filled_scores4 %>%
 
 species_scores4 <- as.data.frame(nmds[["species"]])
 
-rownames(species_scores4) <- c("Optimal Temperature", "Maximum Temperature", "Lifespan", "Species Richness", "Length", 
+rownames(species_scores4) <- c("Optimal Temperature", "Lifespan", "Species Richness", "Length", 
                                "Growth Rate", "Trophic Level", "Temperature Range", "Oxygen Consumption")
 
 species_scores4 <- species_scores4 %>% 
@@ -269,83 +269,6 @@ pairwise.adonis(m_com7, com_data7$class3, perm = 9999)
 ```
 
 
-##### NMDS 4 key traits: Maximum temperature, length, longevity, trophic level
-
-```{r}
-
-com_data8 <- filled_data %>%
-  dplyr::select(
-    temp_max, length, longevity_wild, diet_troph3,
-    species, order, class2, class3
-  ) %>%
-  #mutate(temp_preferred = temp_preferred + 2) %>%
-  na.omit()
-
-com8 <- com_data8 %>%
-  dplyr::select(-species, -order, -class2, -class3)
-
-m_com8 <- as.matrix(com8)
-
-set.seed(123)
-nmds <- metaMDS(m_com8, distance = "euclidean")
-nmds
-
-# extract NMDS scores (x and y coordinates)
-filled_scores8 <- as.data.frame(scores(nmds)$sites)
-
-# add columns to data frame
-filled_scores8$class2 <- com_data8$class2
-filled_scores8$species <- com_data8$species
-filled_scores8$order <- com_data8$order
-
-filled_scores8 <- filled_scores8 %>%
-  mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
-
-species_scores8 <- as.data.frame(nmds[["species"]])
-
-rownames(species_scores8) <- c("Maximum Temperature", "Length", "Lifespan", "Trophic Level")
-
-species_scores8 <- species_scores8 %>% 
-  rownames_to_column(var = "var")
-
-centroid8 <- filled_scores8 %>%
-  group_by(class2) %>%
-  summarize(NMDS1 = mean(NMDS1), NMDS2 = mean(NMDS2))
-
-nmds8 <- ggplot(filled_scores8, aes(x = NMDS1, y = NMDS2)) +
-  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
-  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), linewidth = 0.25, alpha = 0.2, show.legend = FALSE) +
-  geom_point(aes(color = class2), alpha = 0.3) +
-  theme_bw(base_size = 22) +
-  geom_point(data = centroid8, aes(color = class2), size = 4, alpha = 0.9) +
-  labs(x = "nMDS1", y = "nMDS2", color = "Class (home range/PLD)") +
-  scale_color_viridis_d() +
-  scale_fill_viridis_d() +
-  geom_segment(data = species_scores8, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20") +
-  ggrepel::geom_label_repel(data = species_scores8, aes(x = MDS1, y = MDS2, label = var), size = 5, fill = "white", cex = 3, direction = "both", segment.size = .25) +
-  scale_y_continuous(position = "right") +
-  theme(legend.position = "left", panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  annotate("text", x = 0.15, y = 0.2, label = "Stress: 0.117")
-
-nmds8
-
-#ggsave(nmds8, file = paste0("nmds_4_traits.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
-
-
-dst8 <- dist(com8, method = "euclidean")
-
-bd8 <- betadisper(dst8, com_data8$class2)
-
-anova(bd8)
-
-permutest(bd8, pairwise = TRUE, permutations = 9999)
-
-adonis2(com_data8$class3 ~ m_com8, permutations = 9999)
-
-pairwise.adonis(m_com8, com_data8$class3, perm = 9999)
-
-```
 
 
 

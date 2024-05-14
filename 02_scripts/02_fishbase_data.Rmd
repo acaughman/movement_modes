@@ -256,7 +256,7 @@ missing <- miss_var_summary(data)
 
 missing_data <- data %>%
   dplyr::select(
-    oxygen_cons, temp_range, temp_max, fecundity_mean, fecundity_max, longevity_wild,
+    oxygen_cons, temp_range, fecundity_mean, fecundity_max, longevity_wild,
     temp_preferred, dev_place, iucn_category
   )
 
@@ -368,26 +368,6 @@ genus_filled_data <- genus_filled_data %>%
   mutate(temp_range = coalesce(temp_range.x, temp_range.y)) %>%
   dplyr::select(-temp_range.x, -temp_range.y)
 
-
-# Temp Max
-missing_max <- stocks() %>%
-  filter(SpecCode %in% fish_genera$spec_code) %>%
-  dplyr::select(SpecCode, TempMax) %>%
-  janitor::clean_names()
-
-missing_max <- left_join(fish_genera, missing_max, relationship = "many-to-many")
-
-missing_max <- missing_max %>%
-  mutate(temp_max = as.numeric(temp_max)) %>%
-  na.omit() %>%
-  group_by(genus) %>%
-  summarise(temp_max = mean(temp_max)) %>%
-  ungroup()
-
-genus_filled_data <- genus_filled_data %>%
-  left_join(missing_max, by = "genus") %>%
-  mutate(temp_max = coalesce(temp_max.x, temp_max.y)) %>%
-  dplyr::select(-temp_max.x, -temp_max.y)
 
 
 # Fecundity Mean
