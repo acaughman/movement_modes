@@ -29,6 +29,8 @@ data <- read_csv(here::here("01_data", "01_raw_data", "homerange_pld.csv")) %>%
   filter(pld < 400) %>% # remove 1 large outlier
   mutate(magnitude_homerange = floor(log10(home_range))) %>% # calculate order of magnitude of home range
   mutate(month_pld = ceiling(pld / 30)) # calculate month of PLD
+
+write_csv(data, here::here("01_data", "02_processed_data", "homerange_pld_processed.csv"))
 ```
 
 ##### GMM Clustering

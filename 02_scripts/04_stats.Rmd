@@ -1,5 +1,5 @@
 ---
-title: "stats"
+title: "Statistical Analyses"
 author: "Lex Rosenberg"
 date: "2023-06-06"
 output: html_document
@@ -26,7 +26,7 @@ library(patchwork)
 ### Load data
 
 ```{r}
-filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
+filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>%
   mutate_if(is.character, as.factor)
 ```
 
@@ -34,12 +34,12 @@ filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data
 
 ```{r}
 # Cohort sample size
-sample_size <- filled_data2 %>%
+sample_size <- filled_data %>%
   group_by(class2) %>%
   summarise(n = length(class2))
 
 # Trait means, medians, and sd by cohort
-trait_summary <- filled_data2 %>%
+trait_summary <- filled_data %>%
   dplyr::select(class2, length, temp_preferred, longevity_wild, diet_troph3) %>%
   group_by(class2) %>%
   summarise(across(
@@ -51,7 +51,7 @@ trait_summary <- filled_data2 %>%
     )
   ))
 
-trait_summary2 <- filled_data2 %>%
+trait_summary2 <- filled_data %>%
   dplyr::select(class2, r_fin, temp_range, oxygen_cons, sp_richness, fecundity_mean) %>%
   group_by(class2) %>%
   summarise(across(
@@ -67,8 +67,8 @@ trait_summary2 <- filled_data2 %>%
 ### Build linear models
 
 ```{r}
-lm1 <- lm(log(home_range) ~ length * diet_troph3 * longevity_wild * temp_preferred, data = filled_data2)
-lm2 <- lm(pld ~ length * diet_troph3 * longevity_wild * temp_preferred, data = filled_data2)
+lm1 <- lm(log(home_range) ~ length * diet_troph3 * longevity_wild * temp_preferred, data = filled_data)
+lm2 <- lm(pld ~ length * diet_troph3 * longevity_wild * temp_preferred, data = filled_data)
 stepAIC(lm1)
 stepAIC(lm2)
 
@@ -78,13 +78,13 @@ lm1.1 <- lm(
     diet_troph3:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred +
     longevity_wild:temp_preferred + length:diet_troph3:longevity_wild +
     length:diet_troph3:temp_preferred + length:longevity_wild:temp_preferred,
-  data = filled_data2
+  data = filled_data
 )
 lm2.1 <- lm(
   pld ~ length + diet_troph3 + longevity_wild + temp_preferred +
     length:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred +
     longevity_wild:temp_preferred + length:longevity_wild:temp_preferred,
-  data = filled_data2
+  data = filled_data
 )
 
 anova(lm1, lm1.1)
@@ -193,14 +193,14 @@ ggsave(interact_plot, file = paste0("interact_plot.pdf"), path = here::here("04_
 
 ```{r}
 model <- lm(
-  class3 ~ temp_preferred + fecundity_mean + longevity_wild +
+  class3 ~ temp_preferred + temp_max + fecundity_mean + longevity_wild +
     sp_richness + length + kfin + r_fin + diet_troph3,
-  data = filled_data2
+  data = filled_data
 )
 
 summary(model)
 
-vif(model) # when including both fecundity variables, they have a VIF over 5
+vif(model)
 
 # create vector of VIF values
 vif_values <- vif(model)
@@ -222,7 +222,7 @@ abline(v = 5, lwd = 3, lty = 2)
 ```{r}
 # optimal temperature -----------------------------------------------
 
-temp_data <- filled_data2 %>%
+temp_data <- filled_data %>%
   filter(!is.na(temp_preferred)) %>%
   filter(temp_preferred > 0)
 
@@ -262,22 +262,63 @@ dunnTest(temp_preferred ~ class2, data = temp_data, method = "bh")
 
 
 
+# maximum temperature -----------------------------------------------
+
+temp_max_data <- filled_data %>%
+  filter(!is.na(temp_max))
+
+# look at outliers
+outliers_temp <- boxplot.stats(temp_data$temp_max)$out
+boxplot(temp_data$temp_max, main = "Max Temp", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_temp, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_temp_max <- aov(temp_max ~ class2, data = temp_max_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temp_max))
+# not normal
+
+# model with log transformed variable
+model_temp_max_log <- aov(log(temp_max) ~ class2, data = temp_max_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temp_max_log))
+# more abnormal
+
+# test for homogeneity of variance
+plot(model_temp_max, 1)
+# looks fine
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(temp_max ~ class2, data = temp_max_data)
+# chi-squared = 43.754, df = 5, p-value = 2.599e-08
+
+# get effect size
+temp_max_data %>% kruskal_effsize(temp_max ~ class2, ci = TRUE)
+# eta2 = 0.178, LARGE effect
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(temp_max ~ class2, data = temp_max_data, method = "bh")
+
+
+
 # length -------------------------------------------------------
 
 # check for outliers - there are a lot?
-outliers_length <- boxplot.stats(filled_data2$length)$out
-boxplot(filled_data2$length, main = "Length", boxwex = 0.1)
+outliers_length <- boxplot.stats(filled_data$length)$out
+boxplot(filled_data$length, main = "Length", boxwex = 0.1)
 mtext(paste("Outliers: ", paste(outliers_length, collapse = ", ")), cex = 0.4)
 
 # build the model
-model_length <- aov(length ~ class2, data = filled_data2)
+model_length <- aov(length ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_length))
 # not normal
 
 # model with log transformed length
-model_length_log <- aov(log(length) ~ class2, data = filled_data2)
+model_length_log <- aov(log(length) ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_length_log))
@@ -309,21 +350,21 @@ TukeyHSD(model_length_log)
 # trophic level --------------------------------------------------
 
 # look at outliers
-outliers_diet_troph3 <- boxplot.stats(filled_data2$diet_troph3)$out
-boxplot(filled_data2$diet_troph3, main = "Trophic Position", boxwex = 0.1)
+outliers_diet_troph3 <- boxplot.stats(filled_data$diet_troph3)$out
+boxplot(filled_data$diet_troph3, main = "Trophic Position", boxwex = 0.1)
 mtext(paste("Outliers: ", paste(outliers_diet_troph3, collapse = ", ")), cex = 0.4)
 
 # build the model
-model_diet_troph3 <- aov(diet_troph3 ~ class2, data = filled_data2)
+model_diet_troph3 <- aov(diet_troph3 ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_diet_troph3))
 # not normal
 
 # model with transformed variable
-model_diet_troph3_log <- aov(log(diet_troph3) ~ class2, data = filled_data2)
-model_diet_troph3_exp <- aov(exp(diet_troph3) ~ class2, data = filled_data2)
-model_diet_troph3_sqrt <- aov(sqrt(diet_troph3) ~ class2, data = filled_data2)
+model_diet_troph3_log <- aov(log(diet_troph3) ~ class2, data = filled_data)
+model_diet_troph3_exp <- aov(exp(diet_troph3) ~ class2, data = filled_data)
+model_diet_troph3_sqrt <- aov(sqrt(diet_troph3) ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_diet_troph3_log))
@@ -336,21 +377,21 @@ plot(model_diet_troph3, 1)
 # looks good
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(diet_troph3 ~ class2, data = filled_data2)
+kruskal.test(diet_troph3 ~ class2, data = filled_data)
 # chi-squared = 36.497, df = 5, p-value = 7.555e-07
 
 # get effect size
-filled_data2 %>% kruskal_effsize(diet_troph3 ~ class2, ci = TRUE)
+filled_data %>% kruskal_effsize(diet_troph3 ~ class2, ci = TRUE)
 # eta2 = 0.0525, SMALL effect
 
 # Kruskal-Wallis is significant, run Dunn's test
-dunnTest(diet_troph3 ~ class2, data = filled_data2, method = "bh")
+dunnTest(diet_troph3 ~ class2, data = filled_data, method = "bh")
 
 
 
 # lifespan -----------------------------------------------
 
-longevity_data <- filled_data2 %>%
+longevity_data <- filled_data %>%
   filter(!is.na(longevity_wild))
 
 # look at outliers
@@ -397,19 +438,19 @@ dunnTest(longevity_wild ~ class2, data = longevity_data, method = "bh")
 # r_fin --------------------------------------------------------
 
 # look at outliers
-outliers_r_fin <- boxplot.stats(filled_data2$r_fin)$out
-boxplot(filled_data2$r_fin, main = "Growth Rate", boxwex = 0.1)
+outliers_r_fin <- boxplot.stats(filled_data$r_fin)$out
+boxplot(filled_data$r_fin, main = "Growth Rate", boxwex = 0.1)
 mtext(paste("Outliers: ", paste(outliers_r_fin, collapse = ", ")), cex = 0.4)
 
 # build the model
-model_r_fin <- aov(r_fin ~ class2, data = filled_data2)
+model_r_fin <- aov(r_fin ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_r_fin))
 # not normal
 
 # model with log transformed variable
-model_r_fin_log <- aov(log(r_fin) ~ class2, data = filled_data2)
+model_r_fin_log <- aov(log(r_fin) ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_r_fin_log))
@@ -424,21 +465,21 @@ plot(model_r_fin, 1)
 # looks fine
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(r_fin ~ class2, data = filled_data2)
+kruskal.test(r_fin ~ class2, data = filled_data)
 # chi-squared = 42.245, df = 5, p-value = 5.255e-08
 
 # get effect size
-filled_data2 %>% kruskal_effsize(r_fin ~ class2, ci = TRUE)
+filled_data %>% kruskal_effsize(r_fin ~ class2, ci = TRUE)
 # eta2 = 0.0621, MODERATE effect
 
 # Kruskal-Wallis is significant, run Dunn's test
-dunnTest(r_fin ~ class2, data = filled_data2, method = "bh")
+dunnTest(r_fin ~ class2, data = filled_data, method = "bh")
 
 
 
 # temp_range ---------------------------------------------------
 
-temprange_data <- filled_data2 %>%
+temprange_data <- filled_data %>%
   filter(!is.na(temp_range))
 
 # look at outliers
@@ -473,7 +514,7 @@ kruskal.test(temp_range ~ class2, data = temprange_data)
 # chi-squared = 19.907, df = 5, p-value = 0.001301
 
 # get effect size
-filled_data2 %>% kruskal_effsize(temp_range ~ class2, ci = TRUE)
+filled_data %>% kruskal_effsize(temp_range ~ class2, ci = TRUE)
 # eta2 = 0.0248, SMALL effect
 
 # Kruskal-Wallis is significant, run Dunn's test
@@ -483,7 +524,7 @@ dunnTest(temp_range ~ class2, data = temprange_data, method = "bh")
 
 # oxygen_cons --------------------------------------------------
 
-oxygen_data <- filled_data2 %>%
+oxygen_data <- filled_data %>%
   filter(!is.na(oxygen_cons))
 
 # look at outliers
@@ -514,7 +555,7 @@ kruskal.test(oxygen_cons ~ class2, data = oxygen_data)
 # chi-squared = 28.931, df = 5, p-value = 2.392e-05
 
 # get effect size
-filled_data2 %>% kruskal_effsize(oxygen_cons ~ class2, ci = TRUE)
+filled_data %>% kruskal_effsize(oxygen_cons ~ class2, ci = TRUE)
 # eta2 = 0.0399, SMALL effect
 
 # Kruskal-Wallis is significant, run Dunn's test
@@ -525,19 +566,19 @@ dunnTest(oxygen_cons ~ class2, data = oxygen_data, method = "bh")
 # sp_richness --------------------------------------------------
 
 # look at outliers
-outliers_sp <- boxplot.stats(filled_data2$sp_richness)$out
-boxplot(filled_data2$sp_richness, main = "Species Richness by Family", boxwex = 0.1)
+outliers_sp <- boxplot.stats(filled_data$sp_richness)$out
+boxplot(filled_data$sp_richness, main = "Species Richness by Family", boxwex = 0.1)
 mtext(paste("Outliers: ", paste(outliers_sp, collapse = ", ")), cex = 0.4)
 
 # build the model
-model_sprich <- aov(sp_richness ~ class2, data = filled_data2)
+model_sprich <- aov(sp_richness ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_sprich))
 # not normal
 
 # model with log transformed variable
-model_sprich_log <- aov(log(sp_richness) ~ class2, data = filled_data2)
+model_sprich_log <- aov(log(sp_richness) ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_sprich_log))
@@ -548,34 +589,34 @@ plot(model_sprich, 1)
 # looks good
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(sp_richness ~ class2, data = filled_data2)
+kruskal.test(sp_richness ~ class2, data = filled_data)
 # chi-squared = 28.128, df = 5, p-value = 3.437e-05
 
 # get effect size
-filled_data2 %>% kruskal_effsize(sp_richness ~ class2, ci = TRUE)
+filled_data %>% kruskal_effsize(sp_richness ~ class2, ci = TRUE)
 # eta2 = 0.0385, SMALL effect
 
 # Kruskal-Wallis is significant, run Dunn's test
-dunnTest(sp_richness ~ class2, data = filled_data2, method = "bh")
+dunnTest(sp_richness ~ class2, data = filled_data, method = "bh")
 
 
 
 # fecundity_mean -----------------------------------------------
 
 # look at outliers
-outliers_fecundity <- boxplot.stats(filled_data2$fecundity_mean)$out
-boxplot(filled_data2$fecundity_mean, main = "Fecundity", boxwex = 0.1)
+outliers_fecundity <- boxplot.stats(filled_data$fecundity_mean)$out
+boxplot(filled_data$fecundity_mean, main = "Fecundity", boxwex = 0.1)
 mtext(paste("Outliers: ", paste(outliers_fecundity, collapse = ", ")), cex = 0.4)
 
 # build the model
-model_fecundity <- aov(fecundity_mean ~ class2, data = filled_data2)
+model_fecundity <- aov(fecundity_mean ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_fecundity))
 # not normal
 
 # model with log transformed variable
-model_fecundity_log <- aov(log(fecundity_mean) ~ class2, data = filled_data2)
+model_fecundity_log <- aov(log(fecundity_mean) ~ class2, data = filled_data)
 
 # create a QQ plot of residuals
 ggqqplot(residuals(model_fecundity_log))
@@ -586,7 +627,7 @@ plot(model_fecundity, 1)
 # not horizontal
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(fecundity_mean ~ class2, data = filled_data2)
+kruskal.test(fecundity_mean ~ class2, data = filled_data)
 # chi-squared = 2.8377, df = 5, p-value = 0.725
 # not significant
 ```
@@ -599,11 +640,11 @@ kruskal.test(fecundity_mean ~ class2, data = filled_data2)
 # demers_pelag -------------------------------------------------
 
 # Pearson's Chi-squared test
-chisq.test(filled_data2$class2, filled_data2$demers_pelag)
+chisq.test(filled_data$class2, filled_data$demers_pelag)
 # X-squared = 232.88, df = 30, p-value < 2.2e-16 - there is a significant relationship
 
 # contingency table
-demers_table <- table(filled_data2$class2, filled_data2$demers_pelag)
+demers_table <- table(filled_data$class2, filled_data$demers_pelag)
 demers_table
 
 # post-hoc test
@@ -613,11 +654,11 @@ chisq.posthoc.test(demers_table, method = "bonferroni")
 # movement_keyword ---------------------------------------------
 
 # Pearson's Chi-squared test
-chisq.test(filled_data2$class2, filled_data2$movement_keyword)
+chisq.test(filled_data$class2, filled_data$movement_keyword)
 # X-squared = 309.78, df = 50, p-value < 2.2e-16
 
 # contingency table
-movement_table <- table(filled_data2$class2, filled_data2$movement_keyword)
+movement_table <- table(filled_data$class2, filled_data$movement_keyword)
 movement_table
 
 # post-hoc test
@@ -627,11 +668,11 @@ chisq.posthoc.test(movement_table, method = "bonferroni")
 # body_shape_i -------------------------------------------------
 
 # Pearson's Chi-squared test
-chisq.test(filled_data2$class2, filled_data2$body_shape_i)
+chisq.test(filled_data$class2, filled_data$body_shape_i)
 # X-squared = 28.07, df = 15, p-value = 0.02114
 
 # contingency table
-body_table <- table(filled_data2$class2, filled_data2$body_shape_i)
+body_table <- table(filled_data$class2, filled_data$body_shape_i)
 body_table
 
 # post-hoc test
@@ -641,11 +682,11 @@ chisq.posthoc.test(body_table, method = "bonferroni")
 # climate ------------------------------------------------------
 
 # Pearson's Chi-squared test
-chisq.test(filled_data2$class2, filled_data2$climate)
+chisq.test(filled_data$class2, filled_data$climate)
 # X-squared = 17.694, df = 5, p-value = 0.003355
 
 # contingency table
-climate_table <- table(filled_data2$class2, filled_data2$climate)
+climate_table <- table(filled_data$class2, filled_data$climate)
 climate_table
 
 # post-hoc test
@@ -655,25 +696,25 @@ chisq.posthoc.test(climate_table, method = "bonferroni")
 # dev_place ----------------------------------------------------
 
 # Pearson's Chi-squared test
-chisq.test(filled_data2$class2, filled_data2$dev_place)
+chisq.test(filled_data$class2, filled_data$dev_place)
 # X-squared = 3.5273, df = 5, p-value = 0.6193
 
 
 # food_mode ----------------------------------------------------
 
 # Pearson's Chi-squared test
-chisq.test(filled_data2$class2, filled_data2$food_mode)
+chisq.test(filled_data$class2, filled_data$food_mode)
 # X-squared = 8.4677, df = 5, p-value = 0.1323
 
 
 # iucn_category ------------------------------------------------
 
 # Pearson's Chi-squared test
-chisq.test(filled_data2$class2, filled_data2$iucn_category)
+chisq.test(filled_data$class2, filled_data$iucn_category)
 # X-squared = 40.009, df = 25, p-value = 0.0291
 
 # contingency table
-iucn_table <- table(filled_data2$class2, filled_data2$iucn_category)
+iucn_table <- table(filled_data$class2, filled_data$iucn_category)
 iucn_table
 
 # post-hoc test

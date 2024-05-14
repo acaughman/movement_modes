@@ -23,9 +23,9 @@ library(ggrepel)
 ```{r}
 fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv"))
 
-filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv"))
+genus_filled_data <- read_csv(here::here("01_data", "02_processed_data", "genus_filled_data.csv"))
 
-filled_data2 <- read_csv(here::here("01_data", "02_processed_data", "filled_data2.csv")) %>%
+filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>%
   mutate_if(is.character, as.factor)
 ```
 
@@ -145,7 +145,7 @@ ggsave(g, file = paste0("stats_sum.pdf"), path = here::here("04_figs"), height =
 
 ```{r}
 # homerange vs PLD
-fishbase_data_gmm <- filled_data2 %>%
+fishbase_data_gmm <- filled_data %>%
   mutate(class2 = as.factor(class2))
 
 hr_hist <- ggplot(fishbase_data_gmm, aes(log(home_range))) +
@@ -182,7 +182,7 @@ p1
 
 
 
-# example_fish <- filled_data2 %>%
+# example_fish <- filled_data %>%
 #   select(species, fb_name, class2, class3, magnitude_homerange, month_pld) %>%
 #   filter(fb_name %in% c(
 #     "Hogfish", "Yellow snapper", "Blackfin tuna", "Humphead wrasse", "Pacific red snapper",
@@ -273,68 +273,79 @@ gmm_panel
 ### Missing data figure
 
 ```{r}
-missing <- miss_var_summary(fishbase_data)
-missing2 <- miss_var_summary(filled_data)
-missing3 <- miss_var_summary(filled_data2)
 
-missing_fishbase_data <- fishbase_data %>% 
+missing <- miss_var_summary(data)
+genus_filled <- miss_var_summary(genus_genus_filled_data)
+family_filled <- miss_var_summary(genus_filled_data)
+
+# original missing data
+missing_data_plot <- data %>% 
   dplyr::select(
-    oxygen_cons, temp_range, fecundity_mean, dev_place,
-    longevity_wild, temp_preferred, iucn_category,
+    oxygen_cons, temp_range, temp_max, fecundity_mean, fecundity_max, longevity_wild,
+    temp_preferred, dev_place, iucn_category
   ) %>%
   rename(
     "Oxygen Consumption Rate" = oxygen_cons,
     "Temperature Range" = temp_range,
-    "Fecundity" = fecundity_mean,
-    "Place of Development" = dev_place,
+    "Maximum Temperature" = temp_max,
+    "Average Fecundity" = fecundity_mean,
+    "Maximum Fecundity" = fecundity_max,
     "Maximum Recorded Lifespan" = longevity_wild,
     "Optimal Temperature" = temp_preferred,
+    "Place of Development" = dev_place,
     "IUCN Category" = iucn_category
   )
 
-m1 <- gg_miss_var(missing_fishbase_data) +
+m1 <- gg_miss_var(missing_data_plot) +
   theme_bw(base_size = 16) +
   labs(y = "Original Missing Data", x = "") +
   theme(axis.title.x = element_text(vjust = -1))
 m1
 
-missing_filled_data <- filled_data %>% 
-  dplyr::select(
-    oxygen_cons, temp_range, dev_place, fecundity_mean,
-    longevity_wild, temp_preferred, iucn_category,
-  ) %>%
-  rename(
-    "Oxygen Consumption Rate" = oxygen_cons,
-    "Temperature Range" = temp_range,
-    "Place of Development" = dev_place,
-    "Fecundity" = fecundity_mean,
-    "Maximum Recorded Lifespan" = longevity_wild,
-    "Optimal Temperature" = temp_preferred,
-    "IUCN Category" = iucn_category
-  )
 
-m2 <- gg_miss_var(missing_filled_data) + # figure showing the missing data
-  theme_bw(base_size = 16) +
-  labs(y = "Missing Data After Genus-Level Fill", x = "Variable") +
-  theme(axis.title.x = element_text(vjust = -1))
-m2
-
-missing_data_final <- filled_data2 %>%
+# missing data after genus-level fills
+genus_filled_plot <- genus_genus_filled_data %>% 
   dplyr::select(
-    oxygen_cons, temp_range, fecundity_mean, dev_place,
+    oxygen_cons, temp_range, temp_max, fecundity_mean, fecundity_max,
     longevity_wild, temp_preferred, iucn_category
   ) %>%
   rename(
     "Oxygen Consumption Rate" = oxygen_cons,
     "Temperature Range" = temp_range,
-    "Fecundity" = fecundity_mean,
-    "Place of Development" = dev_place,
+    "Maximum Temperature" = temp_max,
+    "Average Fecundity" = fecundity_mean,
+    "Maximum Fecundity" = fecundity_max,
     "Maximum Recorded Lifespan" = longevity_wild,
     "Optimal Temperature" = temp_preferred,
     "IUCN Category" = iucn_category
   )
 
-m3 <- gg_miss_var(missing_data_final) +
+m2 <- gg_miss_var(genus_filled_plot) + # figure showing the missing data
+  theme_bw(base_size = 16) +
+  labs(y = "Missing Data After Genus-Level Fill", x = "Variable") +
+  theme(axis.title.x = element_text(vjust = -1))
+m2
+
+
+
+# missing data after femaily-level fills
+filled_plot <- genus_filled_data %>%
+  dplyr::select(
+    oxygen_cons, temp_range, temp_max, fecundity_mean, fecundity_max,
+    longevity_wild, temp_preferred, iucn_category
+  ) %>%
+  rename(
+    "Oxygen Consumption Rate" = oxygen_cons,
+    "Temperature Range" = temp_range,
+    "Maximum Temperature" = temp_max,
+    "Average Fecundity" = fecundity_mean,
+    "Maximum Fecundity" = fecundity_max,
+    "Maximum Recorded Lifespan" = longevity_wild,
+    "Optimal Temperature" = temp_preferred,
+    "IUCN Category" = iucn_category
+  )
+
+m3 <- gg_miss_var(filled_plot) +
   theme_bw(base_size = 16) +
   labs(y = "Missing Data After Family-Level Fill", x = "") +
   theme(axis.title.x = element_text(vjust = -1))
@@ -350,12 +361,13 @@ missing_fig
 ```
 
 
+
 ### Individual Plots
 
 ```{r}
 # continuous
 
-plot_data <- filled_data2 %>%
+plot_data <- filled_data %>%
   mutate(
     class2 = as.factor(class2),
     class3 = as.factor(class3),
