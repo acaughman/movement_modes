@@ -181,18 +181,6 @@ p1 <- ggplot(fishbase_data_gmm, aes(log(home_range), pld)) +
 p1
 
 
-
-# example_fish <- filled_data %>%
-#   select(species, fb_name, class2, class3, magnitude_homerange, month_pld) %>%
-#   filter(fb_name %in% c(
-#     "Hogfish", "Yellow snapper", "Blackfin tuna", "Humphead wrasse", "Pacific red snapper",
-#     "Giant seabass", "Lemon sole", "Chum salmon", "Pacific ocean perch", "Atlantic herring",
-#     "Atlantic cod", "Haddock", "Atlantic salmon", "California sheephead", "Black seabream",
-#     "Blue marlin", "Yellowfin tuna", "Swordfish"
-#     # "Blackhead seabream", "Pink salmon", "Coho salmon", "Ghost shark", "Pollack", "Polar cod", "Sockeye salmon", "Chinook salmon"
-#   ))
-
-
 gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   theme_bw(base_size = 16) +
   labs(
@@ -205,49 +193,50 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   theme(legend.position = "bottom") +
   scale_color_viridis_d() +
   geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Hogfish", "Yellow snapper", "Blackfin tuna")),
-    aes(label = fb_name, color = class2),
+    data = subset(fishbase_data_gmm, fishbase_name %in% c("Hogfish", "Yellow snapper", "Blackfin tuna")),
+    aes(label = fishbase_name, color = class2),
     vjust = "outward", hjust = "outward",
-    min.segment.length = 0.5,
+    min.segment.length = 30,
     nudge_y = -1,
     show.legend = FALSE
   ) +
   geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Chocolate hind", "Lingcod", "Nassau grouper")),
-    aes(label = fb_name, color = class2),
+    data = subset(fishbase_data_gmm, fishbase_name %in% c("Chocolate hind", "Lingcod", "Nassau grouper")),
+    aes(label = fishbase_name, color = class2),
     hjust = "inward",
-    min.segment.length = 0.5,
+    min.segment.length = 30,
     box.padding = 0.3,
-    nudge_x = -2, nudge_y = -0.8,
+    nudge_x = -2, #nudge_y = -0.8,
     show.legend = FALSE
   ) +
   geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Lemon sole", "North Pacific hake", "Yellowstripe goatfish")),
-    aes(label = fb_name, color = class2),
+    data = subset(fishbase_data_gmm, fishbase_name %in% c("Lemon sole", "North Pacific hake", "Yellowstripe goatfish")),
+    aes(label = fishbase_name, color = class2),
     vjust = "outward", hjust = "outward",
-    min.segment.length = 0.5,
+    min.segment.length = 30,
     nudge_x = -1, nudge_y = 0.8,
     show.legend = FALSE
   ) +
   geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Atlantic herring", "Atlantic cod", "Summer flounder")),
-    aes(label = fb_name, color = class2),
-    vjust = "outward", hjust = "outward",
-    min.segment.length = 0.5,
+    data = subset(fishbase_data_gmm, fishbase_name %in% c("Atlantic herring", "Atlantic cod", "Summer flounder")),
+    aes(label = fishbase_name, color = class2),
+    #vjust = "outward", hjust = "outward",
+    min.segment.length = 30,
     nudge_y = 0,
+    nudge_x = 1,
     show.legend = FALSE
   ) +
   geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Great barracuda", "Giant trevally", "Black seabream")),
-    aes(label = fb_name, color = class2),
+    data = subset(fishbase_data_gmm, fishbase_name %in% c("Great barracuda", "Giant trevally", "Black seabass")),
+    aes(label = fishbase_name, color = class2),
     vjust = "outward", hjust = "outward",
-    min.segment.length = 0.5,
+    min.segment.length = 30,
     nudge_y = 1, nudge_x = 0.3,
     show.legend = FALSE
   ) +
   geom_label_repel(
-    data = subset(fishbase_data_gmm, fb_name %in% c("Common snook", "Yellowfin tuna", "Swordfish")),
-    aes(label = fb_name, color = clas2),
+    data = subset(fishbase_data_gmm, fishbase_name %in% c("Common snook", "Yellowfin tuna", "Swordfish")),
+    aes(label = fishbase_name, color = clas2),
     color = "goldenrod1",
     vjust = "outward", hjust = "outward",
     min.segment.length = 30,
