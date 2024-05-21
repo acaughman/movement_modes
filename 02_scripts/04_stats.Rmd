@@ -73,16 +73,16 @@ stepAIC(lm1)
 stepAIC(lm2)
 
 lm1.1 <- lm(
-  log(home_range) ~ length + diet_troph3 + longevity_wild +
-    temp_preferred + length:diet_troph3 + length:longevity_wild +
-    diet_troph3:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred +
-    longevity_wild:temp_preferred + length:diet_troph3:longevity_wild +
-    length:diet_troph3:temp_preferred + length:longevity_wild:temp_preferred,
+  log(home_range) ~ length + diet_troph3 + longevity_wild + 
+    temp_preferred + length:diet_troph3 + length:longevity_wild + 
+    diet_troph3:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred + 
+    longevity_wild:temp_preferred + length:diet_troph3:temp_preferred + 
+    length:longevity_wild:temp_preferred + diet_troph3:longevity_wild:temp_preferred,
   data = filled_data
 )
 lm2.1 <- lm(
-  pld ~ length + diet_troph3 + longevity_wild + temp_preferred +
-    length:longevity_wild + length:temp_preferred + diet_troph3:temp_preferred +
+  pld ~ length + diet_troph3 + longevity_wild + temp_preferred + 
+    length:longevity_wild + diet_troph3:longevity_wild + length:temp_preferred + 
     longevity_wild:temp_preferred + length:longevity_wild:temp_preferred,
   data = filled_data
 )
