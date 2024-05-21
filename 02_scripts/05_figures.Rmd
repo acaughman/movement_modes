@@ -15,6 +15,7 @@ library(patchwork)
 library(cowplot)
 library(ggpubr)
 library(ggrepel)
+library(naniar)
 ```
 
 
@@ -263,12 +264,12 @@ gmm_panel
 
 ```{r}
 
-missing <- miss_var_summary(data)
+missing <- miss_var_summary(fishbase_data)
 genus_filled <- miss_var_summary(genus_filled_data)
 family_filled <- miss_var_summary(filled_data)
 
 # original missing data
-missing_data_plot <- data %>% 
+missing_data_plot <- fishbase_data %>% 
   dplyr::select(
     oxygen_cons, temp_range, fecundity_mean, longevity_wild,
     temp_preferred, dev_place, iucn_category
@@ -376,8 +377,6 @@ box_data <- function(x, y) {
     scale_color_viridis_d()
 }
 
-# plots_cont <- map(expl_cont, ~ box_data(.x, "class2"))
-# plots_cont
 ```
 
 ```{r}
@@ -462,7 +461,7 @@ individual_panel
 # categorical
 
 expl_cat <- c(
-  "body_shape_i", "dev_place", "demers_pelag", "iucn_category","food_mode"
+  "body_shape_i", "dev_place", "demers_pelag", "iucn_category"
 )
 
 scatter_data <- function(x, y) {
@@ -477,8 +476,6 @@ scatter_data <- function(x, y) {
     theme(axis.text.x = element_text(angle = 40, hjust = 1))
 }
 
-# plots_cat <- map(expl_cat, ~ scatter_data(.x, "class2"))
-# plots_cat
 ```
 
 ```{r}
@@ -492,15 +489,24 @@ dev_plot <- scatter_data(x = "dev_place", y = "class2") +
 demers_plot <- scatter_data(x = "demers_pelag", y = "class2") + 
   labs(y = "", x = "Habitat Type") +
   theme(axis.text.y = element_blank())
-iucn_plot <- scatter_data(x = "iucn_category", y = "class2") + 
-  labs(y = "", x = "IUCN Category") +
-  theme(axis.text.y = element_blank())
-food_plot <- scatter_data(x = "food_mode", y = "class2") + 
-  labs(y = "", x = "Feeding Mode") +
-  scale_y_discrete(position = "right")
+
+iucn <- plot_data %>% 
+  filter(!is.na(iucn_category))
+
+iucn_plot <- ggplot(iucn, aes(x = iucn_category, y = class2)) + 
+  geom_jitter(aes(color = class2)) +
+  theme_bw() +
+    labs(
+      x = "Habitat Type", 
+      y = "",
+      color = "Class (homerange/PLD)"
+    ) +
+    scale_color_viridis_d() +
+    theme(axis.text.x = element_text(angle = 40, hjust = 1),
+          axis.text.y = element_blank())
 
 
-cat_panel <- demers_plot + dev_plot + iucn_plot + food_plot + plot_spacer() + body_plot +
+cat_panel <- demers_plot + dev_plot + iucn_plot + body_plot +
   plot_layout(ncol = 2, guides = "collect") + 
   plot_annotation(tag_levels = "A") &
   theme(text = element_text(size = 14), legend.position = "none")

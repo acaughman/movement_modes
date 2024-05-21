@@ -151,7 +151,6 @@ fecundity <- fecundity() %>%
   janitor::clean_names()
 
 
-
 fecundity <- fecundity %>% # combine actual mean with calculated mean
   mutate(fecundity_mean = coalesce(fecundity_mean, fecundity_mean_calc)) %>%
   dplyr::select(-fecundity_mean_calc, -fecundity_min)
@@ -288,7 +287,11 @@ missing_dev <- larvae() %>%
   filter(SpecCode %in% fish_genera$spec_code) %>%
   dplyr::select(SpecCode, PlaceofDevelopment) %>%
   rename(spec_code = SpecCode, 
-         dev_place = PlaceofDevelopment)
+         dev_place = PlaceofDevelopment) %>%
+  na.omit() %>% 
+  mutate(dev_place = case_when(
+    dev_place != "planktonic" ~ "non-planktonic", 
+    TRUE ~ dev_place))
 
 missing_dev <- left_join(fish_genera, missing_dev, relationship = "many-to-many")
 
@@ -419,7 +422,7 @@ genus_filled_data <- genus_filled_data %>%
 #write_csv(genus_filled_data, here::here("01_data", "02_processed_data", "genus_filled_data.csv"))
 ```
 
-##### Asses missing data after genus fills
+##### Asses missing data after genus fills - dev_place is complete
 
 ```{r}
 genus_filled <- miss_var_summary(genus_filled_data)
@@ -437,7 +440,7 @@ genus_filled_fig
 
 ```
 
-##### Fill in missing data from family averages
+##### Fill in missing data from family averages for remaining variables
 
 ```{r}
 # replace numeric NAs with mean of family, categorical with mode of family
@@ -562,7 +565,7 @@ filled_data <- filled_data %>%
 ##### Write new csv including family filled variables
 
 ```{r}
-# write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
 ```
 
 ##### Assess missing data after family fills
