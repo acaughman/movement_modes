@@ -21,6 +21,7 @@ library(MASS)
 library(sjPlot)
 library(marginaleffects)
 library(patchwork)
+library(broom)
 ```
 
 ### Load data
@@ -93,6 +94,12 @@ Anova(lm1.1, type = "III")
 
 summary(lm2.1)
 Anova(lm2.1, type = "III")
+
+tidy_lm1.1 = tidy(lm1.1)
+tidy_lm2.1 = tidy(lm2.1)
+
+write_csv(tidy_lm1.1, here::here("01_data", "02_processed_data", "hr_lm.csv"))
+write_csv(tidy_lm2.1, here::here("01_data", "02_processed_data", "pld_lm.csv"))
 
 p1 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("length", "r_fin"), comparison = "difference") +
   labs(
