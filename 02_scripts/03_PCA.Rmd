@@ -29,6 +29,20 @@ filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.
   mutate_if(is.character, as.factor)
 ```
 
+```{r}
+scale_values <- function(x){(x-min(x, na.rm = TRUE))/(max(x, na.rm = TRUE)-min(x, na.rm = TRUE))}
+```
+
+```{r}
+filled_data$temp_preferred = scale_values(filled_data$temp_preferred)
+filled_data$longevity_wild =scale_values(filled_data$longevity_wild)
+filled_data$sp_richness = scale_values(filled_data$sp_richness)
+filled_data$length = scale_values(filled_data$length)
+filled_data$r_fin = scale_values(filled_data$r_fin)
+filled_data$diet_troph3 = scale_values(filled_data$diet_troph3)
+filled_data$temp_range =scale_values(filled_data$temp_range)
+filled_data$oxygen_cons =scale_values(filled_data$oxygen_cons)
+```
 
 ### FAMD
 
@@ -105,7 +119,7 @@ f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_1$class2, palette =
 
 f1_fig
 
-#ggsave(f1_fig, file = paste0("famd_all_variables.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
+ggsave(f1_fig, file = paste0("famd_all_variables_.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
 
 ```
 
@@ -118,8 +132,7 @@ com_data <- filled_data %>%
   dplyr::select(
     temp_preferred, longevity_wild, sp_richness, length, r_fin, diet_troph3, temp_range, oxygen_cons,
     species, order, class2, class3
-  ) %>%
-  filter(temp_preferred > 0) %>%
+  ) %>% 
   na.omit()
 
 com <- com_data %>%
@@ -128,7 +141,7 @@ com <- com_data %>%
 m_com <- as.matrix(com)
 
 set.seed(123)
-nmds <- metaMDS(m_com, distance = "euclidean")
+nmds <- metaMDS(m_com, distance = "euclidean", autotransform = FALSE)
 nmds
 
 # extract NMDS scores (x and y coordinates)
@@ -144,10 +157,10 @@ filled_scores <- filled_scores %>%
 
 species_scores <- as.data.frame(nmds[["species"]])
 
-rownames(species_scores) <- c("Optimal Temperature", "Lifespan", "Species Richness", "Length", 
+rownames(species_scores) <- c("Optimal Temperature", "Lifespan", "Species Richness", "Length",
                                "Growth Rate", "Trophic Level", "Temperature Range", "Oxygen Consumption")
 
-species_scores <- species_scores %>% 
+species_scores <- species_scores %>%
   rownames_to_column(var = "var")
 
 centroid <- filled_scores %>%
@@ -168,11 +181,11 @@ nmds_1 <- ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) +
   ggrepel::geom_label_repel(data = species_scores, aes(x = MDS1, y = MDS2, label = var), fill = "white", cex = 3, direction = "both", segment.size = .25) +
   scale_y_continuous(position = "right") +
   theme(legend.position = "left", panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  annotate("text", x = 0.17, y = 0.25, label = "Stress: 0.155")
+  annotate("text", x = 0.17, y = 0.25, label = "Stress: 0.13")
 
 nmds_1
 
-#ggsave(nmds_1, file = paste0("nmds_significant_traits.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
+ggsave(nmds_1, file = paste0("nmds_significant_traits_.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
 
 
 dst <- dist(com, method = "euclidean")
@@ -196,10 +209,9 @@ pairwise.adonis(m_com, com_data$class3, perm = 9999)
 
 com_data2 <- filled_data %>%
   dplyr::select(
-    temp_preferred, length, longevity_wild, diet_troph3,
+    temp_preferred, length, longevity_wild, r_fin,
     species, order, class2, class3
   ) %>%
-  mutate(temp_preferred = temp_preferred + 2) %>%
   na.omit()
 
 
@@ -209,7 +221,7 @@ com2 <- com_data2 %>%
 m_com2 <- as.matrix(com2)
 
 set.seed(123)
-nmds2 <- metaMDS(m_com2, distance = "euclidean")
+nmds2 <- metaMDS(m_com2, distance = "euclidean", autotransform = FALSE, wascores = TRUE)
 nmds2
 
 # extract NMDS scores (x and y coordinates)
@@ -225,7 +237,7 @@ filled_scores2 <- filled_scores2 %>%
 
 species_scores2 <- as.data.frame(nmds2[["species"]])
 
-rownames(species_scores2) <- c("Optimal Temperature", "Length", "Lifespan", "Trophic Level")
+rownames(species_scores2) <- c("Optimal Temperature", "Length", "Lifespan", "Growth Rate")
 
 species_scores2 <- species_scores2 %>% 
   rownames_to_column(var = "var")
@@ -248,11 +260,11 @@ nmds_2 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
   ggrepel::geom_label_repel(data = species_scores2, aes(x = MDS1, y = MDS2, label = var), size = 5, fill = "white", cex = 3, direction = "both", segment.size = .25) +
   scale_y_continuous(position = "right") +
   theme(legend.position = "left", panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  annotate("text", x = 0.15, y = 0.2, label = "Stress: 0.121")
+  annotate("text", x = 0.2, y = 0.4, label = "Stress: 0.07")
 
 nmds_2
 
-#ggsave(nmds_2, file = paste0("nmds_4_traits.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
+ggsave(nmds_2, file = paste0("nmds_4_traits.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
 
 
 dst2 <- dist(com2, method = "euclidean")
