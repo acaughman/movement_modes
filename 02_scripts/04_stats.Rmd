@@ -53,7 +53,7 @@ trait_summary <- filled_data %>%
   ))
 
 trait_summary2 <- filled_data %>%
-  dplyr::select(class2, r_fin, temp_range, oxygen_cons, sp_richness, fecundity_mean) %>%
+  dplyr::select(class2, r_fin, temp_range, oxygen_cons, fecundity_mean) %>%
   group_by(class2) %>%
   summarise(across(
     where(is.numeric),
@@ -171,7 +171,7 @@ ggsave(interact_plot, file = paste0("interact_plot.pdf"), path = here::here("04_
 ```{r}
 model <- lm(
   class3 ~ temp_preferred + temp_max + fecundity_mean + longevity_wild +
-    sp_richness + length + kfin + r_fin + diet_troph3,
+    length + kfin + r_fin + diet_troph3,
   data = filled_data
 )
 
@@ -537,44 +537,6 @@ filled_data %>% kruskal_effsize(oxygen_cons ~ class2, ci = TRUE)
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(oxygen_cons ~ class2, data = oxygen_data, method = "bh")
-
-
-
-# sp_richness --------------------------------------------------
-
-# look at outliers
-outliers_sp <- boxplot.stats(filled_data$sp_richness)$out
-boxplot(filled_data$sp_richness, main = "Species Richness by Family", boxwex = 0.1)
-mtext(paste("Outliers: ", paste(outliers_sp, collapse = ", ")), cex = 0.4)
-
-# build the model
-model_sprich <- aov(sp_richness ~ class2, data = filled_data)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_sprich))
-# not normal
-
-# model with log transformed variable
-model_sprich_log <- aov(log(sp_richness) ~ class2, data = filled_data)
-
-# create a QQ plot of residuals
-ggqqplot(residuals(model_sprich_log))
-# less abnormal
-
-# test for homogeneity of variance
-plot(model_sprich, 1)
-# looks good
-
-# run Kruskal-Wallis test (non-parametric version of ANOVA)
-kruskal.test(sp_richness ~ class2, data = filled_data)
-# chi-squared = 28.128, df = 5, p-value = 3.437e-05
-
-# get effect size
-filled_data %>% kruskal_effsize(sp_richness ~ class2, ci = TRUE)
-# eta2 = 0.0385, SMALL effect
-
-# Kruskal-Wallis is significant, run Dunn's test
-dunnTest(sp_richness ~ class2, data = filled_data, method = "bh")
 
 
 

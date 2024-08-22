@@ -416,13 +416,9 @@ fecund_plot <- box_data(x = "fecundity_mean", y = "class2") +
   stat_kruskal_test(label.y = 40000000, label.x = 5.5, position = "jitter") +
   labs(y = "Fecundity", x = "") +
   scale_x_discrete(position = "top")
-sp_rich_plot <- box_data(x = "sp_richness", y = "class2") + 
-  stat_kruskal_test(label.y = 1100, position = "jitter") +
-  labs(y = "Species Richness", x = "") + 
-  scale_x_discrete(position = "top")
 
 
-num_panel <- diet_plot + temp_range_plot + oxygen_plot + sp_rich_plot + plot_spacer() + fecund_plot +
+num_panel <- diet_plot + temp_range_plot + oxygen_plot +  plot_spacer() + fecund_plot +
   plot_layout(ncol = 2, guides = "collect") + 
   plot_annotation(tag_levels = "A") &
   theme(text = element_text(size = 14), legend.position = "none")
