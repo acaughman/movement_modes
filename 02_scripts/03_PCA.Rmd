@@ -52,14 +52,14 @@ famd_1 <- filled_data %>%
   dplyr::select(
     temp_preferred, fecundity_mean, longevity_wild, length,
     r_fin, diet_troph3, oxygen_cons, temp_range, body_shape_i,
-    dev_place, iucn_category, demers_pelag,
+    dev_place,  demers_pelag,
     class2
   ) %>%
   mutate(class2 = as.factor(class2)) %>%
   na.omit()
 
 
-f1 <- FAMD(famd_1[, 1:12], graph = FALSE)
+f1 <- FAMD(famd_1[, 1:11], graph = FALSE)
 f1
 
 eigen_f1 <- f1$eig
@@ -75,7 +75,7 @@ f1_var = as.data.frame(f1$var)
 
 rownames(f1_var) <- c("Optimal Temperature", "Average Fecundity", "Lifespan", "Length", 
                       "Population Growth Rate", "Trophic Level", "Oxygen Consumption", "Temperature Range",
-                      "Body Shape", "Place of Development", "IUCN Category", "Habitat Type")
+                      "Body Shape", "Place of Development","Habitat Type")
 
 f1_var <- f1_var %>% 
   dplyr::select(coord.Dim.1, coord.Dim.2) %>% 
@@ -106,7 +106,7 @@ f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_1$class2, palette =
                         addEllipses = TRUE, ellipse.level = 0.95, invisible = "quali.var", alpha.ind = 0.4, 
                         ellipse.alpha = 0.2) +
   theme_bw(base_size = 16) +
-  labs(x = "FAMD1 (11.6%)", y = "FAMD2 (9%)", color = "Class (Homerange/PLD)", 
+  labs(x = "FAMD1 (13.4%)", y = "FAMD2 (9.9%)", color = "Class (Homerange/PLD)", 
        fill = "Class (Homerange/PLD)", title = NULL) +
   scale_y_continuous(position = "right") +
   theme(legend.position = "left") + 
@@ -119,7 +119,7 @@ f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_1$class2, palette =
 
 f1_fig
 
-ggsave(f1_fig, file = paste0("famd_all_variables_.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
+ggsave(f1_fig, file = paste0("famd_all_variables.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
 
 ```
 
@@ -185,7 +185,7 @@ nmds_1 <- ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) +
 
 nmds_1
 
-ggsave(nmds_1, file = paste0("nmds_significant_traits_.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
+ggsave(nmds_1, file = paste0("nmds_significant_traits.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
 
 
 dst <- dist(com, method = "euclidean")

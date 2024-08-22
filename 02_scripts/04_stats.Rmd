@@ -645,19 +645,6 @@ chisq.test(filled_data$class2, filled_data$dev_place)
 chisq.test(filled_data$class2, filled_data$food_mode)
 # X-squared = 8.4677, df = 5, p-value = 0.1323
 
-
-# iucn_category ------------------------------------------------
-
-# Pearson's Chi-squared test
-chisq.test(filled_data$class2, filled_data$iucn_category)
-# X-squared = 40.009, df = 25, p-value = 0.0291
-
-# contingency table
-iucn_table <- table(filled_data$class2, filled_data$iucn_category)
-iucn_table
-
-# post-hoc test
-chisq.posthoc.test(iucn_table, method = "bonferroni")
 ```
 
 

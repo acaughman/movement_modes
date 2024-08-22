@@ -255,7 +255,7 @@ gmm_panel <- ((dist_plot) | p1) / gmm_new_fig &
   theme(plot.tag = element_text(face = "bold"))
 
 gmm_panel
-#ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
+ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
 
 ```
 
@@ -272,7 +272,7 @@ family_filled <- miss_var_summary(filled_data)
 missing_data_plot <- fishbase_data %>% 
   dplyr::select(
     oxygen_cons, temp_range, fecundity_mean, longevity_wild,
-    temp_preferred, dev_place, iucn_category
+    temp_preferred, dev_place
   ) %>%
   rename(
     "Oxygen Consumption Rate" = oxygen_cons,
@@ -280,8 +280,7 @@ missing_data_plot <- fishbase_data %>%
     "Average Fecundity" = fecundity_mean,
     "Maximum Recorded Lifespan" = longevity_wild,
     "Optimal Temperature" = temp_preferred,
-    "Place of Development" = dev_place,
-    "IUCN Category" = iucn_category
+    "Place of Development" = dev_place
   )
 
 m1 <- gg_miss_var(missing_data_plot) +
@@ -295,15 +294,14 @@ m1
 genus_filled_plot <- genus_filled_data %>% 
   dplyr::select(
     oxygen_cons, temp_range, fecundity_mean,
-    longevity_wild, temp_preferred, iucn_category
+    longevity_wild, temp_preferred
   ) %>%
   rename(
     "Oxygen Consumption Rate" = oxygen_cons,
     "Temperature Range" = temp_range,
     "Average Fecundity" = fecundity_mean,
     "Maximum Recorded Lifespan" = longevity_wild,
-    "Optimal Temperature" = temp_preferred,
-    "IUCN Category" = iucn_category
+    "Optimal Temperature" = temp_preferred
   )
 
 m2 <- gg_miss_var(genus_filled_plot) + # figure showing the missing data
@@ -318,15 +316,14 @@ m2
 filled_plot <- filled_data %>%
   dplyr::select(
     oxygen_cons, temp_range, fecundity_mean,
-    longevity_wild, temp_preferred, iucn_category
+    longevity_wild, temp_preferred
   ) %>%
   rename(
     "Oxygen Consumption Rate" = oxygen_cons,
     "Temperature Range" = temp_range,
     "Average Fecundity" = fecundity_mean,
     "Maximum Recorded Lifespan" = longevity_wild,
-    "Optimal Temperature" = temp_preferred,
-    "IUCN Category" = iucn_category
+    "Optimal Temperature" = temp_preferred
   )
 
 m3 <- gg_miss_var(filled_plot) +
@@ -340,7 +337,7 @@ missing_fig <- (m1 / m2 / m3) +
   theme_bw(base_size = 16)
 missing_fig
 
-#ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 8)
+ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 8)
 
 ```
 
@@ -418,7 +415,7 @@ fecund_plot <- box_data(x = "fecundity_mean", y = "class2") +
   scale_x_discrete(position = "top")
 
 
-num_panel <- diet_plot + temp_range_plot + oxygen_plot +  plot_spacer() + fecund_plot +
+num_panel <- diet_plot + temp_range_plot + oxygen_plot +  fecund_plot +
   plot_layout(ncol = 2, guides = "collect") + 
   plot_annotation(tag_levels = "A") &
   theme(text = element_text(size = 14), legend.position = "none")
@@ -431,7 +428,7 @@ numeric_panel <- wrap_elements(num_panel) +
   )
 
 numeric_panel
-#ggsave(numeric_panel, file = paste0("numeric_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 11, width = 11)
+ggsave(numeric_panel, file = paste0("numeric_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 11, width = 11)
 
 
 ind_panel <- ((temp_plot | length_plot) / (r_fin_plot | long_plot)) +
@@ -448,7 +445,7 @@ individual_panel <- wrap_elements(ind_panel) +
 
 individual_panel
 
-#ggsave(individual_panel, file = paste0("4_trait_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 13)
+ggsave(individual_panel, file = paste0("4_trait_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 13)
 
 ```
 
@@ -486,23 +483,7 @@ demers_plot <- scatter_data(x = "demers_pelag", y = "class2") +
   labs(y = "", x = "Habitat Type") +
   theme(axis.text.y = element_blank())
 
-iucn <- plot_data %>% 
-  filter(!is.na(iucn_category))
-
-iucn_plot <- ggplot(iucn, aes(x = iucn_category, y = class2)) + 
-  geom_jitter(aes(color = class2)) +
-  theme_bw() +
-    labs(
-      x = "Habitat Type", 
-      y = "",
-      color = "Class (homerange/PLD)"
-    ) +
-    scale_color_viridis_d() +
-    theme(axis.text.x = element_text(angle = 40, hjust = 1),
-          axis.text.y = element_blank())
-
-
-cat_panel <- demers_plot + dev_plot + iucn_plot + body_plot +
+cat_panel <- demers_plot + dev_plot +  body_plot +
   plot_layout(ncol = 2, guides = "collect") + 
   plot_annotation(tag_levels = "A") &
   theme(text = element_text(size = 14), legend.position = "none")
@@ -515,7 +496,7 @@ categorical_panel <- wrap_elements(cat_panel) +
   )
 
 categorical_panel
-#ggsave(categorical_panel, file = paste0("categorical_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 11, width = 11)
+ggsave(categorical_panel, file = paste0("categorical_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 11, width = 11)
 
 ```
 
