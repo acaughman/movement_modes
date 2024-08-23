@@ -41,7 +41,7 @@ sample_size <- filled_data %>%
 
 # Trait means, medians, and sd by cohort
 trait_summary <- filled_data %>%
-  dplyr::select(class2, length, temp_preferred, longevity_wild, diet_troph3) %>%
+  dplyr::select(class2, length,r_fin, temp_preferred, longevity_wild) %>%
   group_by(class2) %>%
   summarise(across(
     where(is.numeric),
@@ -53,7 +53,7 @@ trait_summary <- filled_data %>%
   ))
 
 trait_summary2 <- filled_data %>%
-  dplyr::select(class2, r_fin, temp_range, oxygen_cons, fecundity_mean) %>%
+  dplyr::select(class2, diet_troph3, temp_range, oxygen_cons, fecundity_mean) %>%
   group_by(class2) %>%
   summarise(across(
     where(is.numeric),
@@ -408,9 +408,6 @@ longevity_data %>% kruskal_effsize(longevity_wild ~ class2, ci = TRUE)
 
 # Kruskal-Wallis is significant, run Dunn's test
 dunnTest(longevity_wild ~ class2, data = longevity_data, method = "bh")
-
-
-
 
 # r_fin --------------------------------------------------------
 
