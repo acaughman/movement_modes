@@ -90,9 +90,11 @@ anova(lm1, lm1.1)
 anova(lm2, lm2.1)
 
 summary(lm1.1)
+AIC(lm1.1)
 Anova(lm1.1, type = "III")
 
 summary(lm2.1)
+AIC(lm2.1)
 Anova(lm2.1, type = "III")
 
 tidy_lm1.1 = tidy(lm1.1)
