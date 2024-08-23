@@ -40,56 +40,56 @@ cohort <- c("1: mid/low vs 2: low/mid", "1: mid/low vs 3: mid/high", "1: mid/low
             "3: mid/high vs 4: mid/very high", "3: mid/high vs 5: mid/mid", "3: mid/high vs 6: high/mid",
             "4: mid/very high vs 5: mid/mid", "4: mid/very high vs 6: high/mid",
             "5: mid/mid vs 6: high/mid")
-PERMDISP <- c(0.0019, 0.0003, 0.0327, 0.0001, 0.0001,
-              0.5182, 0.7507, 0.0138, 0.0005,
-              0.9792, 0.5276, 0.0029, 
-              0.7928, 0.1475, 
-              0.0052)
-PERMANOVA <- c(1.0000, 0.0015, 0.0495, 0.0015, 0.0015,
-               0.0015, 1.0000, 0.0015, 0.0015,
-               1.0000, 0.0015, 0.0015,
-               0.8175, 0.0090,
-               0.0015)
-Optimal_Temp <- c(0.005043306637114, 0.000000051454126, 0.000113116310469, 0.789451442990800, 0.010082693281337,
-                  0.000025756231358, 0.001765218761412, 0.000112331676538, 0.000038520195310,
-                  0.284373283785538, 0.000000002348839, 0.000000002258531, 
-                  0.000068856888538, 0.000001695644852, 
-                  0.010090438574951)
-temp_arrows <- c("increase", "increase", "increase", "equal", "decrease",
+PERMDISP <- c(0.001, 0.032, 0.771, 0.550, 0.587, 
+              0.425, 0.17, 0.0006, 0.028, 
+              0.529, 0.159, 0.305, 
+              0.971, 0.98, 
+              0.928)
+PERMANOVA <- c(0.06, 0.002, 0.002, 0.002, 0.002, 
+               0.002, 0.026, 0.002, 0.002,
+               1, 0.002, 0.002, 
+               0.215, 0.002,
+               0.002)
+Optimal_Temp <- c(0.01, 0.01, 0.01, 0.01, 0.01, 
+                  0.01, 0.01, 0.01, 0.01,
+                  0.430, 0.01, 0.01, 
+                  0.01, 0.01,
+                  0.1)
+temp_arrows <- c("increase", "increase", "increase", "decrease", "decrease",
                  "increase", "increase","decrease", "decrease",
                  "increase","decrease", "decrease",
                  "decrease", "decrease",
                  "decrease")
-Length <- c(0.8592642, 0.9998089, 0.9872521, 0.0007795, 0.0000000,
-            0.9070423, 0.9181733, 0.0000000, 0.0000000,
-            0.9966266, 0.1494607, 0.0000000,
-            0.9897718, 0.0008647,
-            0.0000000)
+Length <- c(0.9, 0.9, 0.9, 0.01, 0.01,
+            0.9, 0.9, 0.01, 0.01, 
+            0.9, 0.0007, 0.01, 
+            0.34, 0.003,
+            0.027)
 length_arrows <- c("decrease", "decrease", "decrease", "decrease", "decrease",
                    "decrease", "decrease", "decrease", "decrease",
                    "decrease", "decrease", "decrease",
                    "decrease", "decrease",
                    "decrease")
-Lifespan <- c(0.57035468549, 0.00007769083, 0.55052882501, 0.74567296422, 0.31579160719,
-              0.00010263105, 0.59495732706, 0.73671251684, 0.20707475101,
-              0.38779558233, 0.00017543403, 0.00008096802,
-              0.58625833556, 0.24515673988,
-              0.24664224315)
+Lifespan <- c(0.6, 0.0001, 0.6, 0.98, 0.25,
+              0.00001, 0.61, 0.71, 0.14,
+              0.388, 0.0006, 0.00001,
+              0.57, 0.26,
+              0.27)
 life_arrows <- c("decrease", "decrease", "decrease", "equal", "increase",
                  "decrease", "decrease", "increase", "increase",
                  "increase", "increase", "increase",
                  "increase", "increase",
                  "increase")
-Growth_Rate <- c(0.1035871996367, 0.0891868417293, 0.5697644317228, 0.5148291779984, 0.0000607828670,
-                   0.5183877375223, 0.8682996282889, 0.2916548282051, 0.0000002614727,
-                   0.8630208058363, 0.2124781071891, 0.0000015574893, 
-                   0.7282998974706, 0.0082066924854, 
-                   0.0000032514102)
+Growth_Rate <- c(0.237, 0.0001, 0.258, 0.396, 0.117,
+                 0.0001, 0.303, 0.959, 0.287,
+                 0.322, 0.0001, 0.039,
+                 0.303, 0.774,
+                 0.321)
 growth_arrows <- c("increase", "increase", "increase", "increase", "decrease",
-                    "decrease", "increase", "decrease", "decrease",
-                    "increase", "decrease", "decrease",
+                    "increase", "increase", "decrease", "increase",
+                    "decrease", "decrease", "decrease",
                     "decrease", "decrease",
-                    "decrease")
+                    "increase")
 
 # Create data frame
 data <- data.frame(cohort, PERMDISP, PERMANOVA, Optimal_Temp, Length, Lifespan, Growth_Rate)
