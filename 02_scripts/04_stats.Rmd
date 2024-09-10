@@ -41,7 +41,7 @@ sample_size <- filled_data %>%
 
 # Trait means, medians, and sd by cohort
 trait_summary <- filled_data %>%
-  dplyr::select(class2, length,r_fin, temp_preferred, longevity_wild) %>%
+  dplyr::select(class2, length, r_fin, temp_preferred, longevity_wild) %>%
   group_by(class2) %>%
   summarise(across(
     where(is.numeric),
@@ -78,10 +78,10 @@ lm1.1 <- lm(
   data = filled_data
 )
 lm2.1 <- lm(
-  pld ~ length + r_fin + longevity_wild + temp_preferred + 
-    length:r_fin + length:longevity_wild + r_fin:longevity_wild + 
-    length:temp_preferred + r_fin:temp_preferred + longevity_wild:temp_preferred + 
-    length:r_fin:longevity_wild + length:r_fin:temp_preferred + 
+  pld ~ length + r_fin + longevity_wild + temp_preferred +
+    length:r_fin + length:longevity_wild + r_fin:longevity_wild +
+    length:temp_preferred + r_fin:temp_preferred + longevity_wild:temp_preferred +
+    length:r_fin:longevity_wild + length:r_fin:temp_preferred +
     length:longevity_wild:temp_preferred,
   data = filled_data
 )
@@ -97,8 +97,8 @@ summary(lm2.1)
 AIC(lm2.1)
 Anova(lm2.1, type = "III")
 
-tidy_lm1.1 = tidy(lm1.1)
-tidy_lm2.1 = tidy(lm2.1)
+tidy_lm1.1 <- tidy(lm1.1)
+tidy_lm2.1 <- tidy(lm2.1)
 
 write_csv(tidy_lm1.1, here::here("01_data", "02_processed_data", "hr_lm.csv"))
 write_csv(tidy_lm2.1, here::here("01_data", "02_processed_data", "pld_lm.csv"))
@@ -111,8 +111,8 @@ p1 <- plot_comparisons(lm1.1, variables = "longevity_wild", condition = c("lengt
     fill = "Growth Rate",
   ) +
   theme_bw(base_size = 18) +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d() +
+  scale_fill_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2))) +
+  scale_color_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2))) +
   xlim(NA, 150) +
   ylim(-0.25, 0.25)
 
@@ -124,8 +124,12 @@ p2 <- plot_comparisons(lm2.1, variables = "longevity_wild", condition = c("lengt
     fill = "Growth Rate",
   ) +
   theme_bw(base_size = 18) +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d() +
+  scale_fill_viridis_d(labels = function(x) {
+    paste0(round(as.numeric(x), 2))
+  }) +
+  scale_color_viridis_d(labels = function(x) {
+    paste0(round(as.numeric(x), 2))
+  }) +
   xlim(NA, 150) +
   ylim(NA, 1)
 
@@ -156,12 +160,12 @@ p3 <- plot_comparisons(lm2.1, variables = "temp_preferred", condition = list("le
     fill = "Growth Rate"
   ) +
   theme_bw(base_size = 18) +
-  scale_fill_viridis_d() +
-  scale_color_viridis_d()+
-  xlim(NA, 45)+
+  scale_fill_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2))) +
+  scale_color_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2))) +
+  xlim(NA, 45) +
   ylim(-2.5, NA)
 
-interact_plot <-  (p3) / (p1 + p2) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
+interact_plot <- (p3) / (p1 + p2) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 interact_plot
 
 ggsave(interact_plot, file = paste0("interact_plot.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 15)
@@ -643,7 +647,6 @@ chisq.test(filled_data$class2, filled_data$dev_place)
 # Pearson's Chi-squared test
 chisq.test(filled_data$class2, filled_data$food_mode)
 # X-squared = 8.4677, df = 5, p-value = 0.1323
-
 ```
 
 
