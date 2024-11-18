@@ -566,12 +566,20 @@ ggqqplot(residuals(model_fecundity_log))
 
 # test for homogeneity of variance
 plot(model_fecundity, 1)
-# not horizontal
+# horizontal, looks good
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(fecundity_mean ~ class2, data = filled_data)
-# chi-squared = 2.8377, df = 5, p-value = 0.725
-# not significant
+# chi-squared = 42.357, df = 5, p-value = 4.988e-08
+
+# get effect size
+filled_data %>% kruskal_effsize(fecundity_mean ~ class2, ci = TRUE)
+# eta2 = 0.0623, MODERATE effect
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(fecundity_mean ~ class2, data = filled_data, method = "bh")
+
+
 ```
 
 
