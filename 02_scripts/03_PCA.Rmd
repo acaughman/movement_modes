@@ -264,7 +264,7 @@ nmds_2 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
 
 nmds_2
 
-ggsave(nmds_2, file = paste0("nmds_4_traits.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
+ggsave(nmds_2, file = paste0("fig2.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
 
 
 dst2 <- dist(com2, method = "euclidean")

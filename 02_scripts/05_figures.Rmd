@@ -134,7 +134,7 @@ g <- ggplot(data1, aes(x = variable, y = cohort, fill = direction)) +
 
 g
 
-ggsave(g, file = paste0("stats_sum.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 12)
+ggsave(g, file = paste0("fig3.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 12)
 
 #geom_point(data = data_arrows, mapping=aes(x = variable, y = cohort), pch = "x", inherit.aes = F)
 
@@ -255,7 +255,7 @@ gmm_panel <- ((dist_plot) | p1) / gmm_new_fig &
   theme(plot.tag = element_text(face = "bold"))
 
 gmm_panel
-ggsave(gmm_panel, file = paste0("gmm_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 10, width = 15)
+ggsave(gmm_panel, file = paste0("fig1.pdf"), path = here::here("04_figs", "final_figs"), height = 15, width = 15)
 
 ```
 
@@ -445,7 +445,7 @@ individual_panel <- wrap_elements(ind_panel) +
 
 individual_panel
 
-ggsave(individual_panel, file = paste0("4_trait_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 13)
+ggsave(individual_panel, file = paste0("fig4.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 13)
 
 ```
 
