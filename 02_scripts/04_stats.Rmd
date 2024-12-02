@@ -566,12 +566,20 @@ ggqqplot(residuals(model_fecundity_log))
 
 # test for homogeneity of variance
 plot(model_fecundity, 1)
-# not horizontal
+# horizontal, looks good
 
 # run Kruskal-Wallis test (non-parametric version of ANOVA)
 kruskal.test(fecundity_mean ~ class2, data = filled_data)
-# chi-squared = 2.8377, df = 5, p-value = 0.725
-# not significant
+# chi-squared = 42.357, df = 5, p-value = 4.988e-08
+
+# get effect size
+filled_data %>% kruskal_effsize(fecundity_mean ~ class2, ci = TRUE)
+# eta2 = 0.0623, MODERATE effect
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(fecundity_mean ~ class2, data = filled_data, method = "bh")
+
+
 ```
 
 
@@ -639,7 +647,14 @@ chisq.posthoc.test(climate_table, method = "bonferroni")
 
 # Pearson's Chi-squared test
 chisq.test(filled_data$class2, filled_data$dev_place)
-# X-squared = 3.5273, df = 5, p-value = 0.6193
+# X-squared = 12.4531, df = 5, p-value = 0.0291
+
+# contingency table
+dev_table <- table(filled_data$class2, filled_data$dev_place)
+dev_table
+
+# post-hoc test
+chisq.posthoc.test(dev_table, method = "bonferroni")
 
 
 # food_mode ----------------------------------------------------
