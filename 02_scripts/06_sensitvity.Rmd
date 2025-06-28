@@ -120,8 +120,7 @@ nmds_2 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
   geom_segment(data = species_scores2, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20") +
   ggrepel::geom_label_repel(data = species_scores2, aes(x = MDS1, y = MDS2, label = var), size = 5, fill = "white", cex = 3, direction = "both", segment.size = .25) +
   scale_y_continuous(position = "right") +
-  theme(legend.position = "left", panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  annotate("text", x = -0.5, y = 0.45, label = "Stress: 0.09")
+  theme(legend.position = "left", panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 p1 = nmds_2
 
@@ -421,8 +420,7 @@ nmds_3 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
   geom_segment(data = species_scores2, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20") +
   ggrepel::geom_label_repel(data = species_scores2, aes(x = MDS1, y = MDS2, label = var), size = 5, fill = "white", cex = 3, direction = "both", segment.size = .25) +
   scale_y_continuous(position = "right") +
-  theme(legend.position = "left", panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
-  annotate("text", x = -0.5, y = 0.45, label = "Stress: 0.13")
+  theme(legend.position = "left", panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 p2 = nmds_3
 
