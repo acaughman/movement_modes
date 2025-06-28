@@ -449,8 +449,8 @@ filled_data = filled_data_save %>%
 ```
 
 ```{r}
-lm1 <- lm(log(home_range) ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data %>% filter(!is.na(home_range)))
-lm2 <- lm(pld ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data %>% filter(!is.na(observed_pld)))
+lm1 <- lm(log(home_range) ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data_save %>% filter(!is.na(home_range)))
+lm2 <- lm(pld ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data_save %>% filter(!is.na(observed_pld)))
 
 summary(lm1)
 AIC(lm1)
@@ -467,7 +467,6 @@ write_csv(tidy_lm1, here::here("01_data", "02_processed_data", "hr_lm_empirical.
 write_csv(tidy_lm2, here::here("01_data", "02_processed_data", "pld_lm_empirical.csv"))
 ```
 
-### ANOVA/Kruskal-Wallis for Numeric/Continuous Variables
 
 ```{r}
 # optimal temperature -----------------------------------------------
@@ -646,51 +645,51 @@ cohort <- c("1: mid/low vs 2: low/mid", "1: mid/low vs 3: mid/high", "1: mid/low
             "3: mid/high vs 4: mid/very high", "3: mid/high vs 5: mid/mid", "3: mid/high vs 6: high/mid",
             "4: mid/very high vs 5: mid/mid", "4: mid/very high vs 6: high/mid",
             "5: mid/mid vs 6: high/mid")
-PERMDISP <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
-PERMANOVA <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
-Optimal_Temp <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
+PERMDISP <- c(0.025, 0.028, 0.714, 0.618, 0.913, 
+              0.0648, 0.696, 0.555, 0.471, 
+              0.395, 0.218, 0.313, 
+              0.985, 0.8464, 
+              0.822)
+PERMANOVA <- c(1.00, 0.003, 0.0015, 0.0855, 0.0135, 
+              0.003, 0.0480, 0.3285, 0.0210,
+              1.00, 0.054, 0.0885, 
+              0.0195, 0.138, 
+              1.00)
+Optimal_Temp <- c(0.156, 0.073, 0.0062, 0.4705, 0.0323, 
+              0.1772, 0.0100, 0.1494, 0.0063, 
+              0.2105, 0.05855, 0.0043, 
+              0.00339, 0.00028, 
+              0.1562)
 temp_arrows <- c(, , , , , 
               , , , , 
               , , , 
               , , 
               ) # increase or decrease
-Length <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
+Length <- c(0.614, 0.998, 0.209, 0.000006, 0.0000003, 
+              0.8909, 0.482, 0.0000595, 0.0000019, 
+              0.29, 0.0013, 0.0000212, 
+              0.759, 0.0894, 
+              0.522)
 length_arrows <- c(, , , , , 
               , , , , 
               , , , 
               , , 
               )
-Lifespan <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
+Lifespan <- c(0.75, 0.322, 0.5404, 0.615, 0.666, 
+              0.1756, 0.536, 0.655, 0.604, 
+              0.634, 0.523, 0.136, 
+              0.5999, 0.5100, 
+              0.478)
 life_arrows <- c(, , , , , 
               , , , , 
               , , , 
               , , 
               )
-Growth_Rate <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
+Growth_Rate <- c(0.342, 0.0119, 0.359, 0.319, 0.402, 
+              0.0475, 0.513, 0.602, 0.654, 
+              0.478, 0.352, 0.393, 
+              0.822, 0.922, 
+              0.868)
 growth_arrows <- c(, , , , , 
               , , , , 
               , , , 
@@ -754,46 +753,42 @@ PERMDISP <- c(, , , , ,
               , , , 
               , , 
               )
-PERMANOVA <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
-Optimal_Temp <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
-temp_arrows <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              ) # increase or decrease
-Length <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
+PERMANOVA <- c(1, 1, 1, 1, 1, 
+              1, 1, 1, 0.97, 
+              1, 1, 1, 
+              1, NA, 
+              1)
+Optimal_Temp <- c(0.415, 0.359, 0.297, 0.818, 0.388, 
+              0.322, 0.408, 0.573, 0.309, 
+              0.360, 0.451, 0.873, 
+              0.295, 0.233, 
+              0.406)
+temp_arrows <-  # increase or decrease
+Length <- c(0.094, 0.828, 0.691, 0.964, 0.493, 
+              0.927, 0.502, 0.748, 0.318, 
+              0.327, 0.525, 0.207, 
+              0.928, 0.999, 
+              0.799)
 length_arrows <- c(, , , , , 
               , , , , 
               , , , 
               , , 
               )
-Lifespan <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
+Lifespan <- c(1, 1, 1, 1, 1, 
+              1, 1, 0969, 1, 
+              1,1 , 1, 
+              1, 1, 
+             1 )
 life_arrows <- c(, , , , , 
               , , , , 
               , , , 
               , , 
               )
-Growth_Rate <- c(, , , , , 
-              , , , , 
-              , , , 
-              , , 
-              )
+Growth_Rate <- c(1, 1,1 , 1,0.969 , 
+              1, 1, 1, 1, 
+              1,1 , 1, 
+              0.999,0.996 , 
+             1 )
 growth_arrows <- c(, , , , , 
               , , , , 
               , , , 
