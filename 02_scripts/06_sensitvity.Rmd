@@ -1,0 +1,640 @@
+---
+title: "06_sensitivity"
+author: "Allie Caughman"
+date: "2025-06-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(rfishbase)
+library(FactoMineR)
+library(factoextra)
+library(car)
+library(vegan)
+library(patchwork)
+library(cowplot)
+library(ggpubr)
+library(naniar)
+library(pairwiseAdonis)
+library(broom)
+library(effectsize)
+library(rstatix)
+library(FSA)
+library(chisq.posthoc.test)
+library(MASS)
+library(sjPlot)
+```
+
+##### Constrained Data
+
+```{r}
+filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>%
+  mutate_if(is.character, as.factor) %>% 
+  mutate(range_hr = floor(log10(pred_75)) - floor(log10((pred_25))),
+         range_pld = ceiling(pred_75_pld/30) - ceiling(pred_25_pld/30)) %>% 
+  mutate(keep_hr = case_when(
+    range_hr <= 1 ~ "keep",
+    !is.na(observed_homerange) ~ "keep"
+  )) %>% 
+  mutate(keep_pld = case_when(
+    range_pld <= 1 ~ "keep",
+    !is.na(observed_pld) ~ "keep"
+  )) %>% 
+  filter(!is.na(keep_hr)) %>% 
+  filter(!is.na(keep_pld))
+```
+
+
+```{r}
+scale_values <- function(x){(x-min(x, na.rm = TRUE))/(max(x, na.rm = TRUE)-min(x, na.rm = TRUE))}
+```
+
+```{r}
+filled_data$temp_preferred = scale_values(filled_data$temp_preferred)
+filled_data$longevity_wild =scale_values(filled_data$longevity_wild)
+# filled_data$sp_richness = scale_values(filled_data$sp_richness)
+filled_data$length = scale_values(filled_data$length)
+filled_data$r_fin = scale_values(filled_data$r_fin)
+filled_data$diet_troph3 = scale_values(filled_data$diet_troph3)
+filled_data$temp_range =scale_values(filled_data$temp_range)
+filled_data$oxygen_cons =scale_values(filled_data$oxygen_cons)
+```
+
+
+```{r}
+
+com_data2 <- filled_data %>%
+  dplyr::select(
+    temp_preferred, length, longevity_wild, r_fin,
+    species, order, class2, class3
+  ) %>%
+  na.omit()
+
+
+com2 <- com_data2 %>%
+  dplyr::select(-species, -order, -class2, -class3)
+
+m_com2 <- as.matrix(com2)
+
+set.seed(123)
+nmds2 <- metaMDS(m_com2, distance = "euclidean", autotransform = FALSE, wascores = TRUE)
+nmds2
+
+# extract NMDS scores (x and y coordinates)
+filled_scores2 <- as.data.frame(scores(nmds2)$sites)
+
+# add columns to data frame
+filled_scores2$class2 <- com_data2$class2
+filled_scores2$species <- com_data2$species
+filled_scores2$order <- com_data2$order
+
+filled_scores2 <- filled_scores2 %>%
+  mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
+
+species_scores2 <- as.data.frame(nmds2[["species"]])
+
+rownames(species_scores2) <- c("Optimal Temperature", "Length", "Lifespan", "Population Growth Rate")
+
+species_scores2 <- species_scores2 %>% 
+  rownames_to_column(var = "var")
+
+centroid2 <- filled_scores2 %>%
+  group_by(class2) %>%
+  summarize(NMDS1 = mean(NMDS1), NMDS2 = mean(NMDS2))
+
+nmds_2 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), linewidth = 0.25, alpha = 0.2, show.legend = FALSE) +
+  geom_point(aes(color = class2), alpha = 0.3) +
+  theme_bw(base_size = 22) +
+  geom_point(data = centroid2, aes(color = class2), size = 4, alpha = 0.9) +
+  labs(x = "nMDS1", y = "nMDS2", color = "Class (home range/PLD)") +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d() +
+  geom_segment(data = species_scores2, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20") +
+  ggrepel::geom_label_repel(data = species_scores2, aes(x = MDS1, y = MDS2, label = var), size = 5, fill = "white", cex = 3, direction = "both", segment.size = .25) +
+  scale_y_continuous(position = "right") +
+  theme(legend.position = "left", panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  annotate("text", x = -0.5, y = 0.45, label = "Stress: 0.09")
+
+p1 = nmds_2
+
+dst2 <- dist(com2, method = "euclidean")
+
+bd2 <- betadisper(dst2, com_data2$class2)
+
+anova(bd2)
+
+permutest(bd2, pairwise = TRUE, permutations = 9999)
+
+adonis2(com_data2$class3 ~ m_com2, permutations = 9999)
+
+pairwise.adonis(m_com2, com_data2$class3, perm = 9999)
+```
+
+```{r}
+filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>%
+  mutate_if(is.character, as.factor) %>% 
+  mutate(range_hr = floor(log10(pred_75)) - floor(log10((pred_25))),
+         range_pld = ceiling(pred_75_pld/30) - ceiling(pred_25_pld/30)) %>% 
+  mutate(keep_hr = case_when(
+    range_hr <= 1 ~ "keep",
+    !is.na(observed_homerange) ~ "keep"
+  )) %>% 
+  mutate(keep_pld = case_when(
+    range_pld <= 1 ~ "keep",
+    !is.na(observed_pld) ~ "keep"
+  )) %>% 
+  filter(!is.na(keep_hr)) %>% 
+  filter(!is.na(keep_pld))
+```
+
+```{r}
+lm1 <- lm(log(home_range) ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data)
+lm2 <- lm(pld ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data)
+
+summary(lm1)
+AIC(lm1)
+Anova(lm1, type = "III")
+
+summary(lm2)
+AIC(lm2)
+Anova(lm2, type = "III")
+
+tidy_lm1 <- tidy(lm1)
+tidy_lm2 <- tidy(lm2)
+
+write_csv(tidy_lm1, here::here("01_data", "02_processed_data", "hr_lm_constrained.csv"))
+write_csv(tidy_lm2, here::here("01_data", "02_processed_data", "pld_lm_constrained.csv"))
+```
+
+
+```{r}
+# optimal temperature -----------------------------------------------
+
+temp_data <- filled_data %>%
+  filter(!is.na(temp_preferred)) %>%
+  filter(temp_preferred > 0)
+
+# look at outliers
+outliers_temp <- boxplot.stats(temp_data$temp_preferred)$out
+boxplot(temp_data$temp_preferred, main = "Preferred Temp", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_temp, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_temp <- aov(temp_preferred ~ class2, data = temp_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temp))
+# not normal
+
+# model with log transformed variable
+model_temp_log <- aov(log(temp_preferred) ~ class2, data = temp_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temp_log))
+# more abnormal
+
+# test for homogeneity of variance
+plot(model_temp, 1)
+# looks fine
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(temp_preferred ~ class2, data = temp_data)
+# chi-squared = 77.77, df = 5, p-value = 2.455e-15
+
+# get effect size
+temp_data %>% kruskal_effsize(temp_preferred ~ class2, ci = TRUE)
+# eta2 = 0.124, MODERATE effect
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(temp_preferred ~ class2, data = temp_data, method = "bh")
+
+# length -------------------------------------------------------
+
+# check for outliers - there are a lot?
+outliers_length <- boxplot.stats(filled_data$length)$out
+boxplot(filled_data$length, main = "Length", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_length, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_length <- aov(length ~ class2, data = filled_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_length))
+# not normal
+
+# model with log transformed length
+model_length_log <- aov(log(length) ~ class2, data = filled_data %>% filter(length > 0))
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_length_log))
+# looks normal
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_length_log))
+# p-value = 0.0669, normal
+
+# test for homogeneity of variance
+plot(model_length_log, 1)
+# looks good
+
+summary(model_length_log)
+# p-value < 2e-16 ***
+
+# effect size
+effectsize::cohens_f(model_length_log)
+
+effectsize::eta_squared(model_length_log)
+interpret_eta_squared(0.53, rules = "cohen1992")
+# eta2 = 0.18, LARGE effect
+
+# post hoc Tukey test
+TukeyHSD(model_length_log)
+
+# lifespan -----------------------------------------------
+
+longevity_data <- filled_data %>%
+  filter(!is.na(longevity_wild))
+
+# look at outliers
+outliers_long <- boxplot.stats(longevity_data$longevity_wild)$out
+boxplot(longevity_data$longevity_wild, main = "Longevity in the Wild", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_long, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_long <- aov(longevity_wild ~ class2, data = longevity_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_long))
+# not normal
+
+# model with log transformed variable
+model_long_log <- aov(log(longevity_wild) ~ class2, data = longevity_data %>% filter(longevity_wild > 0))
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_long_log))
+# almost normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_long_log))
+# p-value = 0.00000807, not normal
+
+# test for homogeneity of variance
+plot(model_long, 1)
+# looks fine?
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(longevity_wild ~ class2, data = longevity_data)
+# chi-squared = 25.928, df = 5, p-value = 9.216e-05
+
+# get effect size
+longevity_data %>% kruskal_effsize(longevity_wild ~ class2, ci = TRUE)
+# eta2 = 0.0384, SMALL effect
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(longevity_wild ~ class2, data = longevity_data, method = "bh")
+
+# r_fin --------------------------------------------------------
+
+# look at outliers
+outliers_r_fin <- boxplot.stats(filled_data$r_fin)$out
+boxplot(filled_data$r_fin, main = "Growth Rate", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_r_fin, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_r_fin <- aov(r_fin ~ class2, data = filled_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_r_fin))
+# not normal
+
+# model with log transformed variable
+model_r_fin_log <- aov(log(r_fin) ~ class2, data = filled_data %>% filter(r_fin > 0))
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_r_fin_log))
+# normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_r_fin_log))
+# p-value = 0.000508, not normal
+
+# test for homogeneity of variance
+plot(model_r_fin, 1)
+# looks fine
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(r_fin ~ class2, data = filled_data)
+# chi-squared = 42.245, df = 5, p-value = 5.255e-08
+
+# get effect size
+filled_data %>% kruskal_effsize(r_fin ~ class2, ci = TRUE)
+# eta2 = 0.0621, MODERATE effect
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(r_fin ~ class2, data = filled_data, method = "bh")
+
+```
+
+##### Empirical Data
+
+```{r}
+filled_data_save <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>%
+  mutate_if(is.character, as.factor)
+
+filled_data = filled_data_save %>% 
+  filter(!is.na(observed_homerange)) %>% 
+  filter(!is.na(observed_pld))
+```
+
+
+```{r}
+filled_data$temp_preferred = scale_values(filled_data$temp_preferred)
+filled_data$longevity_wild =scale_values(filled_data$longevity_wild)
+# filled_data$sp_richness = scale_values(filled_data$sp_richness)
+filled_data$length = scale_values(filled_data$length)
+filled_data$r_fin = scale_values(filled_data$r_fin)
+filled_data$diet_troph3 = scale_values(filled_data$diet_troph3)
+filled_data$temp_range =scale_values(filled_data$temp_range)
+filled_data$oxygen_cons =scale_values(filled_data$oxygen_cons)
+```
+
+
+```{r}
+
+com_data2 <- filled_data %>%
+  dplyr::select(
+    temp_preferred, length, longevity_wild, r_fin,
+    species, order, class2, class3
+  ) %>%
+  na.omit()
+
+
+com2 <- com_data2 %>%
+  dplyr::select(-species, -order, -class2, -class3)
+
+m_com2 <- as.matrix(com2)
+
+set.seed(123)
+nmds2 <- metaMDS(m_com2, distance = "euclidean", autotransform = FALSE, wascores = TRUE)
+nmds2
+
+# extract NMDS scores (x and y coordinates)
+filled_scores2 <- as.data.frame(scores(nmds2)$sites)
+
+# add columns to data frame
+filled_scores2$class2 <- com_data2$class2
+filled_scores2$species <- com_data2$species
+filled_scores2$order <- com_data2$order
+
+filled_scores2 <- filled_scores2 %>%
+  mutate(class2 = as.factor(class2), order = as.factor(order), species = as.factor(species))
+
+species_scores2 <- as.data.frame(nmds2[["species"]])
+
+rownames(species_scores2) <- c("Optimal Temperature", "Length", "Lifespan", "Population Growth Rate")
+
+species_scores2 <- species_scores2 %>% 
+  rownames_to_column(var = "var")
+
+centroid2 <- filled_scores2 %>%
+  group_by(class2) %>%
+  summarize(NMDS1 = mean(NMDS1), NMDS2 = mean(NMDS2))
+
+nmds_3 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "grey") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  stat_ellipse(geom = "polygon", aes(color = class2, fill = class2), linewidth = 0.25, alpha = 0.2, show.legend = FALSE) +
+  geom_point(aes(color = class2), alpha = 0.3) +
+  theme_bw(base_size = 22) +
+  geom_point(data = centroid2, aes(color = class2), size = 4, alpha = 0.9) +
+  labs(x = "nMDS1", y = "nMDS2", color = "Class (home range/PLD)") +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d() +
+  geom_segment(data = species_scores2, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20") +
+  ggrepel::geom_label_repel(data = species_scores2, aes(x = MDS1, y = MDS2, label = var), size = 5, fill = "white", cex = 3, direction = "both", segment.size = .25) +
+  scale_y_continuous(position = "right") +
+  theme(legend.position = "left", panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
+  annotate("text", x = -0.5, y = 0.45, label = "Stress: 0.13")
+
+p2 = nmds_3
+
+plot = p1 + p2 + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
+
+ggsave(plot, file = paste0("figS6.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 15)
+
+
+dst2 <- dist(com2, method = "euclidean")
+
+bd2 <- betadisper(dst2, com_data2$class2)
+
+anova(bd2)
+
+permutest(bd2, pairwise = TRUE, permutations = 9999)
+
+adonis2(com_data2$class3 ~ m_com2, permutations = 9999)
+
+pairwise.adonis(m_com2, com_data2$class3, perm = 9999)
+```
+
+```{r}
+filled_data = filled_data_save %>% 
+  filter(!is.na(observed_homerange)) %>% 
+  filter(!is.na(observed_pld))
+```
+
+```{r}
+lm1 <- lm(log(home_range) ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data %>% filter(!is.na(home_range)))
+lm2 <- lm(pld ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data %>% filter(!is.na(observed_pld)))
+
+summary(lm1)
+AIC(lm1)
+Anova(lm1, type = "III")
+
+summary(lm2)
+AIC(lm2)
+Anova(lm2, type = "III")
+
+tidy_lm1 <- tidy(lm1)
+tidy_lm2 <- tidy(lm2)
+
+write_csv(tidy_lm1, here::here("01_data", "02_processed_data", "hr_lm_empirical.csv"))
+write_csv(tidy_lm2, here::here("01_data", "02_processed_data", "pld_lm_empirical.csv"))
+```
+
+### ANOVA/Kruskal-Wallis for Numeric/Continuous Variables
+
+```{r}
+# optimal temperature -----------------------------------------------
+
+temp_data <- filled_data %>%
+  filter(!is.na(temp_preferred)) %>%
+  filter(temp_preferred > 0)
+
+# look at outliers
+outliers_temp <- boxplot.stats(temp_data$temp_preferred)$out
+boxplot(temp_data$temp_preferred, main = "Preferred Temp", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_temp, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_temp <- aov(temp_preferred ~ class2, data = temp_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temp))
+# not normal
+
+# model with log transformed variable
+model_temp_log <- aov(log(temp_preferred) ~ class2, data = temp_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_temp_log))
+# more abnormal
+
+# test for homogeneity of variance
+plot(model_temp, 1)
+# looks fine
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(temp_preferred ~ class2, data = temp_data)
+# chi-squared = 77.77, df = 5, p-value = 2.455e-15
+
+# get effect size
+temp_data %>% kruskal_effsize(temp_preferred ~ class2, ci = TRUE)
+# eta2 = 0.124, MODERATE effect
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(temp_preferred ~ class2, data = temp_data, method = "bh")
+
+# length -------------------------------------------------------
+
+# check for outliers - there are a lot?
+outliers_length <- boxplot.stats(filled_data$length)$out
+boxplot(filled_data$length, main = "Length", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_length, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_length <- aov(length ~ class2, data = filled_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_length))
+# not normal
+
+# model with log transformed length
+model_length_log <- aov(log(length) ~ class2, data = filled_data %>% filter(length > 0))
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_length_log))
+# looks normal
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_length_log))
+# p-value = 0.0669, normal
+
+# test for homogeneity of variance
+plot(model_length_log, 1)
+# looks good
+
+summary(model_length_log)
+# p-value < 2e-16 ***
+
+# effect size
+effectsize::cohens_f(model_length_log)
+
+effectsize::eta_squared(model_length_log)
+interpret_eta_squared(0.69, rules = "cohen1992")
+# eta2 = 0.18, LARGE effect
+
+# post hoc Tukey test
+TukeyHSD(model_length_log)
+
+# lifespan -----------------------------------------------
+
+longevity_data <- filled_data %>%
+  filter(!is.na(longevity_wild))
+
+# look at outliers
+outliers_long <- boxplot.stats(longevity_data$longevity_wild)$out
+boxplot(longevity_data$longevity_wild, main = "Longevity in the Wild", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_long, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_long <- aov(longevity_wild ~ class2, data = longevity_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_long))
+# not normal
+
+# model with log transformed variable
+model_long_log <- aov(log(longevity_wild) ~ class2, data = longevity_data %>% filter(longevity_wild > 0))
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_long_log))
+# almost normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_long_log))
+# p-value = 0.00000807, not normal
+
+# test for homogeneity of variance
+plot(model_long, 1)
+# looks fine?
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(longevity_wild ~ class2, data = longevity_data)
+# chi-squared = 25.928, df = 5, p-value = 9.216e-05
+
+# get effect size
+longevity_data %>% kruskal_effsize(longevity_wild ~ class2, ci = TRUE)
+# eta2 = 0.0384, SMALL effect
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(longevity_wild ~ class2, data = longevity_data, method = "bh")
+
+# r_fin --------------------------------------------------------
+
+# look at outliers
+outliers_r_fin <- boxplot.stats(filled_data$r_fin)$out
+boxplot(filled_data$r_fin, main = "Growth Rate", boxwex = 0.1)
+mtext(paste("Outliers: ", paste(outliers_r_fin, collapse = ", ")), cex = 0.4)
+
+# build the model
+model_r_fin <- aov(r_fin ~ class2, data = filled_data)
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_r_fin))
+# not normal
+
+# model with log transformed variable
+model_r_fin_log <- aov(log(r_fin) ~ class2, data = filled_data %>% filter(r_fin > 0))
+
+# create a QQ plot of residuals
+ggqqplot(residuals(model_r_fin_log))
+# normal?
+
+# run Shapiro-Wilk test of normality
+shapiro_test(residuals(model_r_fin_log))
+# p-value = 0.000508, not normal
+
+# test for homogeneity of variance
+plot(model_r_fin, 1)
+# looks fine
+
+# run Kruskal-Wallis test (non-parametric version of ANOVA)
+kruskal.test(r_fin ~ class2, data = filled_data)
+# chi-squared = 42.245, df = 5, p-value = 5.255e-08
+
+# get effect size
+filled_data %>% kruskal_effsize(r_fin ~ class2, ci = TRUE)
+# eta2 = 0.0621, MODERATE effect
+
+# Kruskal-Wallis is significant, run Dunn's test
+dunnTest(r_fin ~ class2, data = filled_data, method = "bh")
+
+```
