@@ -638,3 +638,211 @@ filled_data %>% kruskal_effsize(r_fin ~ class2, ci = TRUE)
 dunnTest(r_fin ~ class2, data = filled_data, method = "bh")
 
 ```
+
+### Summary plot
+
+```{r}
+
+cohort <- c("1: mid/low vs 2: low/mid", "1: mid/low vs 3: mid/high", "1: mid/low vs 4: mid/very high", "1: mid/low vs 5: mid/mid", "1: mid/low vs 6: high/mid",
+            "2: low/mid vs 3: mid/high", "2: low/mid vs 4: mid/very high", "2: low/mid vs 5: mid/mid", "2: low/mid vs 6: high/mid",
+            "3: mid/high vs 4: mid/very high", "3: mid/high vs 5: mid/mid", "3: mid/high vs 6: high/mid",
+            "4: mid/very high vs 5: mid/mid", "4: mid/very high vs 6: high/mid",
+            "5: mid/mid vs 6: high/mid")
+PERMDISP <- c(0.001, 0.032, 0.771, 0.550, 0.587, 
+              0.425, 0.17, 0.0006, 0.028, 
+              0.529, 0.159, 0.305, 
+              0.971, 0.98, 
+              0.928)
+PERMANOVA <- c(0.06, 0.002, 0.002, 0.002, 0.002, 
+               0.002, 0.026, 0.002, 0.002,
+               1, 0.002, 0.002, 
+               0.215, 0.002,
+               0.002)
+Optimal_Temp <- c(0.01, 0.01, 0.01, 0.01, 0.01, 
+                  0.01, 0.01, 0.01, 0.01,
+                  0.430, 0.01, 0.01, 
+                  0.01, 0.01,
+                  0.1)
+temp_arrows <- c("increase", "increase", "increase", "decrease", "decrease",
+                 "increase", "increase","decrease", "decrease",
+                 "increase","decrease", "decrease",
+                 "decrease", "decrease",
+                 "decrease")
+Length <- c(0.9, 0.9, 0.9, 0.01, 0.01,
+            0.9, 0.9, 0.01, 0.01, 
+            0.9, 0.0007, 0.01, 
+            0.34, 0.003,
+            0.027)
+length_arrows <- c("decrease", "decrease", "decrease", "decrease", "decrease",
+                   "decrease", "decrease", "decrease", "decrease",
+                   "decrease", "decrease", "decrease",
+                   "decrease", "decrease",
+                   "decrease")
+Lifespan <- c(0.6, 0.0001, 0.6, 0.98, 0.25,
+              0.00001, 0.61, 0.71, 0.14,
+              0.388, 0.0006, 0.00001,
+              0.57, 0.26,
+              0.27)
+life_arrows <- c("decrease", "decrease", "decrease", "equal", "increase",
+                 "decrease", "decrease", "increase", "increase",
+                 "increase", "increase", "increase",
+                 "increase", "increase",
+                 "increase")
+Growth_Rate <- c(0.237, 0.0001, 0.258, 0.396, 0.117,
+                 0.0001, 0.303, 0.959, 0.287,
+                 0.322, 0.0001, 0.039,
+                 0.303, 0.774,
+                 0.321)
+growth_arrows <- c("increase", "increase", "increase", "increase", "decrease",
+                    "increase", "increase", "decrease", "increase",
+                    "decrease", "decrease", "decrease",
+                    "decrease", "decrease",
+                    "increase")
+
+# Create data frame
+data <- data.frame(cohort, PERMDISP, PERMANOVA, Optimal_Temp, Length, Lifespan, Growth_Rate)
+
+# Pivot to long data format
+data_long <- data %>% 
+  mutate(across(c("Optimal_Temp", "Length", "Lifespan", "Growth_Rate"), round, 4)) %>% 
+  pivot_longer(-cohort) %>% 
+  set_names(c("cohort", "variable", "p_value")) %>% 
+  mutate(significant = case_when(
+    p_value >= 0.05 ~ "no",
+    p_value < 0.05 ~ "yes"
+  ))
+
+# Add arrow information
+data1 <- data.frame(cohort, temp_arrows, length_arrows, life_arrows, growth_arrows) %>% 
+  rename(Optimal_Temp = temp_arrows, Length = length_arrows, Lifespan = life_arrows, Growth_Rate = growth_arrows) %>% 
+  pivot_longer(-cohort) %>% 
+  set_names(c("cohort", "variable", "direction")) %>% 
+  full_join(data_long, by = c("cohort","variable")) %>% 
+  mutate(direction = fct_relevel(direction, c("increase", "equal", "decrease")))
+
+# Reorder and rename levels
+data1$variable <- factor(data1$variable, levels = c("PERMANOVA", "PERMDISP", "Optimal_Temp", "Length", "Lifespan", "Growth_Rate"))
+data1$variable <- recode_factor(data1$variable, PERMANOVA = "PERMANOVA", PERMDISP = "PERMDISP", Optimal_Temp = "Optimal Temperature", Length = "Length", Lifespan = "Lifespan", Growth_Rate = "Growth Rate")
+
+
+
+# Plot 
+g <- ggplot(data1, aes(x = variable, y = cohort, fill = direction)) +
+  geom_tile(color = "white", lwd = 1) +
+  geom_point(data = data1 %>% filter(significant == "yes"), shape = 8, size = 3, color = "black", show.legend = FALSE) +
+  theme_minimal(base_size = 12) +
+  theme(axis.title = element_blank(),
+        axis.text = element_text(face = "bold", color = "black"),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_blank()) +
+  labs(fill = "Direction of Effect") +
+  scale_x_discrete(position = "top") +
+  scale_y_discrete(limits = rev) +
+  scale_fill_manual(values = c("#fde725", "#21918c", "#7568a0"), na.value = "darkgray")
+
+
+```
+
+```{r}
+
+cohort <- c("1: mid/low vs 2: low/mid", "1: mid/low vs 3: mid/high", "1: mid/low vs 4: mid/very high", "1: mid/low vs 5: mid/mid", "1: mid/low vs 6: high/mid",
+            "2: low/mid vs 3: mid/high", "2: low/mid vs 4: mid/very high", "2: low/mid vs 5: mid/mid", "2: low/mid vs 6: high/mid",
+            "3: mid/high vs 4: mid/very high", "3: mid/high vs 5: mid/mid", "3: mid/high vs 6: high/mid",
+            "4: mid/very high vs 5: mid/mid", "4: mid/very high vs 6: high/mid",
+            "5: mid/mid vs 6: high/mid")
+PERMDISP <- c(0.001, 0.032, 0.771, 0.550, 0.587, 
+              0.425, 0.17, 0.0006, 0.028, 
+              0.529, 0.159, 0.305, 
+              0.971, 0.98, 
+              0.928)
+PERMANOVA <- c(0.06, 0.002, 0.002, 0.002, 0.002, 
+               0.002, 0.026, 0.002, 0.002,
+               1, 0.002, 0.002, 
+               0.215, 0.002,
+               0.002)
+Optimal_Temp <- c(0.01, 0.01, 0.01, 0.01, 0.01, 
+                  0.01, 0.01, 0.01, 0.01,
+                  0.430, 0.01, 0.01, 
+                  0.01, 0.01,
+                  0.1)
+temp_arrows <- c("increase", "increase", "increase", "decrease", "decrease",
+                 "increase", "increase","decrease", "decrease",
+                 "increase","decrease", "decrease",
+                 "decrease", "decrease",
+                 "decrease")
+Length <- c(0.9, 0.9, 0.9, 0.01, 0.01,
+            0.9, 0.9, 0.01, 0.01, 
+            0.9, 0.0007, 0.01, 
+            0.34, 0.003,
+            0.027)
+length_arrows <- c("decrease", "decrease", "decrease", "decrease", "decrease",
+                   "decrease", "decrease", "decrease", "decrease",
+                   "decrease", "decrease", "decrease",
+                   "decrease", "decrease",
+                   "decrease")
+Lifespan <- c(0.6, 0.0001, 0.6, 0.98, 0.25,
+              0.00001, 0.61, 0.71, 0.14,
+              0.388, 0.0006, 0.00001,
+              0.57, 0.26,
+              0.27)
+life_arrows <- c("decrease", "decrease", "decrease", "equal", "increase",
+                 "decrease", "decrease", "increase", "increase",
+                 "increase", "increase", "increase",
+                 "increase", "increase",
+                 "increase")
+Growth_Rate <- c(0.237, 0.0001, 0.258, 0.396, 0.117,
+                 0.0001, 0.303, 0.959, 0.287,
+                 0.322, 0.0001, 0.039,
+                 0.303, 0.774,
+                 0.321)
+growth_arrows <- c("increase", "increase", "increase", "increase", "decrease",
+                    "increase", "increase", "decrease", "increase",
+                    "decrease", "decrease", "decrease",
+                    "decrease", "decrease",
+                    "increase")
+
+# Create data frame
+data <- data.frame(cohort, PERMDISP, PERMANOVA, Optimal_Temp, Length, Lifespan, Growth_Rate)
+
+# Pivot to long data format
+data_long <- data %>% 
+  mutate(across(c("Optimal_Temp", "Length", "Lifespan", "Growth_Rate"), round, 4)) %>% 
+  pivot_longer(-cohort) %>% 
+  set_names(c("cohort", "variable", "p_value")) %>% 
+  mutate(significant = case_when(
+    p_value >= 0.05 ~ "no",
+    p_value < 0.05 ~ "yes"
+  ))
+
+# Add arrow information
+data1 <- data.frame(cohort, temp_arrows, length_arrows, life_arrows, growth_arrows) %>% 
+  rename(Optimal_Temp = temp_arrows, Length = length_arrows, Lifespan = life_arrows, Growth_Rate = growth_arrows) %>% 
+  pivot_longer(-cohort) %>% 
+  set_names(c("cohort", "variable", "direction")) %>% 
+  full_join(data_long, by = c("cohort","variable")) %>% 
+  mutate(direction = fct_relevel(direction, c("increase", "equal", "decrease")))
+
+# Reorder and rename levels
+data1$variable <- factor(data1$variable, levels = c("PERMANOVA", "PERMDISP", "Optimal_Temp", "Length", "Lifespan", "Growth_Rate"))
+data1$variable <- recode_factor(data1$variable, PERMANOVA = "PERMANOVA", PERMDISP = "PERMDISP", Optimal_Temp = "Optimal Temperature", Length = "Length", Lifespan = "Lifespan", Growth_Rate = "Growth Rate")
+
+
+
+# Plot 
+g2 <- ggplot(data1, aes(x = variable, y = cohort, fill = direction)) +
+  geom_tile(color = "white", lwd = 1) +
+  geom_point(data = data1 %>% filter(significant == "yes"), shape = 8, size = 3, color = "black", show.legend = FALSE) +
+  theme_minimal(base_size = 12) +
+  theme(axis.title = element_blank(),
+        axis.text = element_text(face = "bold", color = "black"),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_blank()) +
+  labs(fill = "Direction of Effect") +
+  scale_x_discrete(position = "top") +
+  scale_y_discrete(limits = rev) +
+  scale_fill_manual(values = c("#fde725", "#21918c", "#7568a0"), na.value = "darkgray")
+
+plot = g + g2 + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
+
+ggsave(g, file = paste0("figS8.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 12)
+```
