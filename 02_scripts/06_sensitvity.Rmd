@@ -464,7 +464,7 @@ filled_data = filled_data_save %>%
 ```
 
 ```{r}
-lm1 <- lm(log(home_range) ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data_save %>% filter(!is.na(home_range)))
+lm1 <- lm(log(home_range) ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data_save %>% filter(!is.na(observed_homerange)))
 lm2 <- lm(pld ~ length * r_fin * longevity_wild * temp_preferred, data = filled_data_save %>% filter(!is.na(observed_pld)))
 
 summary(lm1)
