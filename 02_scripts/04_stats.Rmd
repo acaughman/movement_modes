@@ -85,81 +85,48 @@ tidy_lm2 <- tidy(lm2)
 write_csv(tidy_lm1.1, here::here("01_data", "02_processed_data", "hr_lm.csv"))
 write_csv(tidy_lm2.1, here::here("01_data", "02_processed_data", "pld_lm.csv"))
 
-p1 <- plot_comparisons(lm1, variables = "longevity_wild", condition = c("length", "r_fin"), comparison = "difference") +
+p1 <- plot_comparisons(lm1, variables = "length", condition = c("longevity_wild", "r_fin"), comparison = "difference") +
   labs(
     x = "Maximum Lifespan (yr)",
-    y = "Home Range Difference with Length",
+    y =  expression("Marginal Effect of Length (cm) on Home Range (cm"^2*")"),
     color = "Growth Rate",
     fill = "Growth Rate",
   ) +
   theme_bw(base_size = 18) +
-  scale_fill_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2)), end = 0.49) +
-  scale_color_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2)), end = 0.49) +
-  xlim(NA, 150) +
-  ylim(-0.25, 0.15)
+  scale_fill_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2))) +
+  scale_color_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2))) 
+  # xlim(NA, 150) +
+  # ylim(-0.25, 0.15)
 
-p2 <- plot_comparisons(lm2, variables = "longevity_wild", condition = c("length", "r_fin")) +
+p2 <- plot_comparisons(lm2, variables = "length", condition = c("longevity_wild", "r_fin")) +
   labs(
     x = "Maximum Lifespan (yr)",
-    y = "PLD Difference with Length",
+    y = "Marginal Effect of Length (cm) on PLD (days)",
     color = "Growth Rate",
     fill = "Growth Rate",
   ) +
   theme_bw(base_size = 18) +
   scale_fill_viridis_d(labels = function(x) {
     paste0(round(as.numeric(x), 2))
-  }, end = 0.49) +
+  }) +
   scale_color_viridis_d(labels = function(x) {
     paste0(round(as.numeric(x), 2))
-  }, end = 0.49) +
-  xlim(NA, 150) +
-  ylim(-2.5, 1)
+  }) 
 
-p3 <- plot_comparisons(lm1, variables = "longevity_wild", condition = c("length", "temp_preferred"), comparison = "difference") +
-  labs(
-    x = "Maximum Lifespan (yr)",
-    y = "Home Range Difference with Length",
-    color = "Optimal Temperature",
-    fill = "Optimal Temperature"
-  ) +
-  theme_bw(base_size = 18) +
-  scale_fill_viridis_d(labels = function(x) {
-    paste0(round(as.numeric(x), 2))
-  }, begin = 0.5) +
-  scale_color_viridis_d(labels = function(x) {
-    paste0(round(as.numeric(x), 2))
-  }, begin = 0.5) +
-  xlim(NA, 150) +
-  ylim(-0.5, 0.5)
-
-p4 <- plot_comparisons(lm1, variables = "temp_preferred", condition = list("longevity_wild", "r_fin")) +
+p3 <- plot_comparisons(lm2, variables = "length", condition = list("temp_preferred", "r_fin")) +
   labs(
     x = "Optimal Temperature (ºC)",
-    y = "Home Range Difference with Longevity",
+    y = "Marginal Effect of Length (cm) on PLD (days)", 
     color = "Growth Rate",
     fill = "Growth Rate"
   ) +
   theme_bw(base_size = 18) +
-  scale_fill_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2)), end = 0.49) +
-  scale_color_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2)), end = 0.49) +
-  xlim(NA, 45) +
-  ylim(-1, 1)
+  scale_fill_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2))) +
+  scale_color_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2))) 
+  # xlim(NA, 45) +
+  # ylim(-2, NA)
 
-p5 <- plot_comparisons(lm1, variables = "temp_preferred", condition = list("length", "r_fin")) +
-  labs(
-    x = "Optimal Temperature (ºC)",
-    y = "Home Range Difference with Length",
-    color = "Growth Rate",
-    fill = "Growth Rate"
-  ) +
-  theme_bw(base_size = 18) +
-  scale_fill_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2)), end = 0.49) +
-  scale_color_viridis_d(labels = function(x) paste0(round(as.numeric(x), 2)), end = 0.49) +
-  xlim(NA, 40) +
-  ylim(-0.25, 0.5)
-
-interact_plot <- (p1 + p2 +p3  ) / ( p4 +p5 + plot_spacer()) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
-# interact_plot
+interact_plot <- (p3 + guide_area() ) / (p1 + p2) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 
 ggsave(interact_plot, file = paste0("fig5.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 15)
 ```
