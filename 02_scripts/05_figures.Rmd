@@ -22,10 +22,6 @@ library(naniar)
 ### Load data
 
 ```{r}
-fishbase_data <- read_csv(here::here("01_data", "02_processed_data", "fishbase_data.csv"))
-
-genus_filled_data <- read_csv(here::here("01_data", "02_processed_data", "genus_filled_data.csv"))
-
 filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.csv")) %>%
   mutate_if(is.character, as.factor)
 ```
@@ -35,11 +31,11 @@ filled_data <- read_csv(here::here("01_data", "02_processed_data", "filled_data.
 
 ```{r}
 
-cohort <- c("1: mid/low vs 2: low/mid", "1: mid/low vs 3: mid/high", "1: mid/low vs 4: mid/very high", "1: mid/low vs 5: mid/mid", "1: mid/low vs 6: high/mid",
-            "2: low/mid vs 3: mid/high", "2: low/mid vs 4: mid/very high", "2: low/mid vs 5: mid/mid", "2: low/mid vs 6: high/mid",
-            "3: mid/high vs 4: mid/very high", "3: mid/high vs 5: mid/mid", "3: mid/high vs 6: high/mid",
-            "4: mid/very high vs 5: mid/mid", "4: mid/very high vs 6: high/mid",
-            "5: mid/mid vs 6: high/mid")
+cohort <- c("1: HR-mid/PLD-low vs 2: HR-low/PLD-mid", "1: HR-mid/PLD-low vs 3: HR-mid/PLD-high", "1: HR-mid/PLD-low vs 4: HR-mid/PLD-very high", "1: HR-mid/PLD-low vs 5: HR-mid/PLD-mid", "1: HR-mid/PLD-low vs 6: HR-high/PLD-mid",
+            "2: HR-low/PLD-mid vs 3: HR-mid/PLD-high", "2: HR-low/PLD-mid vs 4: HR-mid/PLD-very high", "2: HR-low/PLD-mid vs 5: HR-mid/PLD-mid", "2: HR-low/PLD-mid vs 6: HR-high/PLD-mid",
+            "3: HR-mid/PLD-high vs 4: HR-mid/PLD-very high", "3: HR-mid/PLD-high vs 5: HR-mid/PLD-mid", "3: HR-mid/PLD-high vs 6: HR-high/PLD-mid",
+            "4: HR-mid/PLD-very high vs 5: HR-mid/PLD-mid", "4: HR-mid/PLD-very high vs 6: HR-high/PLD-mid",
+            "5: HR-mid/PLD-mid vs 6: HR-high/PLD-mid")
 PERMDISP <- c(0.001, 0.032, 0.771, 0.550, 0.587, 
               0.425, 0.17, 0.0006, 0.028, 
               0.529, 0.159, 0.305, 
@@ -134,12 +130,10 @@ g <- ggplot(data1, aes(x = variable, y = cohort, fill = direction)) +
 
 g
 
-ggsave(g, file = paste0("fig3.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 12)
+ggsave(g, file = paste0("fig3.pdf"), path = here::here("03_figs"), height = 12, width = 12)
 
-#geom_point(data = data_arrows, mapping=aes(x = variable, y = cohort), pch = "x", inherit.aes = F)
 
 ```
-
 
 
 ### Homerange vs PLD and current classes (Figure 1)
@@ -255,92 +249,9 @@ gmm_panel <- ((dist_plot) | p1) / gmm_new_fig &
   theme(plot.tag = element_text(face = "bold"))
 
 gmm_panel
-ggsave(gmm_panel, file = paste0("fig1.pdf"), path = here::here("04_figs", "final_figs"), height = 15, width = 15)
+ggsave(gmm_panel, file = paste0("fig1.pdf"), path = here::here("03_figs"), height = 15, width = 15)
 
 ```
-
-
-### Missing data figure
-
-```{r}
-
-missing <- miss_var_summary(fishbase_data)
-genus_filled <- miss_var_summary(genus_filled_data)
-family_filled <- miss_var_summary(filled_data)
-
-# original missing data
-missing_data_plot <- fishbase_data %>% 
-  dplyr::select(
-    oxygen_cons, temp_range, fecundity_mean, longevity_wild,
-    temp_preferred, dev_place
-  ) %>%
-  rename(
-    "Oxygen Consumption Rate" = oxygen_cons,
-    "Temperature Range" = temp_range,
-    "Average Fecundity" = fecundity_mean,
-    "Maximum Recorded Lifespan" = longevity_wild,
-    "Optimal Temperature" = temp_preferred,
-    "Place of Development" = dev_place
-  )
-
-m1 <- gg_miss_var(missing_data_plot) +
-  theme_bw(base_size = 16) +
-  labs(y = "Original Missing Data", x = "") +
-  theme(axis.title.x = element_text(vjust = -1))
-m1
-
-
-# missing data after genus-level fills
-genus_filled_plot <- genus_filled_data %>% 
-  dplyr::select(
-    oxygen_cons, temp_range, fecundity_mean,
-    longevity_wild, temp_preferred
-  ) %>%
-  rename(
-    "Oxygen Consumption Rate" = oxygen_cons,
-    "Temperature Range" = temp_range,
-    "Average Fecundity" = fecundity_mean,
-    "Maximum Recorded Lifespan" = longevity_wild,
-    "Optimal Temperature" = temp_preferred
-  )
-
-m2 <- gg_miss_var(genus_filled_plot) + # figure showing the missing data
-  theme_bw(base_size = 16) +
-  labs(y = "Missing Data After Genus-Level Fill", x = "Variable") +
-  theme(axis.title.x = element_text(vjust = -1))
-m2
-
-
-
-# missing data after femaily-level fills
-filled_plot <- filled_data %>%
-  dplyr::select(
-    oxygen_cons, temp_range, fecundity_mean,
-    longevity_wild, temp_preferred
-  ) %>%
-  rename(
-    "Oxygen Consumption Rate" = oxygen_cons,
-    "Temperature Range" = temp_range,
-    "Average Fecundity" = fecundity_mean,
-    "Maximum Recorded Lifespan" = longevity_wild,
-    "Optimal Temperature" = temp_preferred
-  )
-
-m3 <- gg_miss_var(filled_plot) +
-  theme_bw(base_size = 16) +
-  labs(y = "Missing Data After Family-Level Fill", x = "") +
-  theme(axis.title.x = element_text(vjust = -1))
-m3
-
-missing_fig <- (m1 / m2 / m3) +
-  plot_annotation(tag_levels = "A") &
-  theme_bw(base_size = 16)
-missing_fig
-
-ggsave(missing_fig, file = paste0("missing_data.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 8)
-
-```
-
 
 
 ### Individual Plots
@@ -390,13 +301,12 @@ long_plot <- box_data(x = "longevity_wild", y = "class2") +
   labs(y = "Maximum Lifespan (yr)", x = "") +
   scale_x_discrete(position = "top")
 diet_plot <- box_data(x = "diet_troph3", y = "class2") + 
-  labs(y = "Trophic Level", x = "") +
+  labs(y = "Trophic Position", x = "") +
   scale_x_discrete(position = "top") +
   theme(axis.text.y = element_blank())
 
 
 r_fin_plot <- box_data(x = "r_fin", y = "class2") + 
-  stat_kruskal_test(label.y = 0.9, label.x = 6, position = "jitter") +
   labs(y = "Growth Rate", x = "") +
   theme(axis.text.y = element_blank()) +
   scale_x_discrete(position = "top")
@@ -428,7 +338,7 @@ numeric_panel <- wrap_elements(num_panel) +
   )
 
 numeric_panel
-ggsave(numeric_panel, file = paste0("numeric_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 11, width = 11)
+ggsave(numeric_panel, file = paste0("figS4.pdf"), path = here::here("03_figs"), height = 11, width = 11)
 
 
 ind_panel <- ((temp_plot | length_plot) / (r_fin_plot | long_plot)) +
@@ -445,7 +355,7 @@ individual_panel <- wrap_elements(ind_panel) +
 
 individual_panel
 
-ggsave(individual_panel, file = paste0("fig4.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 13)
+ggsave(individual_panel, file = paste0("fig4.pdf"), path = here::here("03_figs"), height = 8, width = 13)
 
 ```
 
@@ -496,19 +406,6 @@ categorical_panel <- wrap_elements(cat_panel) +
   )
 
 categorical_panel
-ggsave(categorical_panel, file = paste0("categorical_panel.pdf"), path = here::here("04_figs", "final_figs"), height = 11, width = 11)
+ggsave(categorical_panel, file = paste0("figS5.pdf"), path = here::here("03_figs"), height = 11, width = 11)
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-

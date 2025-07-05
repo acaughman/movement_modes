@@ -119,7 +119,7 @@ f1_fig <- fviz_famd_ind(f1, label = "none", habillage = famd_1$class2, palette =
 
 f1_fig
 
-ggsave(f1_fig, file = paste0("famd_all_variables.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
+ggsave(f1_fig, file = paste0("figS2.pdf"), path = here::here("03_figs"), height = 8, width = 12)
 
 ```
 
@@ -185,7 +185,7 @@ nmds_1 <- ggplot(filled_scores, aes(x = NMDS1, y = NMDS2)) +
 
 nmds_1
 
-ggsave(nmds_1, file = paste0("nmds_significant_traits.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
+ggsave(nmds_1, file = paste0("figS3.pdf"), path = here::here("03_figs"), height = 8, width = 12)
 
 
 dst <- dist(com, method = "euclidean")
@@ -264,7 +264,7 @@ nmds_2 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
 
 nmds_2
 
-ggsave(nmds_2, file = paste0("fig2.pdf"), path = here::here("04_figs", "final_figs"), height = 8, width = 12)
+ggsave(nmds_2, file = paste0("fig2.pdf"), path = here::here("03_figs"), height = 8, width = 12)
 
 
 dst2 <- dist(com2, method = "euclidean")

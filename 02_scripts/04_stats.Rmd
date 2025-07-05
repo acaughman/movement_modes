@@ -128,7 +128,7 @@ p3 <- plot_comparisons(lm2, variables = "length", condition = list("temp_preferr
 
 interact_plot <- (p3 + guide_area() ) / (p1 + p2) + plot_layout(guides = "collect") + plot_annotation(tag_levels = "A")
 
-ggsave(interact_plot, file = paste0("fig5.pdf"), path = here::here("04_figs", "final_figs"), height = 12, width = 15)
+ggsave(interact_plot, file = paste0("fig5.pdf"), path = here::here("03_figs"), height = 12, width = 15)
 ```
 
 
@@ -620,74 +620,4 @@ chisq.posthoc.test(dev_table, method = "bonferroni")
 # Pearson's Chi-squared test
 chisq.test(filled_data$class2, filled_data$food_mode)
 # X-squared = 8.4677, df = 5, p-value = 0.1323
-```
-
-
-
-
-
-
-### Old
-
-##### Similarity percentage
-
-```{r}
-# com_data <- filled_data2 %>%
-#   dplyr::select(
-#     temp_preferred, fecundity_mean, longevity_wild,
-#     sp_richness, length, kfin, r_fin, diet_troph3, species, family, class2
-#   ) %>%
-#   mutate(class2 = as.factor(class2)) %>%
-#   filter(temp_preferred > 0) %>%
-#   mutate(across(where(is.numeric), ~ scale(.)[, 1])) %>%
-#   na.omit()
-#
-# com <- com_data %>%
-#   dplyr::select(-species, -family, -class2)
-#
-# # load from rda in results folder
-# # set.seed(123)
-# # simper_out = simper(comm = com, group = com_data$class2, permutations = 9999)
-#
-# summary(simper_out)
-# # shows which traits are primarily responsible for observed difference between classes. traits listed from highest to lowest % contribution to the difference between the two classes (cumsum shows total % contribution to the difference). p is signifigance.
-#
-#
-# # load from rda in results folder
-# # set.seed(123)
-# # ano = anosim(com, com_data$class2, distance = "euclidean", permutations = 9999)
-#
-# summary(ano)
-#
-# plot(ano)
-```
-
-
-```{r}
-# # ocean --------------------------------------------------------
-#
-# # Pearson's Chi-squared test
-# chisq.test(filled_data2$class2, filled_data2$ocean)
-# # X-squared = 361.63, df = 126, p-value < 2.2e-16
-#
-# # contingency table
-# ocean_table <- table(filled_data2$class2, filled_data2$ocean)
-# ocean_table
-#
-# # post-hoc test
-# chisq.posthoc.test(ocean_table, method = "bonferroni")
-#
-#
-# # basin --------------------------------------------------------
-#
-# # Pearson's Chi-squared test
-# chisq.test(filled_data2$class2, filled_data2$basin)
-# # X-squared = 30.172, df = 12, p-value = 0.002631
-#
-# # contingency table
-# basin_table <- table(filled_data2$class2, filled_data2$basin)
-# basin_table
-#
-# # post-hoc test
-# chisq.posthoc.test(basin_table, method = "bonferroni")
 ```

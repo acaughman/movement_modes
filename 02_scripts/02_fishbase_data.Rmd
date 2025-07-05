@@ -26,7 +26,7 @@ library(FSA)
 ##### Load data
 
 ```{r}
-data <- read_csv(here::here("01_data", "02_processed_data", "homerange_pld_processed.csv"))
+data <- read_csv(here::here("01_data", "01_raw_data", "homerange_pld.csv"))
 ```
 
 ##### Rename incorect species
@@ -66,12 +66,12 @@ clusters <- clusters %>%
 # rename classes with descriptions: homerange/PLD
 clusters <- clusters %>%
   mutate(class2 = case_when(
-    class3 == 1 ~ "1: mid/low",
-    class3 == 2 ~ "2: low/mid",
-    class3 == 3 ~ "3: mid/high",
-    class3 == 4 ~ "4: mid/veryhigh",
-    class3 == 5 ~ "5: mid/mid",
-    class3 == 6 ~ "6: high/mid"
+    class3 == 1 ~ "1: HR-mid/PLD-low",
+    class3 == 2 ~ "2: HR-low/PLD-mid",
+    class3 == 3 ~ "3: HR-mid/PLD-high",
+    class3 == 4 ~ "4: HR-mid/PLD-veryhigh",
+    class3 == 5 ~ "5: HR-mid/PLD-mid",
+    class3 == 6 ~ "6: HR-high/PLD-mid"
   ))
 ```
 
@@ -83,18 +83,6 @@ data <- full_join(data, clusters)
 fishbase_data_gmm <- data %>%
   mutate(class3 = as.factor(class3))
 
-gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
-  geom_jitter(aes(color = class2)) +
-  theme_bw(base_size = 20) +
-  labs(
-    x = "Order of Magnitude of Predicted Home Range",
-    y = "Predicted Pelagic Larval Duration (Month)",
-    color = "Class (homerange/PLD)"
-  )
-
-gmm_new_fig
-
-# ggsave(gmm_new_fig, file = paste0("gmm_fig.pdf"), path = here::here("04_figs"), height = 8, width = 15)
 ```
 
 ##### Load in taxonomic info
@@ -242,28 +230,30 @@ names <- species(fields = c("SpecCode", "FBname")) %>%
 data <- left_join(data, names)
 ```
 
-##### Write new csv including added variables
-
-```{r}
-#write_csv(data, here::here("01_data", "02_processed_data", "fishbase_data.csv"))
-```
 
 ##### Look at missing data
 
 ```{r}
 missing <- miss_var_summary(data)
 
-missing_data <- data %>%
+missing_data <- data %>% 
   dplyr::select(
-    oxygen_cons, temp_range, fecundity_mean, fecundity_max, longevity_wild,
-    temp_preferred, dev_place, iucn_category
+    oxygen_cons, temp_range, fecundity_mean, longevity_wild,
+    temp_preferred, dev_place
+  ) %>%
+  rename(
+    "Oxygen Consumption Rate" = oxygen_cons,
+    "Temperature Range" = temp_range,
+    "Average Fecundity" = fecundity_mean,
+    "Maximum Recorded Lifespan" = longevity_wild,
+    "Optimal Temperature" = temp_preferred,
+    "Place of Development" = dev_place
   )
 
-missing_fig <- gg_miss_var(missing_data) + # figure showing the missing data
-  theme_bw()
-missing_fig
-
-# ggsave(missing_fig, file = paste0("initial_missing_fig.png"), path = here::here("04_figs", "missing_data"))
+m1 <- gg_miss_var(missing_data)  +
+  theme_bw(base_size = 16) +
+  labs(y = "Original Missing Data", x = "") +
+  theme(axis.title.x = element_text(vjust = -1))
 ```
 
 ##### Fill in missing data from genus averages
@@ -416,11 +406,6 @@ genus_filled_data <- genus_filled_data %>%
 
 ```
 
-##### Write new csv including genus filled variables
-
-```{r}
-#write_csv(genus_filled_data, here::here("01_data", "02_processed_data", "genus_filled_data.csv"))
-```
 
 ##### Asses missing data after genus fills - dev_place is complete
 
@@ -428,15 +413,24 @@ genus_filled_data <- genus_filled_data %>%
 genus_filled <- miss_var_summary(genus_filled_data)
 
 # New missing plot
-genus_filled_plot <- genus_filled_data %>%
+genus_filled_plot <- genus_filled_data %>% 
   dplyr::select(
-    oxygen_cons, temp_range, temp_max, fecundity_mean, fecundity_max,
-    longevity_wild, temp_preferred, iucn_category
+    oxygen_cons, temp_range, fecundity_mean, longevity_wild,
+    temp_preferred, dev_place
+  ) %>%
+  rename(
+    "Oxygen Consumption Rate" = oxygen_cons,
+    "Temperature Range" = temp_range,
+    "Average Fecundity" = fecundity_mean,
+    "Maximum Recorded Lifespan" = longevity_wild,
+    "Optimal Temperature" = temp_preferred,
+    "Place of Development" = dev_place
   )
 
-genus_filled_fig <- gg_miss_var(genus_filled_plot) + # figure showing the missing data
-  theme_bw()
-genus_filled_fig
+m2 <- gg_miss_var(genus_filled_plot) + # figure showing the missing data
+  theme_bw(base_size = 16) +
+  labs(y = "Missing Data After Genus-Level Fill", x = "Variable") +
+  theme(axis.title.x = element_text(vjust = -1))
 
 ```
 
@@ -565,7 +559,7 @@ filled_data <- filled_data %>%
 ##### Write new csv including family filled variables
 
 ```{r}
-#write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
+write_csv(filled_data, here::here("01_data", "02_processed_data", "filled_data.csv"))
 ```
 
 ##### Assess missing data after family fills
@@ -574,15 +568,35 @@ filled_data <- filled_data %>%
 family_filled <- miss_var_summary(filled_data)
 
 # New missing plot
-filled_plot <- filled_data %>%
+filled_plot <- filled_data %>% 
   dplyr::select(
-    oxygen_cons, temp_range, temp_max, fecundity_mean, fecundity_max,
-    longevity_wild, temp_preferred, iucn_category
+    oxygen_cons, temp_range, fecundity_mean, longevity_wild,
+    temp_preferred, dev_place
+  ) %>%
+  rename(
+    "Oxygen Consumption Rate" = oxygen_cons,
+    "Temperature Range" = temp_range,
+    "Average Fecundity" = fecundity_mean,
+    "Maximum Recorded Lifespan" = longevity_wild,
+    "Optimal Temperature" = temp_preferred,
+    "Place of Development" = dev_place
   )
 
-family_filled_fig <- gg_miss_var(filled_plot) + # figure showing the missing data
-  theme_bw()
+m3 <- gg_miss_var(filled_plot)  +
+  theme_bw(base_size = 16) +
+  labs(y = "Missing Data After Family-Level Fill", x = "") +
+  theme(axis.title.x = element_text(vjust = -1))
 family_filled_fig
 
+```
+
+
+```{r}
+missing_fig <- (m1 / m2 / m3) +
+  plot_annotation(tag_levels = "A") &
+  theme_bw(base_size = 16)
+missing_fig
+
+ggsave(missing_fig, file = paste0("figS1.pdf"), path = here::here("03_figs"), height = 12, width = 8)
 ```
 
