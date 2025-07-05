@@ -210,7 +210,7 @@ data <- left_join(data, sp_richness)
 ##### Fill IUCN codes
 
 ```{r}
-iucn_codes <- read_csv(here::here("01_data", "02_processed_data", "iucn_codes.csv")) %>% 
+iucn_codes <- read_csv(here::here("01_data", "01_raw_data", "iucn_codes.csv")) %>% 
   na.omit()
 
 data <- data %>%
