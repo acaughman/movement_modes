@@ -71,7 +71,7 @@ Lifespan <- c(0.6, 0.0001, 0.6, 0.98, 0.25,
               0.388, 0.0006, 0.00001,
               0.57, 0.26,
               0.27)
-life_arrows <- c("decrease", "decrease", "decrease", "equal", "increase",
+life_arrows <- c("decrease", "decrease", "decrease", "no change", "increase",
                  "decrease", "decrease", "increase", "increase",
                  "increase", "increase", "increase",
                  "increase", "increase",
@@ -106,7 +106,7 @@ data1 <- data.frame(cohort, temp_arrows, length_arrows, life_arrows, growth_arro
   pivot_longer(-cohort) %>% 
   set_names(c("cohort", "variable", "direction")) %>% 
   full_join(data_long, by = c("cohort","variable")) %>% 
-  mutate(direction = fct_relevel(direction, c("increase", "equal", "decrease")))
+  mutate(direction = fct_relevel(direction, c("increase", "no change", "decrease")))
 
 # Reorder and rename levels
 data1$variable <- factor(data1$variable, levels = c("PERMANOVA", "PERMDISP", "Optimal_Temp", "Length", "Lifespan", "Growth_Rate"))
