@@ -113,7 +113,7 @@ nmds_2 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2), alpha = 0.3) +
   theme_bw(base_size = 22) +
   geom_point(data = centroid2, aes(color = class2), size = 4, alpha = 0.9) +
-  labs(x = "nMDS1", y = "nMDS2", color = "Class (home range/PLD)") +
+  labs(x = "nMDS1", y = "nMDS2", color = "Movement Group (home range/PLD)") +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
   geom_segment(data = species_scores2, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20") +
@@ -429,7 +429,7 @@ nmds_3 <- ggplot(filled_scores2, aes(x = NMDS1, y = NMDS2)) +
   geom_point(aes(color = class2), alpha = 0.3) +
   theme_bw(base_size = 22) +
   geom_point(data = centroid2, aes(color = class2), size = 4, alpha = 0.9) +
-  labs(x = "nMDS1", y = "nMDS2", color = "Class (home range/PLD)") +
+  labs(x = "nMDS1", y = "nMDS2", color = "Movement Group (home range/PLD)") +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
   geom_segment(data = species_scores2, aes(x = 0, xend = MDS1, y = 0, yend = MDS2), arrow = arrow(length = unit(0.25, "cm")), linewidth = 0.5, colour = "grey20") +
@@ -441,7 +441,7 @@ p2 = nmds_3
 
 plot = p1 + p2 + plot_annotation(tag_levels = "A") + plot_layout(guides = "collect")
 
-ggsave(plot, file = paste0("figS6.pdf"), path = here::here("03_figs"), height = 8, width = 15)
+ggsave(plot, file = paste0("figS6.pdf"), path = here::here("03_figs"), height = 8, width = 18)
 
 
 dst2 <- dist(com2, method = "euclidean")

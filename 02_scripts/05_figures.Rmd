@@ -181,7 +181,7 @@ gmm_new_fig <- ggplot(fishbase_data_gmm, aes(magnitude_homerange, month_pld)) +
   labs(
     x = "Predicted Home Range Magnitude",
     y = "Predicted PLD Month",
-    color = "Class (Homerange/PLD)",
+    color = "Movement Group (Homerange/PLD)",
     tag = "C"
   ) +
   ylim(-0.1,6) +
@@ -279,7 +279,7 @@ box_data <- function(x, y) {
     theme_bw() +
     coord_flip() +
     labs(
-      x = "Movement Class",
+      x = "Movement Group",
       color = "Class (Homerange/PLD)"
     ) +
     scale_color_viridis_d()
@@ -331,7 +331,7 @@ num_panel <- diet_plot + temp_range_plot + oxygen_plot +  fecund_plot +
   theme(text = element_text(size = 14), legend.position = "none")
 
 numeric_panel <- wrap_elements(num_panel) +
-  labs(tag = "Movement Class") +
+  labs(tag = "Movement Group") +
   theme(
     plot.tag = element_text(size = 14, angle = 270),
     plot.tag.position = "right"
@@ -347,7 +347,7 @@ ind_panel <- ((temp_plot | length_plot) / (r_fin_plot | long_plot)) +
   theme(text = element_text(size = 14), legend.position = "none")
 
 individual_panel <- wrap_elements(ind_panel) +
-  labs(tag = "Movement Class") +
+  labs(tag = "Movement Group") +
   theme(
     plot.tag = element_text(size = 14, angle = 270),
     plot.tag.position = "right"
@@ -372,7 +372,7 @@ scatter_data <- function(x, y) {
     geom_jitter(aes(color = .data[[y]])) +
     theme_bw() +
     labs(
-      y = "Movement Class",
+      y = "Movement Group",
       color = "Class (homerange/PLD)"
     ) +
     scale_color_viridis_d() +
@@ -399,7 +399,7 @@ cat_panel <- demers_plot + dev_plot +  body_plot +
   theme(text = element_text(size = 14), legend.position = "none")
 
 categorical_panel <- wrap_elements(cat_panel) +
-  labs(tag = "Movement Class") +
+  labs(tag = "Movement Group") +
   theme(
     plot.tag = element_text(size = 14, angle = 270),
     plot.tag.position = "right"
