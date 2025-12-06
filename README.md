@@ -1,6 +1,8 @@
 # Marine fish trait interactions give rise to unique ontogenetic movement combinations
 
-This repository contains code used in the paper: Rosenberg, L.J., Bradley, D., Gaines, S.D., Caughman, A.M. Marine fish trait interactions give rise to unique ontogenetic movement combinations. Marine Ecology Progress Series. in Revision.
+This repository contains code used in the paper: Rosenberg, L.J., Bradley, D., Gaines, S.D., Caughman, A.M. 2025. Marine fish trait interactions give rise to unique ontogenetic movement combinations. Marine Ecology Progress Series. in Press. https://doi.org/10.3354/meps15004
+
+The associated zenodo repository is located at <a href="https://doi.org/10.5281/zenodo.15811366"><img src="https://zenodo.org/badge/612754347.svg" alt="DOI"></a>
 
 For any questions, comments, or concerns, please contact Alicia Caughman [acaughman@bren.ucsb.edu](acaughman@bren.ucsb.edu).
 
