@@ -88,7 +88,7 @@ write_csv(tidy_lm2.1, here::here("01_data", "02_processed_data", "pld_lm.csv"))
 p1 <- plot_comparisons(lm1, variables = "length", condition = c("longevity_wild", "r_fin"), comparison = "difference") +
   labs(
     x = "Maximum Lifespan (yr)",
-    y =  expression("Marginal Effect of Length (cm) on Home Range (cm"^2*")"),
+    y =  expression("Marginal Effect of Length (cm) on Home Range (km"^2*")"),
     color = "Growth Rate",
     fill = "Growth Rate",
   ) +
